@@ -8,8 +8,8 @@ Since 3.7.0, we provide OBO flow for Token Authorization. To be used, this featu
 
 ```ini
 [feature_toggles]
-# On-Behalf-Of functionality for the ADX data source
-adxOnBehalfOf = true
+# On-Behalf-Of functionality for the Logship data source
+logshipOnBehalfOf = true
 ```
 
 You can enable this feature by selecting the checkbox in the plugin configuration screen.
@@ -19,7 +19,7 @@ When provisioning, set the `oauthPassThru` property to `true` as shown in the fo
 apiVersion: 1
 datasources:
   - name: Azure Data Explorer
-    type: grafana-azure-data-explorer-datasource
+    type: grafana-grafana-logship-datasource
     access: proxy
     basicAuth: false
     editable: true
@@ -57,7 +57,7 @@ We do not support on-behalf-of authorization for private clouds (like "chinaazur
 
 ## Monitoring
 
-Prometheus metrics are exposed on `/api/plugins/grafana-azure-data-explorer-datasource/metrics`. The `grafana_plugin_adx_obo_latency_seconds` histogram counts the number of requests, including the roundtrip times.
+Prometheus metrics are exposed on `/api/plugins/grafana-grafana-logship-datasource/metrics`. The `grafana_plugin_logship_obo_latency_seconds` histogram counts the number of requests, including the roundtrip times.
 
 ## Troubleshooting
 

@@ -3,9 +3,9 @@ import { DYNAMIC_TYPE_ARRAY_DELIMITER } from 'KustoExpressionParser';
 import { escapeRegExp } from 'lodash';
 
 import { QueryEditorPropertyDefinition, QueryEditorPropertyType } from './types';
-import { AdxColumnSchema, AdxDatabaseSchema, AdxTableSchema } from '../types';
+import { LogshipColumnSchema, LogshipDatabaseSchema, LogshipTableSchema } from '../types';
 
-export const tableToDefinition = (table: AdxTableSchema): QueryEditorPropertyDefinition => {
+export const tableToDefinition = (table: LogshipTableSchema): QueryEditorPropertyDefinition => {
   return {
     label: table.Name,
     value: table.Name,
@@ -13,14 +13,14 @@ export const tableToDefinition = (table: AdxTableSchema): QueryEditorPropertyDef
   };
 };
 
-export const tableToSelectable = (table: AdxTableSchema): SelectableValue<string> => {
+export const tableToSelectable = (table: LogshipTableSchema): SelectableValue<string> => {
   return {
     label: table.Name,
     value: table.Name,
   };
 };
 
-export const databaseToDefinition = (database: AdxDatabaseSchema): QueryEditorPropertyDefinition => {
+export const databaseToDefinition = (database: LogshipDatabaseSchema): QueryEditorPropertyDefinition => {
   return {
     value: database.Name,
     label: database.Name,
@@ -28,14 +28,14 @@ export const databaseToDefinition = (database: AdxDatabaseSchema): QueryEditorPr
   };
 };
 
-export const databasesToDefinition = (databases: AdxDatabaseSchema[]): QueryEditorPropertyDefinition[] => {
+export const databasesToDefinition = (databases: LogshipDatabaseSchema[]): QueryEditorPropertyDefinition[] => {
   if (!Array.isArray(databases)) {
     return [];
   }
   return databases.map(databaseToDefinition);
 };
 
-export const tablesToDefinition = (tables: AdxTableSchema[]): QueryEditorPropertyDefinition[] => {
+export const tablesToDefinition = (tables: LogshipTableSchema[]): QueryEditorPropertyDefinition[] => {
   if (!Array.isArray(tables)) {
     return [];
   }
@@ -54,7 +54,7 @@ export const valueToDefinition = (name: string) => {
   };
 };
 
-export const columnsToDefinition = (columns: AdxColumnSchema[]): QueryEditorPropertyDefinition[] => {
+export const columnsToDefinition = (columns: LogshipColumnSchema[]): QueryEditorPropertyDefinition[] => {
   if (!Array.isArray(columns)) {
     return [];
   }
@@ -63,7 +63,7 @@ export const columnsToDefinition = (columns: AdxColumnSchema[]): QueryEditorProp
     return {
       value: column.Name,
       label: column.Name.replace(new RegExp(escapeRegExp(DYNAMIC_TYPE_ARRAY_DELIMITER), 'g'), '[ ]'),
-      type: toPropertyType(column.CslType),
+      type: toPropertyType(column.Type),
     };
   });
 };
@@ -71,16 +71,16 @@ export const columnsToDefinition = (columns: AdxColumnSchema[]): QueryEditorProp
 export const toPropertyType = (kustoType: string): QueryEditorPropertyType => {
   switch (kustoType) {
     case 'real':
-    case 'int':
-    case 'long':
-    case 'double':
-    case 'decimal':
+    case 'Int32':
+    case 'UInt64':
+    case 'Double':
+    case 'Decimal':
       return QueryEditorPropertyType.Number;
-    case 'datetime':
+    case 'Datetime':
       return QueryEditorPropertyType.DateTime;
-    case 'bool':
+    case 'Boolean':
       return QueryEditorPropertyType.Boolean;
-    case 'timespan':
+    case 'TimeSpan':
       return QueryEditorPropertyType.TimeSpan;
     default:
       return QueryEditorPropertyType.String;

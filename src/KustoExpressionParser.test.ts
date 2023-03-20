@@ -13,7 +13,7 @@ import {
   QueryEditorWhereArrayExpression,
   QueryEditorWhereExpression,
 } from './components/LegacyQueryEditor/editor/expressions';
-import { AdxColumnSchema, AutoCompleteQuery, defaultQuery, QueryExpression } from 'types';
+import { LogshipColumnSchema, AutoCompleteQuery, defaultQuery, QueryExpression } from 'types';
 
 describe('KustoExpressionParser', () => {
   const templateSrv: TemplateSrv = {
@@ -114,11 +114,10 @@ describe('KustoExpressionParser', () => {
         database: 'Samples',
       };
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'column["type"]',
-          CslType: 'string',
-          isDynamic: true,
+          Type: 'string',
         },
       ];
 
@@ -151,15 +150,14 @@ describe('KustoExpressionParser', () => {
         database: 'Samples',
       };
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'column["type"]',
-          CslType: 'string',
-          isDynamic: true,
+          Type: 'string',
         },
         {
           Name: 'StartTime',
-          CslType: 'datetime',
+          Type: 'datetime',
         },
       ];
 
@@ -212,11 +210,10 @@ describe('KustoExpressionParser', () => {
         database: 'StormEvents',
       };
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'Modes["`indexer`"]',
-          CslType: 'string',
-          isDynamic: true,
+          Type: 'string',
         },
       ];
       expect(parser.toAutoCompleteQuery(acQuery, tableSchema)).toEqual(
@@ -297,11 +294,10 @@ describe('KustoExpressionParser', () => {
         reduce: createReduceArray([createReduce('reduce thing', 'sum')]),
       });
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'reduce thing',
-          CslType: 'long',
-          isDynamic: true,
+          Type: 'long',
         },
       ];
 
@@ -421,10 +417,10 @@ describe('KustoExpressionParser', () => {
         where: createWhereArray([createOperator('isActive', '==', true)]),
       });
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'StartTime',
-          CslType: 'datetime',
+          Type: 'datetime',
         },
       ];
 
@@ -445,10 +441,10 @@ describe('KustoExpressionParser', () => {
         },
       });
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'StartTime',
-          CslType: 'datetime',
+          Type: 'datetime',
         },
       ];
 
@@ -461,14 +457,14 @@ describe('KustoExpressionParser', () => {
         where: createWhereArray([createOperator('isActive', '==', true)]),
       });
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'StartTime',
-          CslType: 'datetime',
+          Type: 'datetime',
         },
         {
           Name: 'EndTime',
-          CslType: 'datetime',
+          Type: 'datetime',
         },
       ];
 
@@ -486,11 +482,10 @@ describe('KustoExpressionParser', () => {
         where: createWhereArray([createOperator('isActive', '==', true)]),
       });
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'Column["StartTime"]',
-          CslType: 'datetime',
-          isDynamic: true,
+          Type: 'datetime',
         },
       ];
 
@@ -508,15 +503,14 @@ describe('KustoExpressionParser', () => {
         where: createWhereArray([createOperator('isActive', '==', true)]),
       });
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'Column["StartTime"]',
-          CslType: 'datetime',
-          isDynamic: true,
+          Type: 'datetime',
         },
         {
           Name: 'SavedTime',
-          CslType: 'datetime',
+          Type: 'datetime',
         },
       ];
 
@@ -592,11 +586,10 @@ describe('KustoExpressionParser', () => {
         reduce: createReduceArray([createReduce('column["level"]["active"]', 'sum')]),
       });
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'column["level"]["active"]',
-          CslType: 'int',
-          isDynamic: true,
+          Type: 'int',
         },
       ];
 
@@ -612,15 +605,14 @@ describe('KustoExpressionParser', () => {
         reduce: createReduceArray([createReduce('column["level"]["active"]', 'none'), createReduce('active', 'none')]),
       });
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'column["level"]["active"]',
-          CslType: 'int',
-          isDynamic: true,
+          Type: 'int',
         },
         {
           Name: 'StartTime',
-          CslType: 'datetime',
+          Type: 'datetime',
         },
       ];
 
@@ -639,15 +631,14 @@ describe('KustoExpressionParser', () => {
         reduce: createReduceArray([createReduce('column["level"]["active"]', 'sum'), createReduce('active', 'none')]),
       });
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'column["level"]["active"]',
-          CslType: 'int',
-          isDynamic: true,
+          Type: 'int',
         },
         {
           Name: 'StartTime',
-          CslType: 'datetime',
+          Type: 'datetime',
         },
       ];
 
@@ -667,15 +658,14 @@ describe('KustoExpressionParser', () => {
         groupBy: createGroupByArray([createGroupBy('StartTime', '1h')]),
       });
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'column["level"]["active"]',
-          CslType: 'int',
-          isDynamic: true,
+          Type: 'int',
         },
         {
           Name: 'StartTime',
-          CslType: 'datetime',
+          Type: 'datetime',
         },
       ];
 
@@ -695,15 +685,14 @@ describe('KustoExpressionParser', () => {
         groupBy: createGroupByArray([createGroupBy('StartTime', '1h')]),
       });
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'column["level"]["active"]',
-          CslType: 'int',
-          isDynamic: true,
+          Type: 'int',
         },
         {
           Name: 'StartTime',
-          CslType: 'datetime',
+          Type: 'datetime',
         },
       ];
 
@@ -723,15 +712,14 @@ describe('KustoExpressionParser', () => {
         groupBy: createGroupByArray([createGroupBy('StartTime', '1h'), createGroupBy('type')]),
       });
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'column["level"]["active"]',
-          CslType: 'int',
-          isDynamic: true,
+          Type: 'int',
         },
         {
           Name: 'StartTime',
-          CslType: 'datetime',
+          Type: 'datetime',
         },
       ];
 
@@ -751,19 +739,18 @@ describe('KustoExpressionParser', () => {
         groupBy: createGroupByArray([createGroupBy('EndTime', '1h'), createGroupBy('type')]),
       });
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'column["level"]["active"]',
-          CslType: 'int',
-          isDynamic: true,
+          Type: 'int',
         },
         {
           Name: 'StartTime',
-          CslType: 'datetime',
+          Type: 'datetime',
         },
         {
           Name: 'EndTime',
-          CslType: 'datetime',
+          Type: 'datetime',
         },
       ];
 
@@ -783,20 +770,18 @@ describe('KustoExpressionParser', () => {
         groupBy: createGroupByArray([createGroupBy('column["EndTime"]', '1h'), createGroupBy('type')]),
       });
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'column["level"]["active"]',
-          CslType: 'int',
-          isDynamic: true,
+          Type: 'int',
         },
         {
           Name: 'StartTime',
-          CslType: 'datetime',
+          Type: 'datetime',
         },
         {
           Name: 'column["EndTime"]',
-          CslType: 'datetime',
-          isDynamic: true,
+          Type: 'datetime',
         },
       ];
 
@@ -816,15 +801,14 @@ describe('KustoExpressionParser', () => {
         groupBy: createGroupByArray([createGroupBy('column["type"]')]),
       });
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'column["type"]',
-          CslType: 'string',
-          isDynamic: true,
+          Type: 'string',
         },
         {
           Name: 'StartTime',
-          CslType: 'datetime',
+          Type: 'datetime',
         },
       ];
 
@@ -861,15 +845,14 @@ describe('KustoExpressionParser', () => {
         groupBy: createGroupByArray([createGroupBy('column["type"]')]),
       });
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'column["type"]',
-          CslType: 'string',
-          isDynamic: true,
+          Type: 'string',
         },
         {
           Name: 'StartTime',
-          CslType: 'datetime',
+          Type: 'datetime',
         },
       ];
 
@@ -908,15 +891,14 @@ describe('KustoExpressionParser', () => {
         groupBy: createGroupByArray([createGroupBy('column["type"]')]),
       });
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'column["type"]',
-          CslType: 'string',
-          isDynamic: true,
+          Type: 'string',
         },
         {
           Name: 'StartTime',
-          CslType: 'datetime',
+          Type: 'datetime',
         },
       ];
 
@@ -935,15 +917,14 @@ describe('KustoExpressionParser', () => {
         reduce: createReduceArray([createReduceWithParameter('amount', 'percentile', [1])]),
       });
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'column["type"]',
-          CslType: 'string',
-          isDynamic: true,
+          Type: 'string',
         },
         {
           Name: 'StartTime',
-          CslType: 'datetime',
+          Type: 'datetime',
         },
       ];
 
@@ -962,15 +943,14 @@ describe('KustoExpressionParser', () => {
         reduce: createReduceArray([createReduceWithParameter('amount', 'percentile', [1, 2])]),
       });
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'column["type"]',
-          CslType: 'string',
-          isDynamic: true,
+          Type: 'string',
         },
         {
           Name: 'StartTime',
-          CslType: 'datetime',
+          Type: 'datetime',
         },
       ];
 
@@ -989,15 +969,14 @@ describe('KustoExpressionParser', () => {
         reduce: createReduceArray([createReduceWithParameter('amount', 'percentile', [1])]),
       });
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'column["type"]',
-          CslType: 'string',
-          isDynamic: true,
+          Type: 'string',
         },
         {
           Name: 'StartTime',
-          CslType: 'datetime',
+          Type: 'datetime',
         },
       ];
 
@@ -1016,15 +995,14 @@ describe('KustoExpressionParser', () => {
         reduce: createReduceArray([createReduceWithParameter('amount', 'percentile', [1, '2'])]),
       });
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'column["type"]',
-          CslType: 'string',
-          isDynamic: true,
+          Type: 'string',
         },
         {
           Name: 'StartTime',
-          CslType: 'datetime',
+          Type: 'datetime',
         },
       ];
 
@@ -1042,15 +1020,14 @@ describe('KustoExpressionParser', () => {
         reduce: createReduceArray([createReduceWithParameter('column["`indexer`"]', 'percentile', [1, '2'])]),
       });
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'column["`indexer`"]',
-          CslType: 'string',
-          isDynamic: true,
+          Type: 'string',
         },
         {
           Name: 'StartTime',
-          CslType: 'datetime',
+          Type: 'datetime',
         },
       ];
 
@@ -1070,15 +1047,14 @@ describe('KustoExpressionParser', () => {
         ]),
       });
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'column["`indexer`"]["foo"]["`indexer`"]',
-          CslType: 'string',
-          isDynamic: true,
+          Type: 'string',
         },
         {
           Name: 'StartTime',
-          CslType: 'datetime',
+          Type: 'datetime',
         },
       ];
 
@@ -1098,10 +1074,10 @@ describe('KustoExpressionParser', () => {
         timeshift: createProperty('2d'),
       });
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'StartTime',
-          CslType: 'datetime',
+          Type: 'datetime',
         },
       ];
 
@@ -1131,10 +1107,10 @@ describe('KustoExpressionParser', () => {
         timeshift: createProperty('100timmar'),
       });
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'StartTime',
-          CslType: 'datetime',
+          Type: 'datetime',
         },
       ];
 
@@ -1152,10 +1128,10 @@ describe('KustoExpressionParser', () => {
         where: createWhereArray([createOperator('country', 'isnotempty', '')]),
       });
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'StartTime',
-          CslType: 'datetime',
+          Type: 'datetime',
         },
       ];
 
@@ -1175,10 +1151,10 @@ describe('KustoExpressionParser', () => {
         groupBy: createGroupByArray([createGroupBy('continents')]),
       });
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'StartTime',
-          CslType: 'datetime',
+          Type: 'datetime',
         },
       ];
 
@@ -1195,10 +1171,10 @@ describe('KustoExpressionParser', () => {
         groupBy: createGroupByArray([createGroupBy('continents')]),
       });
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'StartTime',
-          CslType: 'datetime',
+          Type: 'datetime',
         },
       ];
 
@@ -1215,10 +1191,10 @@ describe('KustoExpressionParser', () => {
         groupBy: createGroupByArray([createGroupBy('continents')]),
       });
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'StartTime',
-          CslType: 'datetime',
+          Type: 'datetime',
         },
       ];
 
@@ -1235,10 +1211,10 @@ describe('KustoExpressionParser', () => {
         groupBy: createGroupByArray([createGroupBy('continents')]),
       });
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'StartTime',
-          CslType: 'datetime',
+          Type: 'datetime',
         },
       ];
 
@@ -1255,15 +1231,14 @@ describe('KustoExpressionParser', () => {
         groupBy: createGroupByArray([createGroupBy('column["`indexer`"]')]),
       });
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'column["`indexer`"]',
-          CslType: 'string',
-          isDynamic: true,
+          Type: 'string',
         },
         {
           Name: 'StartTime',
-          CslType: 'datetime',
+          Type: 'datetime',
         },
       ];
 
@@ -1281,15 +1256,14 @@ describe('KustoExpressionParser', () => {
         groupBy: createGroupByArray([createGroupBy('column["`indexer`"]["foo"]["`indexer`"]')]),
       });
 
-      const tableSchema: AdxColumnSchema[] = [
+      const tableSchema: LogshipColumnSchema[] = [
         {
           Name: 'column["`indexer`"]["foo"]["`indexer`"]',
-          CslType: 'string',
-          isDynamic: true,
+          Type: 'string',
         },
         {
           Name: 'StartTime',
-          CslType: 'datetime',
+          Type: 'datetime',
         },
       ];
 

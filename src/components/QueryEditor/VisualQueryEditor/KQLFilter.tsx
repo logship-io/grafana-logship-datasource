@@ -3,8 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { SelectableValue } from '@grafana/data';
 import { EditorList } from '@grafana/experimental';
 
-import { AdxDataSource } from '../../../datasource';
-import { AdxColumnSchema, KustoQuery } from '../../../types';
+import { LogshipDataSource } from '../../../datasource';
+import { LogshipColumnSchema, KustoQuery } from '../../../types';
 import {
   QueryEditorExpression,
   QueryEditorExpressionType,
@@ -18,8 +18,8 @@ import FilterItem from './FilterItem';
 interface KQLFilterProps {
   index: number;
   query: KustoQuery;
-  datasource: AdxDataSource;
-  columns?: AdxColumnSchema[];
+  datasource: LogshipDataSource;
+  columns?: LogshipColumnSchema[];
   templateVariableOptions: SelectableValue<string>;
   onChange: (query: KustoQuery) => void;
   focusNewGroup?: boolean;
@@ -129,9 +129,9 @@ const KQLFilter: React.FC<KQLFilterProps> = ({
 // Making component functions in the render body is not recommended, but it works for now.
 // If some problems arise (perhaps with state going missing), consider this to be a potential cause
 function makeRenderFilter(
-  datasource: AdxDataSource,
+  datasource: LogshipDataSource,
   query: KustoQuery,
-  columns: AdxColumnSchema[] | undefined,
+  columns: LogshipColumnSchema[] | undefined,
   templateVariableOptions: SelectableValue<string>,
   filtersLength: number
 ) {

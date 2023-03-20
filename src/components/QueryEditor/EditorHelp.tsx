@@ -7,10 +7,11 @@ export default class EditorHelp extends PureComponent<QueryEditorHelpProps<Kusto
   render() {
     return (
       <div>
-        <h3>ADX query editor help</h3>
+        <h3>Logship query editor help</h3>
         <h5>Format</h5>
         <p>
-          It&apos;s possible to modify the format of the data returned by ADX with the &quot;Format as&quot; selector.
+          It&apos;s possible to modify the format of the data returned by Logship with the 
+          &quot;Format as&quot; selector.
           Here are more details of each option:
         </p>
         <p>
@@ -45,12 +46,12 @@ export default class EditorHelp extends PureComponent<QueryEditorHelpProps<Kusto
         </p>
 
         <p>
-          <span>Format as ADX Time series:</span>
+          <span>Format as Logship Time series:</span>
           <li>
             Used for queries that return Kusto&apos;s &quot;time series&quot; type, such as the make-series operator
           </li>
           <li>Must have a datetime column named &quot;Timestamp&quot;</li>
-          <li>Example ADX Time series query:</li>
+          <li>Example Logship Time series query:</li>
           <pre>
             {`let T = range Timestamp from $__timeFrom to $__timeTo step $__timeInterval * 4
 | extend   Person = dynamic(["Torkel", "Daniel", "Kyle", "Sofia"]) 

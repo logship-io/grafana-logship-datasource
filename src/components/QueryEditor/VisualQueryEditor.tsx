@@ -2,12 +2,12 @@ import { QueryEditorProps, SelectableValue } from '@grafana/data';
 import { getTemplateSrv } from '@grafana/runtime';
 import { Alert } from '@grafana/ui';
 import { EditorRows } from '@grafana/experimental';
-import { AdxDataSource } from 'datasource';
+import { LogshipDataSource } from 'datasource';
 import React, { useMemo, useState, useEffect } from 'react';
 import { useAsync } from 'react-use';
-import { AdxSchemaResolver } from 'schema/AdxSchemaResolver';
+import { LogshipSchemaResolver } from 'schema/LogshipSchemaResolver';
 import { QueryEditorPropertyDefinition } from 'schema/types';
-import { AdxColumnSchema, AdxDataSourceOptions, AdxSchema, KustoQuery } from 'types';
+import { LogshipColumnSchema, LogshipDataSourceOptions, KustoQuery, LogshipDatabaseSchema } from 'types';
 import FilterSection from './VisualQueryEditor/FilterSection';
 import AggregateSection from './VisualQueryEditor/AggregateSection';
 import GroupBySection from './VisualQueryEditor/GroupBySection';
@@ -16,10 +16,10 @@ import Timeshift from './VisualQueryEditor/Timeshift';
 import TableSection from './VisualQueryEditor/TableSection';
 import { filterColumns } from './VisualQueryEditor/utils/utils';
 
-type Props = QueryEditorProps<AdxDataSource, KustoQuery, AdxDataSourceOptions>;
+type Props = QueryEditorProps<LogshipDataSource, KustoQuery, LogshipDataSourceOptions>;
 
 interface VisualQueryEditorProps extends Props {
-  schema?: AdxSchema;
+  schema?: LogshipDatabaseSchema;
   database: string;
   templateVariableOptions: SelectableValue<string>;
 }
@@ -39,9 +39,9 @@ export const VisualQueryEditor: React.FC<VisualQueryEditorProps> = (props) => {
     }
 
     const name = tableMapping?.value ?? tableName;
-    return await getTableSchema(datasource, databaseName, name);
+    return await getTableSchema(datasource, name);
   }, [datasourceId, databaseName, tableName, tableMapping?.value]);
-  const [tableColumns, setTableColumns] = useState<AdxColumnSchema[]>([]);
+  const [tableColumns, setTableColumns] = useState<LogshipColumnSchema[]>([]);
 
   useEffect(() => {
     setTableColumns(filterColumns(tableSchema.value, query.expression?.columns) || []);
@@ -83,24 +83,24 @@ export const VisualQueryEditor: React.FC<VisualQueryEditorProps> = (props) => {
 };
 
 const useTableOptions = (
-  schema: AdxSchema | undefined,
+  schema: LogshipDatabaseSchema | undefined,
   database: string,
-  datasource: AdxDataSource
+  datasource: LogshipDataSource
 ): QueryEditorPropertyDefinition[] => {
   const mapper = datasource.getSchemaMapper();
 
   return useMemo(() => {
-    if (!schema || !schema.Databases) {
+    if (!schema || !schema.Tables) {
       return [];
     }
-    return mapper.getTableOptions(schema, database);
+    return mapper.getTableOptions(schema);
   }, [database, schema, mapper]);
 };
 
 const useSelectedTable = (
   options: QueryEditorPropertyDefinition[],
   query: KustoQuery,
-  datasource: AdxDataSource
+  datasource: LogshipDataSource
 ): SelectableValue<string> | undefined => {
   const variables = datasource.getVariables();
 
@@ -130,7 +130,7 @@ const useSelectedTable = (
   }, [options, table, variables]);
 };
 
-async function getTableSchema(datasource: AdxDataSource, databaseName: string, tableName: string) {
-  const schemaResolver = new AdxSchemaResolver(datasource);
-  return await schemaResolver.getColumnsForTable(databaseName, tableName);
+async function getTableSchema(datasource: LogshipDataSource, tableName: string) {
+  const schemaResolver = new LogshipSchemaResolver(datasource);
+  return await schemaResolver.getColumnsForTable(tableName);
 }

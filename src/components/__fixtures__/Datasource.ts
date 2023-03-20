@@ -1,18 +1,18 @@
 import { DataSourcePluginOptionsEditorProps, PluginType } from '@grafana/data';
 
-import { AdxDataSource } from '../../datasource';
+import { LogshipDataSource } from '../../datasource';
 import { QueryEditorExpressionType } from '../LegacyQueryEditor/editor/expressions';
-import { AdxDataSourceOptions, AdxDataSourceSecureOptions, EditorMode, KustoQuery } from '../../types';
+import { LogshipDataSourceOptions, LogshipDataSourceSecureOptions, EditorMode, KustoQuery } from '../../types';
 
 export const mockDatasourceOptions: DataSourcePluginOptionsEditorProps<
-  AdxDataSourceOptions,
-  AdxDataSourceSecureOptions
+  LogshipDataSourceOptions,
+  LogshipDataSourceSecureOptions
 > = {
   options: {
     id: 1,
-    uid: 'adx-id',
+    uid: 'logship-id',
     orgId: 1,
-    name: 'ADX Data source',
+    name: 'Logship Data source',
     typeLogoUrl: '',
     type: '',
     typeName: '',
@@ -43,16 +43,16 @@ export const mockDatasourceOptions: DataSourcePluginOptionsEditorProps<
 };
 
 export const mockDatasource = () =>
-  new AdxDataSource({
+  new LogshipDataSource({
     id: 1,
-    uid: 'adx-id',
-    type: 'adx-datasource',
-    name: 'ADX Data Source',
+    uid: 'logship-id',
+    type: 'logship-datasource',
+    name: 'Logship Data Source',
     access: 'proxy',
     jsonData: mockDatasourceOptions.options.jsonData,
     meta: {
-      id: 'adx-datasource',
-      name: 'ADX Data Source',
+      id: 'logship-datasource',
+      name: 'Logship Data Source',
       type: PluginType.datasource,
       module: '',
       baseUrl: '',

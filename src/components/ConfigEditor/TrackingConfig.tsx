@@ -1,11 +1,11 @@
 import { DataSourcePluginOptionsEditorProps } from '@grafana/data';
 import { FieldSet, InlineField, InlineSwitch } from '@grafana/ui';
 import React from 'react';
-import { AdxDataSourceOptions, AdxDataSourceSecureOptions } from 'types';
+import { LogshipDataSourceOptions, LogshipDataSourceSecureOptions } from 'types';
 
 interface TrackingConfigProps
-  extends DataSourcePluginOptionsEditorProps<AdxDataSourceOptions, AdxDataSourceSecureOptions> {
-  updateJsonData: <T extends keyof AdxDataSourceOptions>(fieldName: T, value: AdxDataSourceOptions[T]) => void;
+  extends DataSourcePluginOptionsEditorProps<LogshipDataSourceOptions, LogshipDataSourceSecureOptions> {
+  updateJsonData: <T extends keyof LogshipDataSourceOptions>(fieldName: T, value: LogshipDataSourceOptions[T]) => void;
 }
 
 const LABEL_WIDTH = 28;
@@ -22,12 +22,12 @@ const TrackingConfig: React.FC<TrackingConfigProps> = ({ options, updateJsonData
           <p>
             With this feature enabled, Grafana will pass the logged in user&#39;s username in the{' '}
             <code>x-ms-user-id</code> header and in the <code>x-ms-client-request-id</code> header when sending requests
-            to ADX. Can be useful when tracking needs to be done in ADX.{' '}
+            to Logship. Can be useful when tracking needs to be done in Logship.{' '}
           </p>
         }
       >
         <InlineSwitch
-          id="adx-username-header"
+          id="logship-username-header"
           value={jsonData.enableUserTracking}
           onChange={(ev: React.ChangeEvent<HTMLInputElement>) =>
             updateJsonData('enableUserTracking', ev.target.checked)

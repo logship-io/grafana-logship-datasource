@@ -1,14 +1,14 @@
 {
   "type": "datasource",
-  "name": "Azure Data Explorer Datasource",
-  "id": "grafana-azure-data-explorer-datasource",
+  "name": "Logship Datasource",
+  "id": "grafana-logship-datasource",
   "info": {
-    "description": "Grafana data source for Azure Data Explorer",
+    "description": "Grafana data source for Logship",
     "author": {
-      "name": "Grafana Labs",
-      "url": "https://grafana.com"
+      "name": "Logship LLC",
+      "url": "https://logship.ai"
     },
-    "keywords": ["azure", "kusto", "kustodb", "azure data explorer", "data", "explorer"],
+    "keywords": ["logship", "kusto", "kustodb"],
     "logos": {
       "small": "img/logo.png",
       "large": "img/logo.png"
@@ -16,11 +16,11 @@
     "links": [
       {
         "name": "Project site",
-        "url": "https://github.com/grafana/azure-data-explorer-datasource"
+        "url": "https://github.com/logsink/grafana-logship-datasource"
       },
       {
         "name": "Apache License",
-        "url": "https://github.com/grafana/azure-data-explorer-datasource/blob/main/LICENSE"
+        "url": "https://github.com/logsink/grafana-logship-datasource/blob/main/LICENSE"
       }
     ],
     "screenshots": [],
@@ -28,12 +28,12 @@
     "updated": "%TODAY%"
   },
   "dependencies": {
-    "grafanaDependency": ">=8.0.0",
+    "grafanaDependency": ">=9.0.0",
     "plugins": []
   },
   "metrics": true,
   "annotations": true,
   "backend": true,
-  "executable": "gpx_adx",
+  "executable": "gpx_logship",
   "alerting": true
 }

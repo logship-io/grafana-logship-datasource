@@ -16,8 +16,8 @@ Apart from that, this release also includes:
 
 ## [4.1.10]
 
-- Fix: Invalid code editor loaded for Grafana versions that don't follow semantic versioning by @aangelisc in https://github.com/grafana/azure-data-explorer-datasource/pull/506
-- Fix error unmounting ADX query editor by @aangelisc in https://github.com/grafana/azure-data-explorer-datasource/pull/519
+- Fix: Invalid code editor loaded for Grafana versions that don't follow semantic versioning by @aangelisc in https://github.com/grafana/grafana-logship-datasource/pull/506
+- Fix error unmounting Logship query editor by @aangelisc in https://github.com/grafana/grafana-logship-datasource/pull/519
 - Security: Upgrade Go in build process to 1.19.3
 
 ## [4.1.9]
@@ -150,7 +150,7 @@ Note: The minimum required version of Grafana is now 7.4
 
 ## [3.3.0]
 
-- Add tracking capabilities by making it possible to pass the logged in Grafana user's username as a header to ADX
+- Add tracking capabilities by making it possible to pass the logged in Grafana user's username as a header to Logship
 - Use jsoniter instead of encoding/json in order to improve performance
 - Bugfix: Expand query template variables before building query
 - Bugfix: Fix minor typo in confirmation dialog
@@ -168,7 +168,7 @@ All notable changes to this project will be documented in this file.
 - Improved the visual query builder to make it easier to add aggregations to a query.
 - Added support for handling schema mappings to filter out parts of the database schema being available in the visual query builder.
 - Bugfix: prevent empty queries from triggering when creating dashboard.
-- Bugfix: fixing so we properly select ADX time series option when editor is in raw mode.
+- Bugfix: fixing so we properly select Logship time series option when editor is in raw mode.
 - Bugfix: added a timeout setting and will make sure the plugin is handling timeout of long running queries properly.
 
 ## [3.1.0]

@@ -14,7 +14,7 @@ const ConfigHelp: React.FC<ConfigHelpProps> = () => {
             className="external-link"
             target="_blank"
             rel="noreferrer"
-            href="https://github.com/grafana/azure-data-explorer-datasource#configuring-the-datasource-in-grafana"
+            href="https://github.com/grafana/grafana-logship-datasource#configuring-the-datasource-in-grafana"
           >
             here.
           </a>
@@ -41,7 +41,7 @@ const ConfigHelp: React.FC<ConfigHelpProps> = () => {
             className="external-link"
             target="_blank"
             rel="noreferrer"
-            href="https://github.com/grafana/azure-data-explorer-datasource#configuring-the-datasource-in-grafana"
+            href="https://github.com/grafana/grafana-logship-datasource#configuring-the-datasource-in-grafana"
           >
             in the documentation.
           </a>

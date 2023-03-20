@@ -1,6 +1,6 @@
 # Azure Data Explorer data source for Grafana
 
-[![Build Status](https://drone.grafana.net/api/badges/grafana/azure-data-explorer-datasource/status.svg)](https://drone.grafana.net/grafana/azure-data-explorer-datasource)
+[![Build Status](https://drone.grafana.net/api/badges/grafana/grafana-logship-datasource/status.svg)](https://drone.grafana.net/grafana/grafana-logship-datasource)
 
 [Azure Data Explorer](https://docs.microsoft.com/en-us/azure/data-explorer/) is a log analytics cloud platform optimized for ad-hoc big data queries.
 
@@ -13,7 +13,7 @@ Plugin versions prior to 3.0.0 require Grafana 6.3.6.
 
 If you do not have a [Grafana Cloud](https://grafana.com/cloud) account, you can sign up for one [here](https://grafana.com/cloud/grafana).
 
-1. Click on the `Install plugin` button on the [Azure Data Explorer page on Grafana.com](https://grafana.com/plugins/grafana-azure-data-explorer-datasource/?tab=installation). This will automatically add the plugin to your Grafana instance. It might take up to 30 seconds to install.
+1. Click on the `Install plugin` button on the [Azure Data Explorer page on Grafana.com](https://grafana.com/plugins/grafana-grafana-logship-datasource/?tab=installation). This will automatically add the plugin to your Grafana instance. It might take up to 30 seconds to install.
 
 2. Login to your Hosted Grafana instance (go to your instances page in your profile): `https://grafana.com/orgs/<yourUserName>/instances/` and the Azure Data Explorer datasource will be installed.
 
@@ -31,7 +31,7 @@ If you do not have a [Grafana Cloud](https://grafana.com/cloud) account, you can
 2. Run Grafana and install the Azure Data Explorer plugin with this command:
 
    ```bash
-   docker run -d --name=grafana -p 3000:3000 -e "GF_INSTALL_PLUGINS=grafana-azure-data-explorer-datasource" grafana/grafana:latest
+   docker run -d --name=grafana -p 3000:3000 -e "GF_INSTALL_PLUGINS=grafana-grafana-logship-datasource" grafana/grafana:latest
    ```
 
 3. Open the browser at: <http://localhost:3000> or <http://your-domain-name:3000>
@@ -41,7 +41,7 @@ If you do not have a [Grafana Cloud](https://grafana.com/cloud) account, you can
 This ia an alternative command if you want to run Grafana on a different port than the default 3000 port:
 
 ```bash
-docker run -d --name=grafana -p 8081:8081 -e "GF_SERVER_HTTP_PORT=8081" -e "GF_INSTALL_PLUGINS=grafana-azure-data-explorer-datasource" grafana/grafana:master
+docker run -d --name=grafana -p 8081:8081 -e "GF_SERVER_HTTP_PORT=8081" -e "GF_INSTALL_PLUGINS=grafana-grafana-logship-datasource" grafana/grafana:master
 ```
 
 It is recommended that you use a volume to save the Grafana data in. Otherwise if you remove the docker container, you will lose all your Grafana data (dashboards, users etc.). You can create a volume with the [Docker Volume Driver for Azure File Storage](https://github.com/Azure/azurefile-dockervolumedriver).
@@ -51,7 +51,7 @@ It is recommended that you use a volume to save the Grafana data in. Otherwise i
 Grafana comes with a command line tool that can be used to install plugins.
 
 1. Upgrade Grafana to the latest version. Get that [here](https://grafana.com/grafana/download/).
-2. Run this command: `grafana-cli plugins install grafana-azure-data-explorer-datasource`
+2. Run this command: `grafana-cli plugins install grafana-grafana-logship-datasource`
 3. Restart the Grafana server.
 4. Open the browser at: <http://localhost:3000> or <http://your-domain-name:3000>
 5. Login in with a user that has admin rights. This is needed to create datasources.
@@ -62,7 +62,7 @@ Grafana comes with a command line tool that can be used to install plugins.
 If the server where Grafana is installed has no access to the Grafana.com server, then the plugin can be downloaded and manually copied to the server.
 
 1. Upgrade Grafana to the latest version. Get that [here](https://grafana.com/grafana/download/).
-2. Get the zip file from Grafana.com: <https://grafana.com/plugins/grafana-azure-data-explorer-datasource/installation> and click on the link in step 1 (with this text: "Alternatively, you can manually download the .zip file")
+2. Get the zip file from Grafana.com: <https://grafana.com/plugins/grafana-grafana-logship-datasource/installation> and click on the link in step 1 (with this text: "Alternatively, you can manually download the .zip file")
 3. Extract the zip file into the data/plugins subdirectory for Grafana.
 4. Restart the Grafana server
 5. To make sure the plugin was installed, check the list of installed datasources. Click the Plugins item in the main menu. Both core datasources and installed datasources will appear.
@@ -131,7 +131,7 @@ A real example with a client/app id and tenant id:
 
 If the command succeeds you should get a result like this:
 
-![Azure Data Web Explorer Add result](https://raw.githubusercontent.com/grafana/azure-data-explorer-datasource/main/src/img/config_3_web_ui.png)
+![Azure Data Web Explorer Add result](https://raw.githubusercontent.com/grafana/grafana-logship-datasource/main/src/img/config_3_web_ui.png)
 
 ### Configuring Grafana
 
@@ -139,7 +139,7 @@ If the command succeeds you should get a result like this:
 
 2. Select Azure Data Explorer Datasource from the datasource list:
 
-   ![Data Source Type](https://raw.githubusercontent.com/grafana/azure-data-explorer-datasource/main/src/img/config_1_select_type.png)
+   ![Data Source Type](https://raw.githubusercontent.com/grafana/grafana-logship-datasource/main/src/img/config_1_select_type.png)
 
 3. In the name field, a default name is filled in automatically but it can be changed to anything.
 
@@ -150,20 +150,20 @@ If the command succeeds you should get a result like this:
    - **Client Secret** ( Azure Active Directory -> App Registrations -> Choose your app -> Keys)
 
 5. Paste these three items into the fields in the Azure Data Explorer API Details section:
-   ![Azure Data Explorer API Details](https://raw.githubusercontent.com/grafana/azure-data-explorer-datasource/main/src/img/config_2_azure_data_explorer_api_details.png)
+   ![Azure Data Explorer API Details](https://raw.githubusercontent.com/grafana/grafana-logship-datasource/main/src/img/config_2_azure_data_explorer_api_details.png)
 
 6. Click the `Save & Test` button. After a few seconds once Grafana has successfully connected then choose the default database and save again.
 
 ### Configuring On-Behalf-Of authentication (Beta) 
 ⚠️ _This feature is in Beta and subject to breaking changes_
 
-For information about setting up and using the OBO flow: [on-behalf-of documentation](https://github.com/grafana/azure-data-explorer-datasource/blob/main/doc/on-behalf-of.md)
+For information about setting up and using the OBO flow: [on-behalf-of documentation](https://github.com/grafana/grafana-logship-datasource/blob/main/doc/on-behalf-of.md)
 
 ## Writing Queries
 
 Queries are written in the new [Kusto Query Language](https://docs.microsoft.com/en-us/azure/kusto/query/).
 
-Queries can be formatted as _Table_, _Time Series_, or _ADX Time Series_ data.
+Queries can be formatted as _Table_, _Time Series_, or _Logship Time Series_ data.
 
 ### Table Queries
 
@@ -198,9 +198,9 @@ StormEvents
 | order by StartTime asc
 ```
 
-### ADX Time Series Queries
+### Logship Time Series Queries
 
-_ADX Time Series_ are for queries that use the [Kusto `make-series` operator](https://docs.microsoft.com/en-us/azure/kusto/query/make-seriesoperator). The query must have exactly one datetime column named `Timestamp` and at least one value column. There may also optionally be string columns that will be labels.
+_Logship Time Series_ are for queries that use the [Kusto `make-series` operator](https://docs.microsoft.com/en-us/azure/kusto/query/make-seriesoperator). The query must have exactly one datetime column named `Timestamp` and at least one value column. There may also optionally be string columns that will be labels.
 
 Example:
 
@@ -243,11 +243,11 @@ Create the variable in the dashboard settings. Usually you will need to write a 
 2. In the Query Options section, choose the `Azure Data Explorer` datasource in the `Data source` dropdown.
 3. Write the query in the `Query` field. Use `project` to specify one column - the result should be a list of string values.
 
-   ![Template Query](https://raw.githubusercontent.com/grafana/azure-data-explorer-datasource/main/src/img/templating_1.png)
+   ![Template Query](https://raw.githubusercontent.com/grafana/grafana-logship-datasource/main/src/img/templating_1.png)
 
 4. At the bottom, you will see a preview of the values returned from the query:
 
-   ![Template Query Preview](https://raw.githubusercontent.com/grafana/azure-data-explorer-datasource/main/src/img/templating_2.png)
+   ![Template Query Preview](https://raw.githubusercontent.com/grafana/grafana-logship-datasource/main/src/img/templating_2.png)
 
 5. Use the variable in your query (in this case the variable is named `level`):
 
@@ -309,4 +309,4 @@ See the below documentation for further details on how to handle dynamic columns
 
 ## CHANGELOG
 
-See the [Changelog](https://github.com/grafana/azure-data-explorer-datasource/blob/main/CHANGELOG.md).
+See the [Changelog](https://github.com/grafana/grafana-logship-datasource/blob/main/CHANGELOG.md).

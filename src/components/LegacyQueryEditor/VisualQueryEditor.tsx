@@ -18,13 +18,13 @@ import { selectors } from 'test/selectors';
 
 import { QueryEditorResultFormat, selectResultFormat } from '../LegacyQueryEditor/QueryEditorResultFormat';
 import { SchemaError, SchemaLoading, SchemaWarning } from '../LegacyQueryEditor/SchemaMessages';
-import { AdxDataSource } from '../../datasource';
+import { LogshipDataSource } from '../../datasource';
 import { definitionToProperty } from './editor/components/field/QueryEditorField';
 import { isFieldExpression } from './editor/guards';
 import { QueryEditorPropertyDefinition, QueryEditorPropertyType } from '../../schema/types';
-import { AdxSchemaResolver } from '../../schema/AdxSchemaResolver';
+import { LogshipSchemaResolver } from '../../schema/LogshipSchemaResolver';
 import { columnsToDefinition } from '../../schema/mapper';
-import { AdxColumnSchema, AdxSchema, defaultQuery, KustoQuery } from '../../types';
+import { LogshipColumnSchema, defaultQuery, KustoQuery, LogshipDatabaseSchema } from '../../types';
 import {
   KustoGroupByEditorSection,
   KustoPropertyEditorSection,
@@ -36,8 +36,8 @@ interface Props {
   database: string;
   query: KustoQuery;
   onChangeQuery: (query: KustoQuery) => void;
-  schema?: AdxSchema;
-  datasource: AdxDataSource;
+  schema?: LogshipDatabaseSchema;
+  datasource: LogshipDataSource;
   templateVariableOptions: SelectableValue<string>;
 }
 
@@ -283,7 +283,7 @@ export const VisualQueryEditor: React.FC<Props> = (props) => {
       <KustoTable>
         <QueryEditorResultFormat
           format={resultFormat}
-          includeAdxTimeFormat={false}
+          includeLogshipTimeFormat={false}
           onChangeFormat={onChangeResultFormat}
         />
       </KustoTable>
@@ -343,7 +343,7 @@ const useAggregableColumns = (columns: QueryEditorPropertyDefinition[]): QueryEd
   }, [columns]);
 };
 
-const useColumnOptions = (tableSchema?: AdxColumnSchema[]): QueryEditorPropertyDefinition[] => {
+const useColumnOptions = (tableSchema?: LogshipColumnSchema[]): QueryEditorPropertyDefinition[] => {
   return useMemo(() => {
     if (!tableSchema) {
       return [];
@@ -355,7 +355,7 @@ const useColumnOptions = (tableSchema?: AdxColumnSchema[]): QueryEditorPropertyD
 const useSelectedTable = (
   options: QueryEditorPropertyDefinition[],
   query: KustoQuery,
-  datasource: AdxDataSource
+  datasource: LogshipDataSource
 ): QueryEditorPropertyExpression | undefined => {
   const variables = datasource.getVariables();
 
@@ -395,23 +395,23 @@ const useSelectedTable = (
 };
 
 const useTableOptions = (
-  schema: AdxSchema | undefined,
+  schema: LogshipDatabaseSchema | undefined,
   database: string,
-  datasource: AdxDataSource
+  datasource: LogshipDataSource
 ): QueryEditorPropertyDefinition[] => {
   const mapper = datasource.getSchemaMapper();
 
   return useMemo(() => {
-    if (!schema || !schema.Databases) {
+    if (!schema || !schema.Tables) {
       return [];
     }
-    return mapper.getTableOptions(schema, database);
+    return mapper.getTableOptions(schema);
   }, [database, schema, mapper]);
 };
 
-async function getTableSchema(datasource: AdxDataSource, databaseName: string, tableName: string) {
-  const schemaResolver = new AdxSchemaResolver(datasource);
-  return await schemaResolver.getColumnsForTable(databaseName, tableName);
+async function getTableSchema(datasource: LogshipDataSource, databaseName: string, tableName: string) {
+  const schemaResolver = new LogshipSchemaResolver(datasource);
+  return await schemaResolver.getColumnsForTable(tableName);
 }
 
 const useTimeshiftOptions = (): QueryEditorPropertyDefinition[] => {

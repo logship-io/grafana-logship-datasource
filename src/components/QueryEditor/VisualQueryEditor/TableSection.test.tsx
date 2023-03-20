@@ -16,7 +16,7 @@ const defaultProps = {
     value: [
       {
         Name: 'foo',
-        CslType: 'string',
+        Type: 'string',
       },
     ],
   },
@@ -70,11 +70,11 @@ describe('TableSection', () => {
       value: [
         {
           Name: 'time',
-          CslType: 'datetime',
+          Type: 'datetime',
         },
         {
           Name: 'measure',
-          CslType: 'long',
+          Type: 'long',
         },
       ],
     };

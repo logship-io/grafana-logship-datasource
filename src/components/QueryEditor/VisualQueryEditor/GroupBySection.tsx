@@ -5,17 +5,17 @@ import {
   QueryEditorExpressionType,
   QueryEditorGroupByExpression,
 } from 'components/LegacyQueryEditor/editor/expressions';
-import { AdxDataSource } from 'datasource';
+import { LogshipDataSource } from 'datasource';
 import React, { useState, useEffect } from 'react';
-import { AdxColumnSchema, AdxDataSourceOptions, KustoQuery } from 'types';
+import { LogshipColumnSchema, LogshipDataSourceOptions, KustoQuery } from 'types';
 import { QueryEditorPropertyType } from 'schema/types';
 import { sanitizeGroupBy } from './utils/utils';
 import GroupByItem from './GroupByItem';
 
-type Props = QueryEditorProps<AdxDataSource, KustoQuery, AdxDataSourceOptions>;
+type Props = QueryEditorProps<LogshipDataSource, KustoQuery, LogshipDataSourceOptions>;
 
 interface GroupBySectionProps extends Props {
-  columns: AdxColumnSchema[];
+  columns: LogshipColumnSchema[];
   database: string;
   templateVariableOptions: SelectableValue<string>;
 }
@@ -99,7 +99,7 @@ const GroupBySection: React.FC<GroupBySectionProps> = ({
 // If some problems arise (perhaps with state going missing), consider this to be a potential cause
 function makeRenderGroupBy(
   query: KustoQuery,
-  columns: AdxColumnSchema[] | undefined,
+  columns: LogshipColumnSchema[] | undefined,
   templateVariableOptions: SelectableValue<string>
 ) {
   function renderGroupBy(

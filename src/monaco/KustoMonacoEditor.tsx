@@ -8,14 +8,14 @@ import { config } from '@grafana/runtime';
 import { Alert, stylesFactory } from '@grafana/ui';
 import React from 'react';
 
-import { AdxSchema } from '../types';
+import { LogshipDatabaseSchema } from '../types';
 import KustoCodeEditor from './kusto_code_editor';
 
 interface Props {
   content: string;
   defaultTimeField: string;
   pluginBaseUrl: string;
-  getSchema: () => Promise<AdxSchema>;
+  getSchema: () => Promise<LogshipDatabaseSchema>;
   onChange: (val: string) => void;
   onExecute: () => void;
 }

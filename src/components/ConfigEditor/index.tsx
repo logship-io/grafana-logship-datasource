@@ -1,27 +1,20 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { DataSourcePluginOptionsEditorProps } from '@grafana/data';
-import { config } from '@grafana/runtime';
 import ConfigHelp from './ConfigHelp';
-import { AdxDataSourceOptions, AdxDataSourceSecureOptions } from 'types';
+import { LogshipDataSourceOptions, LogshipDataSourceSecureOptions } from 'types';
 import ConnectionConfig from './ConnectionConfig';
-import DatabaseConfig from './DatabaseConfig';
 import QueryConfig from './QueryConfig';
 import TrackingConfig from './TrackingConfig';
-import { AzureCredentials, KnownAzureClouds } from './AzureCredentials';
-import { getCredentials, getOboEnabled, updateCredentials } from './AzureCredentialsConfig';
-import AzureCredentialsForm from './AzureCredentialsForm';
 
 export interface ConfigEditorProps
-  extends DataSourcePluginOptionsEditorProps<AdxDataSourceOptions, AdxDataSourceSecureOptions> {}
+  extends DataSourcePluginOptionsEditorProps<LogshipDataSourceOptions, LogshipDataSourceSecureOptions> {}
 
 const ConfigEditor: React.FC<ConfigEditorProps> = (props) => {
   const { options, onOptionsChange } = props;
   const { jsonData } = options;
 
-  const credentials = useMemo(() => getCredentials(options), [options]);
-
   const updateJsonData = useCallback(
-    <T extends keyof AdxDataSourceOptions>(fieldName: T, value: AdxDataSourceOptions[T]) => {
+    <T extends keyof LogshipDataSourceOptions>(fieldName: T, value: LogshipDataSourceOptions[T]) => {
       onOptionsChange({
         ...options,
         jsonData: {
@@ -33,28 +26,24 @@ const ConfigEditor: React.FC<ConfigEditorProps> = (props) => {
     [jsonData, onOptionsChange, options]
   );
 
-  const onCredentialsChange = (credentials: AzureCredentials): void => {
-    onOptionsChange(updateCredentials(options, credentials));
-  };
-
   return (
-    <div data-testid="azure-data-explorer-config-editor">
+    <div data-testid="logship-datasource-config-editor">
       <ConfigHelp />
 
       <ConnectionConfig options={options} onOptionsChange={onOptionsChange} updateJsonData={updateJsonData} />
 
       <h3 className="page-heading">Authentication</h3>
-      <AzureCredentialsForm
+      {/* <AzureCredentialsForm
         managedIdentityEnabled={config.azure.managedIdentityEnabled}
         oboEnabled={getOboEnabled()}
         credentials={credentials}
         azureCloudOptions={KnownAzureClouds}
         onCredentialsChange={onCredentialsChange}
-      />
+      /> */}
 
       <QueryConfig options={options} onOptionsChange={onOptionsChange} updateJsonData={updateJsonData} />
 
-      <DatabaseConfig options={options} onOptionsChange={onOptionsChange} updateJsonData={updateJsonData} />
+      {/* <DatabaseConfig options={options} onOptionsChange={onOptionsChange} updateJsonData={updateJsonData} /> */}
 
       <TrackingConfig options={options} onOptionsChange={onOptionsChange} updateJsonData={updateJsonData} />
     </div>

@@ -6,17 +6,17 @@ describe('analyzeQueries', () => {
     {
       description: 'should count 1 table query',
       queries: [{ resultFormat: FormatOptions.table }],
-      expectedCounters: { table_queries: 1, time_series_queries: 0, adx_time_series_queries: 0 },
+      expectedCounters: { table_queries: 1, time_series_queries: 0, logship_time_series_queries: 0 },
     },
     {
       description: 'should count 1 time series query',
       queries: [{ resultFormat: FormatOptions.timeSeries }],
-      expectedCounters: { table_queries: 0, time_series_queries: 1, adx_time_series_queries: 0 },
+      expectedCounters: { table_queries: 0, time_series_queries: 1, logship_time_series_queries: 0 },
     },
     {
-      description: 'should count 1 adx time series query',
-      queries: [{ resultFormat: FormatOptions.adxTimeSeries }],
-      expectedCounters: { table_queries: 0, time_series_queries: 0, adx_time_series_queries: 1 },
+      description: 'should count 1 logship time series query',
+      queries: [{ resultFormat: FormatOptions.logshipTimeSeries }],
+      expectedCounters: { table_queries: 0, time_series_queries: 0, logship_time_series_queries: 1 },
     },
     {
       description: 'should count 1 raw query',

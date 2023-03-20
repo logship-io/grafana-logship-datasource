@@ -5,7 +5,7 @@ import TEST_DASHBOARD from '../dashboards/example.json';
 
 const e2eSelectors = e2e.getSelectors(selectors.components);
 
-type ADXConfig = {
+type LogshipConfig = {
   secureJsonData: {
     clientSecret: string;
   };
@@ -16,12 +16,12 @@ type ADXConfig = {
   };
 };
 
-type ADXProvision = {
-  datasources: ADXConfig[];
+type LogshipProvision = {
+  datasources: LogshipConfig[];
 };
 
-function addCommonProvisioningADXDatasource(ADXProvisions: ADXProvision[]) {
-  const datasource = ADXProvisions[0].datasources[0];
+function addCommonProvisioningLogshipDataSource(LogshipProvisions: LogshipProvision[]) {
+  const datasource = LogshipProvisions[0].datasources[0];
 
   e2e.flows.addDataSource({
     type: 'Azure Data Explorer Datasource',
@@ -37,13 +37,13 @@ function addCommonProvisioningADXDatasource(ADXProvisions: ADXProvision[]) {
 }
 
 e2e.scenario({
-  describeName: 'Add ADX datasource Import Dashoard',
+  describeName: 'Add Logship datasource Import Dashoard',
   itName: 'fills out datasource connection configuration and imports JSON dashboard',
   scenario: () => {
     e2e()
-      .readProvisions(['datasources/adx.yaml'])
-      .then((ADXProvisions: ADXProvision[]) => {
-        addCommonProvisioningADXDatasource(ADXProvisions);
+      .readProvisions(['datasources/logship.yaml'])
+      .then((LogshipProvisions: LogshipProvision[]) => {
+        addCommonProvisioningLogshipDataSource(LogshipProvisions);
         e2e.flows.importDashboard(TEST_DASHBOARD, undefined, true);
       });
   },
@@ -54,9 +54,9 @@ e2e.scenario({
   itName: 'fills out datasource connection configuration, adds panel and runs query',
   scenario: () => {
     e2e()
-      .readProvisions(['datasources/adx.yaml'])
-      .then((ADXProvisions: ADXProvision[]) => {
-        addCommonProvisioningADXDatasource(ADXProvisions);
+      .readProvisions(['datasources/logship.yaml'])
+      .then((LogshipProvisions: LogshipProvision[]) => {
+        addCommonProvisioningLogshipDataSource(LogshipProvisions);
 
         e2e.flows.addDashboard({
           timeRange: {
@@ -101,9 +101,9 @@ e2e.scenario({
   itName: 'fills out datasource connection configuration, adds panel and runs query via builder',
   scenario: () => {
     e2e()
-      .readProvisions(['datasources/adx.yaml'])
-      .then((ADXProvisions: ADXProvision[]) => {
-        addCommonProvisioningADXDatasource(ADXProvisions);
+      .readProvisions(['datasources/logship.yaml'])
+      .then((LogshipProvisions: LogshipProvision[]) => {
+        addCommonProvisioningLogshipDataSource(LogshipProvisions);
 
         e2e.flows.addDashboard({
           timeRange: {

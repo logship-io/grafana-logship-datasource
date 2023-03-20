@@ -1,25 +1,25 @@
 import { css } from '@emotion/css';
 import { GrafanaTheme2, QueryEditorProps, SelectableValue } from '@grafana/data';
-import { config, getTemplateSrv } from '@grafana/runtime';
+import { config } from '@grafana/runtime';
 import { CodeEditor, Icon, Monaco, MonacoEditor, useStyles2 } from '@grafana/ui';
 import { QueryEditorResultFormat, selectResultFormat } from './QueryEditorResultFormat';
-import { AdxDataSource } from 'datasource';
+import { LogshipDataSource } from 'datasource';
 import { KustoMonacoEditor } from 'monaco/KustoMonacoEditor';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { gte, valid, coerce } from 'semver';
 import { selectors } from 'test/selectors';
-import { AdxDataSourceOptions, AdxSchema, KustoQuery } from 'types';
+import { LogshipDataSourceOptions, KustoQuery, LogshipDatabaseSchema } from 'types';
 
-import { getFunctions, getSignatureHelp } from '../QueryEditor/Suggestions';
+import { getSignatureHelp } from '../QueryEditor/Suggestions';
 
-type Props = QueryEditorProps<AdxDataSource, KustoQuery, AdxDataSourceOptions>;
+type Props = QueryEditorProps<LogshipDataSource, KustoQuery, LogshipDataSourceOptions>;
 
 interface RawQueryEditorProps extends Props {
   dirty?: boolean;
   lastQueryError?: string;
   lastQuery?: string;
   timeNotASC?: boolean;
-  schema?: AdxSchema;
+  schema?: LogshipDatabaseSchema;
   database: string;
   templateVariableOptions: SelectableValue<string>;
 }
@@ -34,7 +34,7 @@ const defaultQuery = [
 ].join('\n');
 
 interface Worker {
-  setSchemaFromShowSchema: (schema: AdxSchema, url: string, database: string) => void;
+  setSchemaFromShowSchema: (schema: LogshipDatabaseSchema, url: string, database: string) => void;
 }
 
 // Since Grafana 8.5, the query editor includes a version of the Monaco editor for Kusto
@@ -56,8 +56,7 @@ function gtGrafana8_5() {
 export const RawQueryEditor: React.FC<RawQueryEditorProps> = (props) => {
   const [showLastQuery, setShowLastQuery] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
-  const [worker, setWorker] = useState<Worker>();
-  const [variables] = useState(getTemplateSrv().getVariables());
+  const [_, setWorker] = useState<Worker>();
 
   const onRawQueryChange = (kql: string) => {
     const resultFormat = selectResultFormat(props.query.resultFormat, true);
@@ -99,16 +98,6 @@ export const RawQueryEditor: React.FC<RawQueryEditorProps> = (props) => {
       });
   };
 
-  useEffect(() => {
-    if (worker && schema) {
-      // Populate Database schema with macros
-      Object.keys(schema.Databases).forEach((db) =>
-        Object.assign(schema.Databases[db].Functions, getFunctions(variables))
-      );
-      worker.setSchemaFromShowSchema(schema, 'https://help.kusto.windows.net', props.database);
-    }
-  }, [worker, schema, variables, props.database]);
-
   if (!schema) {
     return null;
   }
@@ -142,7 +131,7 @@ export const RawQueryEditor: React.FC<RawQueryEditorProps> = (props) => {
 
       <div className={styles.toolbar}>
         <QueryEditorResultFormat
-          includeAdxTimeFormat={true}
+          includeLogshipTimeFormat={true}
           format={resultFormat}
           onChangeFormat={onChangeResultFormat}
         />
@@ -200,10 +189,10 @@ export const RawQueryEditor: React.FC<RawQueryEditorProps> = (props) => {
       | summarize count() by Category, bin(TimeGenerated, 60min)
       | order by TimeGenerated asc
 
-  Format as ADX Time series:
+  Format as Logship Time series:
    - Used for queries that return Kusto's "time series" type, such as the make-series operator
    - Must have a datetime column named "Timestamp"
-   - Example ADX Time series query:
+   - Example Logship Time series query:
     let T = range Timestamp from $__timeFrom to $__timeTo step $__timeInterval * 4
       | extend   Person = dynamic(["Torkel", "Daniel", "Kyle", "Sofia"]) 
       | extend   Place  = dynamic(["EU",     "EU",     "US",   "EU"]) 

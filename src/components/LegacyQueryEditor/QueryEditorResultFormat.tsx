@@ -6,7 +6,7 @@ import React, { useCallback } from 'react';
 interface Props {
   format: string;
   onChangeFormat: (format: string) => void;
-  includeAdxTimeFormat: boolean;
+  includeLogshipTimeFormat: boolean;
 }
 
 const formats: Array<SelectableValue<string>> = [
@@ -14,9 +14,9 @@ const formats: Array<SelectableValue<string>> = [
   { label: 'Time series', value: 'time_series' },
 ];
 
-const adxTimeFormat: SelectableValue<string> = {
-  label: 'ADX Time series',
-  value: 'time_series_adx_series',
+const logshipTimeFormat: SelectableValue<string> = {
+  label: 'Logship Time series',
+  value: 'time_series_logship_series',
 };
 
 export const QueryEditorResultFormat: React.FC<Props> = (props) => {
@@ -39,7 +39,7 @@ export const QueryEditorResultFormat: React.FC<Props> = (props) => {
         Format as
       </InlineFormLabel>
       <Select
-        options={props.includeAdxTimeFormat ? [...formats, adxTimeFormat] : formats}
+        options={props.includeLogshipTimeFormat ? [...formats, logshipTimeFormat] : formats}
         value={props.format}
         onChange={onFormatChange}
         menuShouldPortal
@@ -56,12 +56,12 @@ const getStyles = (theme: GrafanaTheme2) => ({
   `,
 });
 
-export const selectResultFormat = (format?: string, includeAdxFormat?: boolean): string => {
+export const selectResultFormat = (format?: string, includeLogshipFormat?: boolean): string => {
   const selected = formats.find((f) => f.value === format);
 
-  if (includeAdxFormat && adxTimeFormat.value) {
-    if (adxTimeFormat.value === format) {
-      return adxTimeFormat.value;
+  if (includeLogshipFormat && logshipTimeFormat.value) {
+    if (logshipTimeFormat.value === format) {
+      return logshipTimeFormat.value;
     }
   }
 

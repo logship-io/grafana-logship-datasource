@@ -10,11 +10,11 @@
     "go.sum",
     "mage_output_file.go",
     "src/libs/**",
-    "pkg/azuredx/testdata/**"
+    "pkg/logship/testdata/**"
   ],
   "words": [
-    "adxauth",
-    "adxcredentials",
+    "logshipauth",
+    "logshipcredentials",
     "azhttpclient",
     "azusercontext",
     "clientsecret",
@@ -120,7 +120,7 @@
     "fxxx",
     "aadapp",
     "tenantid",
-    "azuredx",
+    "logship",
     "rowstores",
     "Ymin",
     "Ymax",
@@ -153,7 +153,7 @@
     "Idxs",
     "aztokenprovider",
     "Tmpl",
-    "GRAFANAADXDEV",
+    "GRAFANALogshipDEV",
     "CRID",
     "innererror",
     "retrievebytes",

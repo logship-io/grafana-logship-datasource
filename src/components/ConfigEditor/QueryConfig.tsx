@@ -1,11 +1,11 @@
 import { DataSourcePluginOptionsEditorProps, SelectableValue } from '@grafana/data';
 import { FieldSet, InlineField, InlineSwitch, Input, Select } from '@grafana/ui';
 import React, { useEffect } from 'react';
-import { AdxDataSourceOptions, AdxDataSourceSecureOptions, EditorMode } from 'types';
+import { LogshipDataSourceOptions, LogshipDataSourceSecureOptions, EditorMode } from 'types';
 
 interface QueryConfigProps
-  extends DataSourcePluginOptionsEditorProps<AdxDataSourceOptions, AdxDataSourceSecureOptions> {
-  updateJsonData: <T extends keyof AdxDataSourceOptions>(fieldName: T, value: AdxDataSourceOptions[T]) => void;
+  extends DataSourcePluginOptionsEditorProps<LogshipDataSourceOptions, LogshipDataSourceSecureOptions> {
+  updateJsonData: <T extends keyof LogshipDataSourceOptions>(fieldName: T, value: LogshipDataSourceOptions[T]) => void;
 }
 
 const dataConsistencyOptions: Array<{ value: string; label: string }> = [
@@ -42,7 +42,7 @@ const QueryConfig: React.FC<QueryConfigProps> = ({ options, updateJsonData }) =>
       >
         <Input
           value={jsonData.queryTimeout}
-          id="adx-query-timeout"
+          id="logship-query-timeout"
           placeholder="30s"
           width={18}
           onChange={(ev: React.ChangeEvent<HTMLInputElement>) => updateJsonData('queryTimeout', ev.target.value)}
@@ -56,7 +56,7 @@ const QueryConfig: React.FC<QueryConfigProps> = ({ options, updateJsonData }) =>
       >
         <InlineSwitch
           value={jsonData.dynamicCaching}
-          id="adx-caching"
+          id="logship-caching"
           transparent={false}
           onChange={(ev: React.ChangeEvent<HTMLInputElement>) => updateJsonData('dynamicCaching', ev.target.checked)}
         />
@@ -69,7 +69,7 @@ const QueryConfig: React.FC<QueryConfigProps> = ({ options, updateJsonData }) =>
       >
         <Input
           value={jsonData.cacheMaxAge}
-          id="adx-cache-age"
+          id="logship-cache-age"
           placeholder="0m"
           width={18}
           onChange={(ev: React.ChangeEvent<HTMLInputElement>) => updateJsonData('cacheMaxAge', ev.target.value)}

@@ -1,12 +1,12 @@
 import React from 'react';
 import { DataSourcePluginOptionsEditorProps } from '@grafana/data';
 import { FieldSet, InlineField, Input } from '@grafana/ui';
-import { AdxDataSourceOptions, AdxDataSourceSecureOptions } from 'types';
+import { LogshipDataSourceOptions, LogshipDataSourceSecureOptions } from 'types';
 import { selectors } from 'test/selectors';
 
 interface ConnectionConfigProps
-  extends DataSourcePluginOptionsEditorProps<AdxDataSourceOptions, AdxDataSourceSecureOptions> {
-  updateJsonData: <T extends keyof AdxDataSourceOptions>(fieldName: T, value: AdxDataSourceOptions[T]) => void;
+  extends DataSourcePluginOptionsEditorProps<LogshipDataSourceOptions, LogshipDataSourceSecureOptions> {
+  updateJsonData: <T extends keyof LogshipDataSourceOptions>(fieldName: T, value: LogshipDataSourceOptions[T]) => void;
 }
 
 const LABEL_WIDTH = 18;
@@ -24,8 +24,8 @@ const ConnectionConfig: React.FC<ConnectionConfigProps> = ({ options, updateJson
         <Input
           data-testid={selectors.components.configEditor.clusterURL.input}
           value={jsonData.clusterUrl}
-          id="adx-cluster-url"
-          placeholder="https://yourcluster.kusto.windows.net"
+          id="logship-cluster-url"
+          placeholder="https://try.logship.ai"
           width={60}
           onChange={(ev: React.ChangeEvent<HTMLInputElement>) => updateJsonData('clusterUrl', ev.target.value)}
         />

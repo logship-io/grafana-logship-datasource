@@ -11,7 +11,7 @@ function dsOptions(
     id: 123,
     uid: 'n_ab1cdV5',
     orgId: 1,
-    type: 'grafana-azure-data-explorer-datasource',
+    type: 'grafana-grafana-logship-datasource',
     name: 'Azure Data Explorer Datasource',
     access: 'proxy',
     basicAuth: false,

@@ -1,6 +1,6 @@
 # Building and releasing
 
-## How to build the Azure Data Explorer (ADX) data source plugin locally
+## How to build the Azure Data Explorer (Logship) data source plugin locally
 
 ## Dependencies
 
@@ -45,6 +45,6 @@ Make sure you have the following dependencies installed first:
 You need to have commit rights to the GitHub repository to publish a release.
 
 1. Update the version number in the `package.json` file.
-2. Update the `CHANGELOG.md` by copy and pasting the relevant PRs from [Github's Release drafter interface](https://github.com/grafana/azure-data-explorer-datasource/releases/new) or by running `npm run generate-release-notes`.
+2. Update the `CHANGELOG.md` by copy and pasting the relevant PRs from [Github's Release drafter interface](https://github.com/grafana/grafana-logship-datasource/releases/new) or by running `npm run generate-release-notes`.
 3. PR the changes.
 4. Once merged, follow the Drone release process that you can find [here](https://github.com/grafana/integrations-team/wiki/Plugin-Release-Process#drone-release-process)

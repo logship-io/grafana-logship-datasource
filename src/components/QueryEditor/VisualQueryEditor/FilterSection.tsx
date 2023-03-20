@@ -2,16 +2,16 @@ import { GrafanaTheme2, QueryEditorProps, SelectableValue } from '@grafana/data'
 import { Button, Label, useStyles2 } from '@grafana/ui';
 import { EditorField, EditorFieldGroup, EditorRow } from '@grafana/experimental';
 import { QueryEditorExpressionType } from 'components/LegacyQueryEditor/editor/expressions';
-import { AdxDataSource } from 'datasource';
+import { LogshipDataSource } from 'datasource';
 import React, { useState } from 'react';
-import { AdxColumnSchema, AdxDataSourceOptions, KustoQuery } from 'types';
+import { LogshipColumnSchema, LogshipDataSourceOptions, KustoQuery } from 'types';
 import KQLFilter from './KQLFilter';
 import { css } from '@emotion/css';
 
-type Props = QueryEditorProps<AdxDataSource, KustoQuery, AdxDataSourceOptions>;
+type Props = QueryEditorProps<LogshipDataSource, KustoQuery, LogshipDataSourceOptions>;
 
 interface FilterSectionProps extends Props {
-  columns: AdxColumnSchema[];
+  columns: LogshipColumnSchema[];
   database: string;
   templateVariableOptions: SelectableValue<string>;
 }

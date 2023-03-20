@@ -1,4 +1,4 @@
-import { AdxSchema } from 'types';
+import { LogshipDatabaseSchema } from 'types';
 
 export interface DataTarget {
   target: string;
@@ -84,8 +84,7 @@ export class ResponseParser {
     return databases;
   }
 
-  parseSchemaResult(results: any) {
-    const schemaJson = results.Tables[0].Rows[0][0];
-    return JSON.parse(schemaJson) as AdxSchema;
+  parseSchemaResult(results: any): LogshipDatabaseSchema {
+    return results as LogshipDatabaseSchema;
   }
 }

@@ -1,4 +1,4 @@
-import { QueryExpression, AdxColumnSchema, AutoCompleteQuery } from './types';
+import { QueryExpression, LogshipColumnSchema, AutoCompleteQuery } from './types';
 import { QueryEditorPropertyType } from './schema/types';
 import { getTemplateSrv, TemplateSrv } from '@grafana/runtime';
 import {
@@ -33,7 +33,7 @@ export const escapeColumn = (column: string) => {
 export class KustoExpressionParser {
   constructor(private templateSrv: TemplateSrv = getTemplateSrv()) {}
 
-  toAutoCompleteQuery(query?: AutoCompleteQuery, tableSchema?: AdxColumnSchema[]): string {
+  toAutoCompleteQuery(query?: AutoCompleteQuery, tableSchema?: LogshipColumnSchema[]): string {
     if (!query?.expression || !query.expression.from || !query.search.property) {
       return '';
     }
@@ -71,7 +71,7 @@ export class KustoExpressionParser {
     return parts.join('\n| ');
   }
 
-  toQuery(expression?: QueryExpression, tableSchema?: AdxColumnSchema[]): string {
+  toQuery(expression?: QueryExpression, tableSchema?: LogshipColumnSchema[]): string {
     if (!expression || !expression.from) {
       return '';
     }
@@ -115,7 +115,7 @@ export class KustoExpressionParser {
     context: ParseContext,
     expression: QueryEditorPropertyExpression | undefined,
     parts: string[],
-    tableSchema?: AdxColumnSchema[]
+    tableSchema?: LogshipColumnSchema[]
   ) {
     if (!context.timeColumn) {
       return;
@@ -392,7 +392,7 @@ const withPrefix = (value: string, prefix?: string): string => {
   return value;
 };
 
-const defaultTimeColumn = (columns?: AdxColumnSchema[], expression?: QueryExpression): string | undefined => {
+const defaultTimeColumn = (columns?: LogshipColumnSchema[], expression?: QueryExpression): string | undefined => {
   if (Array.isArray(expression?.groupBy.expressions) && expression?.groupBy.expressions.length) {
     const groupByTimeColumn = expression?.groupBy.expressions.find((exp) => {
       if (!isGroupBy(exp)) {
@@ -410,35 +410,42 @@ const defaultTimeColumn = (columns?: AdxColumnSchema[], expression?: QueryExpres
     return;
   }
 
+  const preciseTimestampColumn = columns?.find((col) => {
+    return col.Name === 'PreciseTimestamp';
+  });
+
+  if (preciseTimestampColumn) {
+    return preciseTimestampColumn?.Name;
+  }
+
   const firstLevelColumn = columns?.find((col) => {
-    return col.CslType === 'datetime' && col.Name.indexOf('[') === -1;
+    return col.Type === 'datetime' && col.Name.indexOf('[') === -1;
   });
 
   if (firstLevelColumn) {
     return firstLevelColumn?.Name;
   }
 
-  const column = columns?.find((col) => col.CslType === 'datetime');
-
+  const column = columns?.find((col) => col.Type === 'datetime');
   if (!column) {
-    return column;
+    return undefined;
   }
 
-  return toType(column.CslType, column.Name);
+  return toType(column.Type, column.Name);
 };
 
-const escapeAndCastIfDynamic = (column: string, tableSchema?: AdxColumnSchema[], schemaName?: string): string => {
+const escapeAndCastIfDynamic = (column: string, tableSchema?: LogshipColumnSchema[], schemaName?: string): string => {
   const columnSchema = tableSchema?.find((c) => c.Name === (schemaName || column));
 
-  if (!columnSchema?.isDynamic || !Array.isArray(tableSchema)) {
-    return escapeColumn(column);
-  }
+  // if (!columnSchema?.isDynamic || !Array.isArray(tableSchema)) {
+  //   return escapeColumn(column);
+  // }
 
   if (!columnSchema) {
     return escapeColumn(column);
   }
 
-  return toType(columnSchema.CslType, column);
+  return toType(columnSchema.Type, column);
 };
 
 const toType = (type: string, name: string): string => {

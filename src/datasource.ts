@@ -12,7 +12,6 @@ import { firstStringFieldToMetricFindValue } from 'common/responseHelpers';
 import { QueryEditorPropertyType } from './schema/types';
 import { KustoExpressionParser, escapeColumn } from 'KustoExpressionParser';
 import { map } from 'lodash';
-import { AdxSchemaMapper } from 'schema/AdxSchemaMapper';
 import { cache } from 'schema/cache';
 import { toPropertyType } from 'schema/mapper';
 
@@ -20,27 +19,28 @@ import { migrateAnnotation } from './migrations/annotation';
 import interpolateKustoQuery from './query_builder';
 import { DatabaseItem, KustoDatabaseList, ResponseParser } from './response_parser';
 import {
-  AdxColumnSchema,
-  AdxDataSourceOptions,
-  AdxSchema,
-  AdxSchemaDefinition,
+  LogshipColumnSchema,
+  LogshipDataSourceOptions as LogshipDataSourceOptions,
+  LogshipSchemaDefinition,
   AutoCompleteQuery,
   defaultQuery,
   EditorMode,
   KustoQuery,
   QueryExpression,
+  LogshipDatabaseSchema,
 } from './types';
+import { LogshipSchemaMapper } from 'schema/LogshipSchemaMapper';
 
-export class AdxDataSource extends DataSourceWithBackend<KustoQuery, AdxDataSourceOptions> {
+export class LogshipDataSource extends DataSourceWithBackend<KustoQuery, LogshipDataSourceOptions> {
   private backendSrv: BackendSrv;
   private templateSrv: TemplateSrv;
   private defaultOrFirstDatabase: string;
   private url?: string;
   private expressionParser: KustoExpressionParser;
   private defaultEditorMode: EditorMode;
-  private schemaMapper: AdxSchemaMapper;
+  private schemaMapper: LogshipSchemaMapper;
 
-  constructor(instanceSettings: DataSourceInstanceSettings<AdxDataSourceOptions>) {
+  constructor(instanceSettings: DataSourceInstanceSettings<LogshipDataSourceOptions>) {
     super(instanceSettings);
 
     const useSchemaMapping = instanceSettings.jsonData.useSchemaMapping ?? false;
@@ -51,7 +51,7 @@ export class AdxDataSource extends DataSourceWithBackend<KustoQuery, AdxDataSour
     this.defaultOrFirstDatabase = instanceSettings.jsonData.defaultDatabase;
     this.url = instanceSettings.url;
     this.defaultEditorMode = instanceSettings.jsonData.defaultEditorMode ?? EditorMode.Visual;
-    this.schemaMapper = new AdxSchemaMapper(useSchemaMapping, schemaMapping);
+    this.schemaMapper = new LogshipSchemaMapper(useSchemaMapping, schemaMapping);
     this.expressionParser = new KustoExpressionParser(this.templateSrv);
     this.parseExpression = this.parseExpression.bind(this);
     this.autoCompleteQuery = this.autoCompleteQuery.bind(this);
@@ -148,15 +148,15 @@ export class AdxDataSource extends DataSourceWithBackend<KustoQuery, AdxDataSour
     });
   }
 
-  async getSchema(refreshCache = false): Promise<AdxSchema> {
-    return cache<AdxSchema>(
+  async getSchema(refreshCache = false): Promise<LogshipDatabaseSchema> {
+    return await cache<LogshipDatabaseSchema>(
       `${this.id}.schema.overview`,
       () => this.getResource('schema').then(new ResponseParser().parseSchemaResult),
       refreshCache
     );
   }
 
-  async getFunctionSchema(database: string, targetFunction: string): Promise<AdxColumnSchema[]> {
+  async getFunctionSchema(database: string, targetFunction: string): Promise<LogshipColumnSchema[]> {
     const queryParts: string[] = [];
     const take = 'take 50000';
 
@@ -181,7 +181,7 @@ export class AdxDataSource extends DataSourceWithBackend<KustoQuery, AdxDataSour
     database: string,
     source: string,
     columns: string[]
-  ): Promise<Record<string, AdxColumnSchema[]>> {
+  ): Promise<Record<string, LogshipColumnSchema[]>> {
     if (!database || !source || !Array.isArray(columns) || columns.length === 0) {
       return {};
     }
@@ -232,7 +232,7 @@ export class AdxDataSource extends DataSourceWithBackend<KustoQuery, AdxDataSour
 
     return {
       ...defaultQuery,
-      refId: `adx-${interpolatedQuery}`,
+      refId: `logship-${interpolatedQuery}`,
       resultFormat: 'table',
       rawMode: true,
       query: interpolatedQuery,
@@ -280,11 +280,11 @@ export class AdxDataSource extends DataSourceWithBackend<KustoQuery, AdxDataSour
     return quotedValues.filter((v) => v !== "''").join(',');
   }
 
-  getSchemaMapper(): AdxSchemaMapper {
+  getSchemaMapper(): LogshipSchemaMapper {
     return this.schemaMapper;
   }
 
-  parseExpression(sections: QueryExpression | undefined, columns: AdxColumnSchema[] | undefined): string {
+  parseExpression(sections: QueryExpression | undefined, columns: LogshipColumnSchema[] | undefined): string {
     return this.expressionParser.toQuery(sections, columns);
   }
 
@@ -292,7 +292,7 @@ export class AdxDataSource extends DataSourceWithBackend<KustoQuery, AdxDataSour
     return this.defaultEditorMode;
   }
 
-  async autoCompleteQuery(query: AutoCompleteQuery, columns: AdxColumnSchema[] | undefined): Promise<string[]> {
+  async autoCompleteQuery(query: AutoCompleteQuery, columns: LogshipColumnSchema[] | undefined): Promise<string[]> {
     const autoQuery = this.expressionParser.toAutoCompleteQuery(query, columns);
 
     if (!autoQuery) {
@@ -301,7 +301,7 @@ export class AdxDataSource extends DataSourceWithBackend<KustoQuery, AdxDataSour
 
     const kustoQuery: KustoQuery = {
       ...defaultQuery,
-      refId: `adx-${autoQuery}`,
+      refId: `logship-${autoQuery}`,
       database: query.database,
       rawMode: true,
       query: autoQuery,
@@ -334,16 +334,16 @@ export class AdxDataSource extends DataSourceWithBackend<KustoQuery, AdxDataSour
   }
 }
 
-const functionSchemaParser = (frames: DataFrame[]): AdxColumnSchema[] => {
-  const result: AdxColumnSchema[] = [];
+const functionSchemaParser = (frames: DataFrame[]): LogshipColumnSchema[] => {
+  const result: LogshipColumnSchema[] = [];
   const fields = frames[0].fields;
 
   if (!fields) {
     return result;
   }
 
-  const nameIndex = fields.findIndex((f) => f.name === 'ColumnName');
-  const typeIndex = fields.findIndex((f) => f.name === 'ColumnType');
+  const nameIndex = fields.findIndex((f) => f.name === 'Name');
+  const typeIndex = fields.findIndex((f) => f.name === 'Type');
 
   if (nameIndex < 0 || typeIndex < 0) {
     return result;
@@ -353,7 +353,7 @@ const functionSchemaParser = (frames: DataFrame[]): AdxColumnSchema[] => {
     for (let index = 0; index < frame.length; index++) {
       result.push({
         Name: frame.fields[nameIndex].values.get(index),
-        CslType: frame.fields[typeIndex].values.get(index),
+        Type: frame.fields[typeIndex].values.get(index),
       });
     }
   }
@@ -361,8 +361,8 @@ const functionSchemaParser = (frames: DataFrame[]): AdxColumnSchema[] => {
   return result;
 };
 
-const dynamicSchemaParser = (frames: DataFrame[]): Record<string, AdxColumnSchema[]> => {
-  const result: Record<string, AdxColumnSchema[]> = {};
+const dynamicSchemaParser = (frames: DataFrame[]): Record<string, LogshipColumnSchema[]> => {
+  const result: Record<string, LogshipColumnSchema[]> = {};
 
   for (const frame of frames) {
     for (const field of frame.fields) {
@@ -373,7 +373,7 @@ const dynamicSchemaParser = (frames: DataFrame[]): Record<string, AdxColumnSchem
         continue;
       }
 
-      const columnSchemas: AdxColumnSchema[] = [];
+      const columnSchemas: LogshipColumnSchema[] = [];
       const columnName = field.name.replace('schema_', '');
       recordSchema(columnName, json, columnSchemas);
       result[columnName] = columnSchemas;
@@ -383,25 +383,25 @@ const dynamicSchemaParser = (frames: DataFrame[]): Record<string, AdxColumnSchem
   return result;
 };
 
-const recordSchemaArray = (name: string, types: AdxSchemaDefinition[], result: AdxColumnSchema[]) => {
+const recordSchemaArray = (name: string, types: LogshipSchemaDefinition[], result: LogshipColumnSchema[]) => {
   // If a field can have different types (e.g. long and double)
   // we select double if it exists as it's the one with more precision, otherwise we take the first
-  const defaultCslType = types.find((t) => typeof t === 'string' && (t === 'double' || t === 'real')) || types[0];
+  const defaultType = types.find((t) => typeof t === 'string' && (t === 'double' || t === 'real')) || types[0];
   if (
     types.length > 1 &&
     !types.every((t) => typeof t === 'string' && toPropertyType(t) === QueryEditorPropertyType.Number)
   ) {
     // If there is more than one type and not all types are numbers
-    console.warn(`schema ${name} may contain different types, assuming ${defaultCslType}`);
+    console.warn(`schema ${name} may contain different types, assuming ${defaultType}`);
   }
-  if (typeof defaultCslType === 'object') {
+  if (typeof defaultType === 'object') {
     recordSchema(name, types[0], result);
   } else {
-    result.push({ Name: name, CslType: defaultCslType, isDynamic: true });
+    result.push({ Name: name, Type: defaultType });
   }
 };
 
-const recordSchema = (columnName: string, schema: AdxSchemaDefinition, result: AdxColumnSchema[]) => {
+const recordSchema = (columnName: string, schema: LogshipSchemaDefinition, result: LogshipColumnSchema[]) => {
   if (!schema) {
     console.log('error with column', columnName);
     return;
@@ -411,8 +411,7 @@ const recordSchema = (columnName: string, schema: AdxSchemaDefinition, result: A
   if (typeof schema === 'string') {
     result.push({
       Name: columnName,
-      CslType: schema,
-      isDynamic: true,
+      Type: schema,
     });
     return;
   }

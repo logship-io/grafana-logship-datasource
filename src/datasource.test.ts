@@ -1,4 +1,4 @@
-import { AdxDataSource, sortStartsWithValuesFirst } from './datasource';
+import { LogshipDataSource, sortStartsWithValuesFirst } from './datasource';
 import { toDataFrame } from '@grafana/data';
 import _ from 'lodash';
 import { EditorMode } from 'types';
@@ -15,7 +15,7 @@ jest.mock('@grafana/runtime', () => {
   };
 });
 
-describe('AdxDataSource', () => {
+describe('LogshipDataSource', () => {
   const ctx: any = {};
 
   beforeEach(() => {
@@ -29,7 +29,7 @@ describe('AdxDataSource', () => {
     const response = setupTableResponse();
 
     beforeEach(() => {
-      ctx.ds = new AdxDataSource(ctx.instanceSettings);
+      ctx.ds = new LogshipDataSource(ctx.instanceSettings);
       ctx.ds.getResource = jest.fn().mockResolvedValue(response);
     });
 
@@ -46,7 +46,7 @@ describe('AdxDataSource', () => {
       let queryResults;
 
       beforeEach(async () => {
-        ctx.ds = new AdxDataSource(ctx.instanceSettings);
+        ctx.ds = new LogshipDataSource(ctx.instanceSettings);
         ctx.ds.getResource = jest.fn().mockResolvedValue(setupTableResponse());
 
         queryResults = await ctx.ds.metricFindQuery('databases()');
@@ -75,12 +75,12 @@ describe('AdxDataSource', () => {
             [
               '{"Plugins":[{"Name":"preview"},{"Name":"pivot"}],' +
                 '"Databases":{"Grafana":{"Name":"Grafana","Tables":{"MyLogs":{"Name":"MyLogs",' +
-                '"OrderedColumns":[{"Name":"Level","Type":"System.String","CslType":"string"},' +
-                '{"Name":"Timestamp","Type":"System.DateTime","CslType":"datetime"},' +
-                '{"Name":"UserId","Type":"System.String","CslType":"string"},' +
-                '{"Name":"TraceId","Type":"System.String","CslType":"string"},' +
-                '{"Name":"Message","Type":"System.String","CslType":"string"},' +
-                '{"Name":"ProcessId","Type":"System.Int32","CslType":"int"}]}},' +
+                '"OrderedColumns":[{"Name":"Level","Type":"System.String","Type":"string"},' +
+                '{"Name":"Timestamp","Type":"System.DateTime","Type":"datetime"},' +
+                '{"Name":"UserId","Type":"System.String","Type":"string"},' +
+                '{"Name":"TraceId","Type":"System.String","Type":"string"},' +
+                '{"Name":"Message","Type":"System.String","Type":"string"},' +
+                '{"Name":"ProcessId","Type":"System.Int32","Type":"int"}]}},' +
                 '"MajorVersion":5,"MinorVersion":3,"Functions":{},"DatabaseAccessMode":"ReadWrite"}}}',
             ],
           ],
@@ -89,7 +89,7 @@ describe('AdxDataSource', () => {
     };
 
     beforeEach(() => {
-      ctx.ds = new AdxDataSource(ctx.instanceSettings);
+      ctx.ds = new LogshipDataSource(ctx.instanceSettings);
       ctx.ds.getResource = jest.fn().mockResolvedValue(response);
     });
 
@@ -102,7 +102,7 @@ describe('AdxDataSource', () => {
   });
 });
 
-describe('AdxDataSource', () => {
+describe('LogshipDataSource', () => {
   describe('when constructing with defaultEditorMode', () => {
     it('then defaultEditorMode should be correct', () => {
       const instanceSettings: any = {
@@ -111,7 +111,7 @@ describe('AdxDataSource', () => {
         },
       };
 
-      const datasource = new AdxDataSource(instanceSettings);
+      const datasource = new LogshipDataSource(instanceSettings);
 
       expect(datasource.getDefaultEditorMode()).toEqual(EditorMode.Raw);
     });
@@ -123,7 +123,7 @@ describe('AdxDataSource', () => {
         jsonData: {},
       };
 
-      const datasource = new AdxDataSource(instanceSettings);
+      const datasource = new LogshipDataSource(instanceSettings);
 
       expect(datasource.getDefaultEditorMode()).toEqual(EditorMode.Visual);
     });
@@ -156,7 +156,7 @@ describe('AdxDataSource', () => {
       expect(await datasource.getDynamicSchema('foo', 'bar', ['col'])).toEqual({
         Teams: [
           {
-            CslType: 'long',
+            Type: 'long',
             Name: 'Teams["18"]["TeamID"]',
             isDynamic: true,
           },
@@ -190,7 +190,7 @@ describe('AdxDataSource', () => {
       expect(await datasource.getDynamicSchema('foo', 'bar', ['col name'])).toEqual({
         Teams: [
           {
-            CslType: 'long',
+            Type: 'long',
             Name: 'Teams["18"]["TeamID"]',
             isDynamic: true,
           },
@@ -208,33 +208,33 @@ describe('AdxDataSource', () => {
       [
         {
           schema: '{"TeamID":["long","double"]}',
-          expected: { Name: `Teams["TeamID"]`, CslType: 'double', isDynamic: true },
+          expected: { Name: `Teams["TeamID"]`, Type: 'double', isDynamic: true },
         },
         {
           schema: '{"TeamID":["long","real"]}',
-          expected: { Name: `Teams["TeamID"]`, CslType: 'real', isDynamic: true },
+          expected: { Name: `Teams["TeamID"]`, Type: 'real', isDynamic: true },
         },
         {
           schema: '{"TeamID":["long","int"]}',
-          expected: { Name: `Teams["TeamID"]`, CslType: 'long', isDynamic: true },
+          expected: { Name: `Teams["TeamID"]`, Type: 'long', isDynamic: true },
         },
         {
           schema: '{"TeamID":["string","bool"]}',
-          expected: { Name: `Teams["TeamID"]`, CslType: 'string', isDynamic: true },
+          expected: { Name: `Teams["TeamID"]`, Type: 'string', isDynamic: true },
           warn: true,
         },
         {
           schema: '{"TeamID":["string","double"]}',
-          expected: { Name: `Teams["TeamID"]`, CslType: 'double', isDynamic: true },
+          expected: { Name: `Teams["TeamID"]`, Type: 'double', isDynamic: true },
           warn: true,
         },
         {
           schema: '{"TeamID":[{"a":"string"},"bool"]}',
-          expected: { Name: `Teams["TeamID"]["a"]`, CslType: 'string', isDynamic: true },
+          expected: { Name: `Teams["TeamID"]["a"]`, Type: 'string', isDynamic: true },
           warn: true,
         },
-        { schema: '["long","double"]', expected: { Name: `Teams`, CslType: 'double', isDynamic: true } },
-        { schema: '"long"', expected: { Name: `Teams`, CslType: 'long', isDynamic: true } },
+        { schema: '["long","double"]', expected: { Name: `Teams`, Type: 'double', isDynamic: true } },
+        { schema: '"long"', expected: { Name: `Teams`, Type: 'long', isDynamic: true } },
       ].forEach((t) => {
         const consoleWarn = console.warn;
         beforeEach(() => {
@@ -243,7 +243,7 @@ describe('AdxDataSource', () => {
         afterEach(() => {
           console.warn = consoleWarn;
         });
-        it(`should return ${t.expected.CslType} type for ${t.expected.Name}`, async () => {
+        it(`should return ${t.expected.Type} type for ${t.expected.Name}`, async () => {
           const datasource = mockDatasource();
           datasource.query = jest.fn().mockReturnValue({
             toPromise: jest.fn().mockResolvedValue({

@@ -4,20 +4,23 @@ import { get } from 'lodash';
 import { migrateQuery, needsToBeMigrated } from 'migrations/query';
 import React, { useMemo, useState } from 'react';
 import { useAsync, useEffectOnce } from 'react-use';
-import { AdxDataSourceOptions, EditorMode, KustoQuery } from 'types';
+import { LogshipDataSourceOptions as LogshipDataSourceOptions, EditorMode, KustoQuery } from 'types';
 
-import { AdxDataSource } from '../../datasource';
+import { LogshipDataSource } from '../../datasource';
 import { QueryHeader } from './QueryHeader';
 import { RawQueryEditor } from './RawQueryEditor';
-import { VisualQueryEditor } from './VisualQueryEditor';
 
-type Props = QueryEditorProps<AdxDataSource, KustoQuery, AdxDataSourceOptions>;
+type Props = QueryEditorProps<LogshipDataSource, KustoQuery, LogshipDataSourceOptions>;
 
 export const QueryEditor: React.FC<Props> = (props) => {
   const { onChange, onRunQuery, query, datasource } = props;
   const schema = useAsync(() => datasource.getSchema(false), [datasource.id]);
   const templateVariables = useTemplateVariables(datasource);
   const [dirty, setDirty] = useState(false);
+  const dbSchema = {
+    Name: 'Default',
+    Tables: schema.value
+  }
 
   useEffectOnce(() => {
     let processedQuery = query;
@@ -47,22 +50,13 @@ export const QueryEditor: React.FC<Props> = (props) => {
         setDirty={setDirty}
         onRunQuery={onRunQuery}
       />
-      {query.rawMode ? (
-        <RawQueryEditor
+      <RawQueryEditor
           {...props}
-          schema={schema.value}
+          schema={dbSchema.Tables}
           database={query.database}
           templateVariableOptions={templateVariables}
           setDirty={() => !dirty && setDirty(true)}
         />
-      ) : (
-        <VisualQueryEditor
-          {...props}
-          schema={schema.value}
-          database={query.database}
-          templateVariableOptions={templateVariables}
-        />
-      )}
     </>
   );
 };
@@ -72,7 +66,7 @@ function parseSchemaError(error: Error) {
   return get(error, 'data.Message', String(error));
 }
 
-const useTemplateVariables = (datasource: AdxDataSource) => {
+const useTemplateVariables = (datasource: LogshipDataSource) => {
   const variables = datasource.getVariables();
 
   return useMemo(() => {

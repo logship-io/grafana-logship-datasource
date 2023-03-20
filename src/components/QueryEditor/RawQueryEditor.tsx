@@ -1,25 +1,25 @@
 import { QueryEditorProps, SelectableValue } from '@grafana/data';
 import { getTemplateSrv } from '@grafana/runtime';
 import { CodeEditor, Monaco, MonacoEditor } from '@grafana/ui';
-import { AdxDataSource } from 'datasource';
+import { LogshipDataSource } from 'datasource';
 import React, { useEffect, useState } from 'react';
 import { selectors } from 'test/selectors';
-import { AdxDataSourceOptions, AdxSchema, KustoQuery } from 'types';
+import { LogshipDataSourceOptions, KustoQuery, LogshipDatabaseSchema } from 'types';
 import { cloneDeep } from 'lodash';
 
-import { getFunctions, getSignatureHelp } from './Suggestions';
+import { getSignatureHelp } from './Suggestions';
 
-type Props = QueryEditorProps<AdxDataSource, KustoQuery, AdxDataSourceOptions>;
+type Props = QueryEditorProps<LogshipDataSource, KustoQuery, LogshipDataSourceOptions>;
 
 interface RawQueryEditorProps extends Props {
-  schema?: AdxSchema;
+  schema?: LogshipDatabaseSchema;
   database: string;
   templateVariableOptions: SelectableValue<string>;
   setDirty: () => void;
 }
 
 interface Worker {
-  setSchemaFromShowSchema: (schema: AdxSchema, url: string, database: string) => void;
+  setSchemaFromShowSchema: (schema: LogshipDatabaseSchema, url: string, database: string) => void;
 }
 
 export const RawQueryEditor: React.FC<RawQueryEditorProps> = (props) => {
@@ -62,10 +62,6 @@ export const RawQueryEditor: React.FC<RawQueryEditorProps> = (props) => {
 
   useEffect(() => {
     if (worker && stateSchema) {
-      // Populate Database schema with macros
-      Object.keys(stateSchema.Databases).forEach((db) =>
-        Object.assign(stateSchema.Databases[db].Functions, getFunctions(variables))
-      );
       worker.setSchemaFromShowSchema(stateSchema, 'https://help.kusto.windows.net', props.database);
     }
   }, [worker, stateSchema, variables, props.database]);

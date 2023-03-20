@@ -1,4 +1,5 @@
-import { DataQuery, DataSourceJsonData, DataSourceSettings } from '@grafana/data';
+import { DataSourceJsonData, DataSourceSettings } from '@grafana/data';
+import { DataQuery } from '@grafana/schema';
 
 import {
   QueryEditorColumnsExpression,
@@ -79,7 +80,7 @@ export interface SchemaMappingOption {
   type: SchemaMappingType;
   name: string;
   database: string;
-  input?: AdxFunctionInputParameterSchema[];
+  input?: LogshipFunctionInputParameterSchema[];
 }
 
 export enum SchemaMappingType {
@@ -88,7 +89,7 @@ export enum SchemaMappingType {
   materializedView = 'materializedView',
 }
 
-export interface AdxDataSourceOptions extends DataSourceJsonData {
+export interface LogshipDataSourceOptions extends DataSourceJsonData {
   defaultDatabase: string;
   minimalCache: number;
   defaultEditorMode: EditorMode;
@@ -102,50 +103,40 @@ export interface AdxDataSourceOptions extends DataSourceJsonData {
   clusterUrl: string;
 }
 
-export interface AdxDataSourceSecureOptions {}
+export interface LogshipDataSourceSecureOptions {}
 
-export interface AdxSchema {
-  Databases: Record<string, AdxDatabaseSchema>;
-}
-
-export interface AdxDatabaseSchema {
+export interface LogshipDatabaseSchema {
   Name: string;
-  Tables: Record<string, AdxTableSchema>;
-  ExternalTables: Record<string, AdxTableSchema>;
-  Functions: Record<string, AdxFunctionSchema>;
-  MaterializedViews: Record<string, AdxTableSchema>;
+  Tables: LogshipTableSchema[];
 }
 
-export interface AdxTableSchema {
+export interface LogshipTableSchema {
   Name: string;
-  OrderedColumns: AdxColumnSchema[];
+  Columns: LogshipColumnSchema[];
 }
 
-export interface AdxColumnSchema {
+export interface LogshipColumnSchema {
   Name: string;
-  CslType: string;
-  Type?: string;
-  CslDefaultValue?: string;
-  isDynamic?: boolean;
+  Type: string;
 }
 
-export interface AdxFunctionSchema {
+export interface LogshipFunctionSchema {
   Body: string;
   FunctionKind: string;
   Name: string;
-  InputParameters: AdxFunctionInputParameterSchema[];
-  OutputColumns: AdxColumnSchema[];
+  InputParameters: LogshipFunctionInputParameterSchema[];
+  OutputColumns: LogshipColumnSchema[];
   DocString?: string;
 }
 
-export interface AdxFunctionInputParameterSchema extends AdxColumnSchema {}
+export interface LogshipFunctionInputParameterSchema extends LogshipColumnSchema {}
 
-export type AdxSchemaDefinition = string | AdxSchemaDefinition[] | { [k: string]: AdxSchemaDefinition };
+export type LogshipSchemaDefinition = string | LogshipSchemaDefinition[] | { [k: string]: LogshipSchemaDefinition };
 
 export enum FormatOptions {
   table = 'table',
   timeSeries = 'time_series',
-  adxTimeSeries = 'time_series_adx_series',
+  logshipTimeSeries = 'time_series_logship_series',
 }
 
-export type AdxDataSourceSettings = DataSourceSettings<AdxDataSourceOptions, AdxDataSourceSecureOptions>;
+export type LogshipDataSourceSettings = DataSourceSettings<LogshipDataSourceOptions, LogshipDataSourceSecureOptions>;

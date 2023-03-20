@@ -5,17 +5,17 @@ import {
   QueryEditorExpressionType,
   QueryEditorReduceExpression,
 } from 'components/LegacyQueryEditor/editor/expressions';
-import { AdxDataSource } from 'datasource';
+import { LogshipDataSource } from 'datasource';
 import React, { useState, useEffect } from 'react';
-import { AdxColumnSchema, AdxDataSourceOptions, KustoQuery } from 'types';
+import { LogshipColumnSchema, LogshipDataSourceOptions, KustoQuery } from 'types';
 import { QueryEditorPropertyType } from 'schema/types';
 import { sanitizeAggregate } from './utils/utils';
 import AggregateItem from './AggregateItem';
 
-type Props = QueryEditorProps<AdxDataSource, KustoQuery, AdxDataSourceOptions>;
+type Props = QueryEditorProps<LogshipDataSource, KustoQuery, LogshipDataSourceOptions>;
 
 interface AggregateSectionProps extends Props {
-  columns: AdxColumnSchema[];
+  columns: LogshipColumnSchema[];
   database: string;
   templateVariableOptions: SelectableValue<string>;
 }
@@ -99,9 +99,9 @@ const AggregateSection: React.FC<AggregateSectionProps> = ({
 // Making component functions in the render body is not recommended, but it works for now.
 // If some problems arise (perhaps with state going missing), consider this to be a potential cause
 function makeRenderAggregate(
-  datasource: AdxDataSource,
+  datasource: LogshipDataSource,
   query: KustoQuery,
-  columns: AdxColumnSchema[] | undefined,
+  columns: LogshipColumnSchema[] | undefined,
   templateVariableOptions: SelectableValue<string>
 ) {
   function renderAggregate(

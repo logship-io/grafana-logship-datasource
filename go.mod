@@ -1,4 +1,4 @@
-module github.com/grafana/azure-data-explorer-datasource
+module github.com/grafana/grafana-logship-datasource
 
 go 1.17
 

@@ -4,8 +4,8 @@ import { SelectableValue } from '@grafana/data';
 import { Label, Select } from '@grafana/ui';
 import { AccessoryButton, InputGroup } from '@grafana/experimental';
 
-import { AdxDataSource } from '../../../datasource';
-import { AdxColumnSchema, KustoQuery } from '../../../types';
+import { LogshipDataSource } from '../../../datasource';
+import { LogshipColumnSchema, KustoQuery } from '../../../types';
 import {
   QueryEditorExpressionType,
   QueryEditorReduceExpression,
@@ -25,10 +25,10 @@ export enum AggregateFunctions {
 }
 
 interface AggregateItemProps {
-  datasource: AdxDataSource;
+  datasource: LogshipDataSource;
   query: KustoQuery;
   aggregate: Partial<QueryEditorReduceExpression>;
-  columns: AdxColumnSchema[] | undefined;
+  columns: LogshipColumnSchema[] | undefined;
   templateVariableOptions: SelectableValue<string>;
   onChange: (item: QueryEditorReduceExpression) => void;
   onDelete: () => void;
@@ -113,7 +113,7 @@ const AggregateItem: React.FC<AggregateItemProps> = (props) => {
                   property: {
                     name: e.value,
                     type: toPropertyType(
-                      columns?.find((c) => c.Name === e.value)?.CslType || QueryEditorPropertyType.String
+                      columns?.find((c) => c.Name === e.value)?.Type || QueryEditorPropertyType.String
                     ),
                   },
                   reduce: {

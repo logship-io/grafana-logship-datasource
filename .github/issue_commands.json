@@ -1,7 +1,7 @@
 [   
     {
       "type": "label",
-      "name": "datasource/ADX",
+      "name": "datasource/Logship",
       "action": "addToProject",
       "addToProject": {
         "url": "https://github.com/orgs/grafana/projects/190"

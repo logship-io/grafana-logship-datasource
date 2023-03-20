@@ -4,7 +4,7 @@ import { SelectableValue } from '@grafana/data';
 import { Select } from '@grafana/ui';
 import { AccessoryButton, InputGroup } from '@grafana/experimental';
 
-import { AdxColumnSchema, KustoQuery } from '../../../types';
+import { LogshipColumnSchema, KustoQuery } from '../../../types';
 import {
   QueryEditorExpressionType,
   QueryEditorGroupByExpression,
@@ -15,7 +15,7 @@ import { QueryEditorPropertyType } from 'schema/types';
 interface GroupByItemProps {
   query: KustoQuery;
   groupBy: Partial<QueryEditorGroupByExpression>;
-  columns: AdxColumnSchema[] | undefined;
+  columns: LogshipColumnSchema[] | undefined;
   templateVariableOptions: SelectableValue<string>;
   onChange: (item: QueryEditorGroupByExpression) => void;
   onDelete: () => void;
@@ -44,7 +44,7 @@ const GroupByItem: React.FC<GroupByItemProps> = (props) => {
               property: {
                 name: e.value,
                 type: toPropertyType(
-                  columns?.find((c) => c.Name === e.value)?.CslType || QueryEditorPropertyType.String
+                  columns?.find((c) => c.Name === e.value)?.Type || QueryEditorPropertyType.String
                 ),
               },
               interval: groupBy.interval,

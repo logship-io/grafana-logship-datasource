@@ -1,13 +1,11 @@
 import { QueryEditorProps } from '@grafana/data';
-import { config } from '@grafana/runtime';
-import { QueryEditor as LegacyQueryEditor } from 'components/LegacyQueryEditor/QueryEditor';
 import { QueryEditor as NewQueryEditor } from './QueryEditor';
-import { AdxDataSource } from 'datasource';
+import { LogshipDataSource } from 'datasource';
 import React from 'react';
-import { AdxDataSourceOptions, KustoQuery } from 'types';
+import { LogshipDataSourceOptions, KustoQuery } from 'types';
 
-type Props = QueryEditorProps<AdxDataSource, KustoQuery, AdxDataSourceOptions>;
+type Props = QueryEditorProps<LogshipDataSource, KustoQuery, LogshipDataSourceOptions>;
 
 export const QueryEditor: React.FC<Props> = (props) => {
-  return config.featureToggles.adxLegacyEditor ? <LegacyQueryEditor {...props} /> : <NewQueryEditor {...props} />;
+  return <NewQueryEditor {...props} />;
 };

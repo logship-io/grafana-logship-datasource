@@ -3,14 +3,14 @@ import ConfigEditor from 'components/ConfigEditor';
 import { getAppEvents, getDataSourceSrv } from '@grafana/runtime';
 import pluginJson from './plugin.json';
 
-import { AdxDataSource } from './datasource';
+import { LogshipDataSource } from './datasource';
 import { QueryEditor } from './components/QueryEditor';
-import { AdxDataSourceOptions, AdxDataSourceSecureOptions, KustoQuery } from './types';
+import { LogshipDataSourceOptions, LogshipDataSourceSecureOptions, KustoQuery } from './types';
 import EditorHelp from 'components/QueryEditor/EditorHelp';
-import { analyzeQueries, trackADXMonitorDashboardLoaded } from 'tracking';
+import { analyzeQueries, trackLogshipMonitorDashboardLoaded } from 'tracking';
 
-export const plugin = new DataSourcePlugin<AdxDataSource, KustoQuery, AdxDataSourceOptions, AdxDataSourceSecureOptions>(
-  AdxDataSource
+export const plugin = new DataSourcePlugin<LogshipDataSource, KustoQuery, LogshipDataSourceOptions, LogshipDataSourceSecureOptions>(
+  LogshipDataSource
 )
   .setConfigEditor(ConfigEditor)
   .setQueryEditorHelp(EditorHelp)
@@ -20,17 +20,17 @@ export const plugin = new DataSourcePlugin<AdxDataSource, KustoQuery, AdxDataSou
 getAppEvents().subscribe<DashboardLoadedEvent<KustoQuery>>(
   DashboardLoadedEvent,
   ({ payload: { dashboardId, orgId, grafanaVersion, queries } }) => {
-    const adxQueries = queries[pluginJson.id]?.filter((q) => !q.hide);
-    if (!adxQueries?.length) {
+    const logshipQueries = queries[pluginJson.id]?.filter((q) => !q.hide);
+    if (!logshipQueries?.length) {
       return;
     }
 
-    trackADXMonitorDashboardLoaded({
-      adx_plugin_version: plugin.meta.info.version,
+    trackLogshipMonitorDashboardLoaded({
+      logship_plugin_version: plugin.meta.info.version,
       grafana_version: grafanaVersion,
       dashboard_id: dashboardId,
       org_id: orgId,
-      ...analyzeQueries(adxQueries, getDataSourceSrv()),
+      ...analyzeQueries(logshipQueries, getDataSourceSrv()),
     });
   }
 );

@@ -10,7 +10,7 @@ import {
 import { intersection, isUndefined, uniq } from 'lodash';
 import { toPropertyType } from 'schema/mapper';
 import { QueryEditorOperatorValueType, QueryEditorPropertyType } from 'schema/types';
-import { AdxColumnSchema, QueryExpression } from 'types';
+import { LogshipColumnSchema, QueryExpression } from 'types';
 import { AggregateFunctions } from '../AggregateItem';
 import { FilterExpression } from '../KQLFilter';
 import { isMulti, OPERATORS } from './operators';
@@ -203,19 +203,19 @@ export function sanitizeGroupBy(expression: QueryEditorGroupByExpression): Query
 
 // extract the column name, ignoring inner objects for dynamic columns
 // e.g. MyCol["Inner"] => MyCol
-export function toColumnName(column: AdxColumnSchema) {
+export function toColumnName(column: LogshipColumnSchema) {
   return column.Name.split('[')[0];
 }
 
-export function toColumnNames(columns: AdxColumnSchema[]) {
+export function toColumnNames(columns: LogshipColumnSchema[]) {
   return uniq(columns.map((c) => toColumnName(c)));
 }
 
 // return columns defined in the expression (if any)
 export function filterColumns(
-  tableSchema?: AdxColumnSchema[],
+  tableSchema?: LogshipColumnSchema[],
   expression?: QueryEditorColumnsExpression
-): AdxColumnSchema[] | undefined {
+): LogshipColumnSchema[] | undefined {
   return expression?.columns?.length
     ? // filter columns with the same name or under the same dynamic column
       // e.g. MyCol or MyCol["Inner"]
@@ -225,7 +225,7 @@ export function filterColumns(
 
 // return columns in use by an expression. If none has been specified, return the first
 // time and number columns from the table definition
-export function defaultTimeSeriesColumns(expression: QueryExpression, tableColumns: AdxColumnSchema[]): string[] {
+export function defaultTimeSeriesColumns(expression: QueryExpression, tableColumns: LogshipColumnSchema[]): string[] {
   const res: string[] = [];
   if (expression.where.expressions?.length) {
     (expression.where.expressions as QueryEditorArrayExpression[]).forEach((exp) => {
@@ -254,7 +254,7 @@ export function defaultTimeSeriesColumns(expression: QueryExpression, tableColum
   }
 
   const timeCols = tableColumns.reduce<string[]>((cols, col) => {
-    if (toPropertyType(col.CslType) === QueryEditorPropertyType.DateTime) {
+    if (toPropertyType(col.Type) === QueryEditorPropertyType.DateTime) {
       cols.push(col.Name);
     }
     return cols;
@@ -265,7 +265,7 @@ export function defaultTimeSeriesColumns(expression: QueryExpression, tableColum
   }
 
   const valCols = tableColumns.reduce<string[]>((cols, col) => {
-    if (toPropertyType(col.CslType) === QueryEditorPropertyType.Number) {
+    if (toPropertyType(col.Type) === QueryEditorPropertyType.Number) {
       cols.push(col.Name);
     }
     return cols;

@@ -3,8 +3,8 @@
 ### 1. Set up credentials file
 
 - Since the e2e tests needs to set up the datasource, it expects credentials (and any other settings that may be required) in 
-`<rootDir>/provisioning/datasources/adx.yaml`. 
-- Symlink or copy `adx.yaml` with the following layout.
+`<rootDir>/provisioning/datasources/logship.yaml`. 
+- Symlink or copy `logship.yaml` with the following layout.
 
 ```yaml
 apiVersion: 1
@@ -30,11 +30,11 @@ datasources:
 
 - Run the same version of core Grafana as the target @grafana/e2e version. 
 
-Example to run v8.2.6 in docker in localhost:3000, make sure you are running the command from your adx folder, or change `$PWD` for the full path to your `azure-data-explorer-datasource` folder.
+Example to run v8.2.6 in docker in localhost:3000, make sure you are running the command from your logship folder, or change `$PWD` for the full path to your `grafana-logship-datasource` folder.
 
 ```
 bash
-docker run --rm  -p 3000:3000 --name=grafana --env GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=grafana-azure-data-explorer-datasource --volume "$PWD:/var/lib/grafana/plugins" grafana/grafana:8.2.6
+docker run --rm  -p 3000:3000 --name=grafana --env GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=grafana-grafana-logship-datasource --volume "$PWD:/var/lib/grafana/plugins" grafana/grafana:8.2.6
 ```
 
 ### 5. Run the e2e tests

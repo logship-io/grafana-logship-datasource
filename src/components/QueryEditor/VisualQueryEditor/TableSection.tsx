@@ -3,17 +3,17 @@ import { EditorField, EditorFieldGroup, EditorRow } from '@grafana/experimental'
 import { QueryEditorExpressionType } from 'components/LegacyQueryEditor/editor/expressions';
 import React, { useEffect, useState } from 'react';
 import { AsyncState } from 'react-use/lib/useAsyncFn';
-import { AdxColumnSchema, AdxDataSourceOptions, defaultQuery, KustoQuery } from 'types';
+import { LogshipColumnSchema, LogshipDataSourceOptions, defaultQuery, KustoQuery } from 'types';
 import { QueryEditorPropertyDefinition, QueryEditorPropertyType } from 'schema/types';
 import { Select } from '@grafana/ui';
-import { AdxDataSource } from 'datasource';
+import { LogshipDataSource } from 'datasource';
 import { defaultTimeSeriesColumns, toColumnNames } from './utils/utils';
 
-type Props = QueryEditorProps<AdxDataSource, KustoQuery, AdxDataSourceOptions>;
+type Props = QueryEditorProps<LogshipDataSource, KustoQuery, LogshipDataSourceOptions>;
 
 interface TableSectionProps extends Props {
   tables: QueryEditorPropertyDefinition[];
-  tableSchema: AsyncState<AdxColumnSchema[]>;
+  tableSchema: AsyncState<LogshipColumnSchema[]>;
   templateVariableOptions: SelectableValue<string>;
   table?: SelectableValue<string>;
 }

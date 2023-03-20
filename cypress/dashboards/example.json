@@ -27,7 +27,7 @@
   "liveNow": false,
   "panels": [
     {
-      "datasource": "e2e-azure-data-explorer-datasource",
+      "datasource": "e2e-grafana-logship-datasource",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -124,7 +124,7 @@
       "type": "timeseries"
     },
     {
-      "datasource": "e2e-azure-data-explorer-datasource",
+      "datasource": "e2e-grafana-logship-datasource",
       "fieldConfig": {
         "defaults": {
           "color": {

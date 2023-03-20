@@ -6,8 +6,8 @@ import { GrafanaTheme2, SelectableValue, toOption } from '@grafana/data';
 import { Input, Label, Select, useStyles2 } from '@grafana/ui';
 import { AccessoryButton, InputGroup } from '@grafana/experimental';
 
-import { AdxDataSource } from '../../../datasource';
-import { AdxColumnSchema, KustoQuery } from '../../../types';
+import { LogshipDataSource } from '../../../datasource';
+import { LogshipColumnSchema, KustoQuery } from '../../../types';
 import { QueryEditorExpressionType } from 'components/LegacyQueryEditor/editor/expressions';
 import {
   getOperatorExpressionOptions,
@@ -22,10 +22,10 @@ import { QueryEditorPropertyType } from 'schema/types';
 import { FilterExpression } from './KQLFilter';
 
 interface FilterItemProps {
-  datasource: AdxDataSource;
+  datasource: LogshipDataSource;
   query: KustoQuery;
   filter: Partial<FilterExpression>;
-  columns: AdxColumnSchema[] | undefined;
+  columns: LogshipColumnSchema[] | undefined;
   templateVariableOptions: SelectableValue<string>;
   onChange: (item: FilterExpression) => void;
   onDelete: () => void;

@@ -6,7 +6,7 @@ import { AzureCloud, AzureCredentials, ConcealedSecret } from './AzureCredential
 const concealed: ConcealedSecret = Symbol('Concealed client secret');
 const concealedLegacy: ConcealedSecret = Symbol('Concealed legacy client secret');
 
-export const getOboEnabled = (): boolean => !!config.featureToggles['adxOnBehalfOf'];
+export const getOboEnabled = (): boolean => !!config.featureToggles['logshipOnBehalfOf'];
 
 function getDefaultAzureCloud(): string {
   return config.azure.cloud || AzureCloud.Public;

@@ -317,8 +317,8 @@ describe('defaultTimeSeriesColumns', () => {
   it('should return a time and numeric value', () => {
     expect(
       defaultTimeSeriesColumns(defaultQuery.expression, [
-        { Name: 'time', CslType: 'datetime' },
-        { Name: 'measure', CslType: 'long' },
+        { Name: 'time', Type: 'datetime' },
+        { Name: 'measure', Type: 'long' },
       ])
     ).toEqual(['time', 'measure']);
   });
@@ -345,9 +345,9 @@ describe('defaultTimeSeriesColumns', () => {
           },
         },
         [
-          { Name: 'time', CslType: 'datetime' },
-          { Name: 'measure', CslType: 'long' },
-          { Name: 'foo', CslType: 'datetime' },
+          { Name: 'time', Type: 'datetime' },
+          { Name: 'measure', Type: 'long' },
+          { Name: 'foo', Type: 'datetime' },
         ]
       )
     ).toEqual(['foo', 'measure']);
@@ -370,9 +370,9 @@ describe('defaultTimeSeriesColumns', () => {
           },
         },
         [
-          { Name: 'time', CslType: 'datetime' },
-          { Name: 'measure', CslType: 'long' },
-          { Name: 'foo', CslType: 'timespan' },
+          { Name: 'time', Type: 'datetime' },
+          { Name: 'measure', Type: 'long' },
+          { Name: 'foo', Type: 'timespan' },
         ]
       )
     ).toEqual(['foo', 'time', 'measure']);
@@ -394,9 +394,9 @@ describe('defaultTimeSeriesColumns', () => {
           },
         },
         [
-          { Name: 'time', CslType: 'datetime' },
-          { Name: 'measure', CslType: 'long' },
-          { Name: 'foo', CslType: 'timespan' },
+          { Name: 'time', Type: 'datetime' },
+          { Name: 'measure', Type: 'long' },
+          { Name: 'foo', Type: 'timespan' },
         ]
       )
     ).toEqual(['foo', 'time', 'measure']);

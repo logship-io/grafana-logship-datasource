@@ -15,7 +15,7 @@ const defaultProps = {
     value: [
       {
         Name: 'foo',
-        CslType: 'string',
+        Type: 'string',
       },
     ],
   },

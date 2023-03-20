@@ -2,7 +2,7 @@ version: '3.0'
 
 services:
   grafana:
-    container_name: 'azure-data-explorer-datasource'
+    container_name: 'grafana-logship-datasource'
     build:
       context: ./.config
       args:
@@ -10,5 +10,5 @@ services:
     ports:
       - 3000:3000/tcp
     volumes:
-      - ./dist:/var/lib/grafana/plugins/azure-data-explorer-datasource
+      - ./dist:/var/lib/grafana/plugins/grafana-logship-datasource
       - ./provisioning:/etc/grafana/provisioning

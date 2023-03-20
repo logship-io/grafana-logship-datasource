@@ -1,21 +1,17 @@
-import React, { useMemo, useState, useEffect } from 'react';
-
+import React, { useState, useEffect } from 'react';
 import { Button, ConfirmModal, RadioButtonGroup } from '@grafana/ui';
 import { EditorHeader, FlexItem, InlineSelect } from '@grafana/experimental';
 
-import { AdxSchema, defaultQuery, EditorMode, FormatOptions, KustoQuery } from '../../types';
+import { EditorMode, FormatOptions, KustoQuery, LogshipDatabaseSchema } from '../../types';
 import { AsyncState } from 'react-use/lib/useAsyncFn';
-import { AdxDataSource } from 'datasource';
-import { QueryEditorPropertyDefinition } from 'schema/types';
-import { useAsync } from 'react-use';
-import { databaseToDefinition } from 'schema/mapper';
+import { LogshipDataSource } from 'datasource';
 import { SelectableValue } from '@grafana/data';
 import { selectors } from 'test/selectors';
 
 export interface QueryEditorHeaderProps {
-  datasource: AdxDataSource;
+  datasource: LogshipDataSource;
   query: KustoQuery;
-  schema: AsyncState<AdxSchema>;
+  schema: AsyncState<LogshipDatabaseSchema>;
   dirty: boolean;
   setDirty: (b: boolean) => void;
   onChange: (value: KustoQuery) => void;
@@ -23,8 +19,8 @@ export interface QueryEditorHeaderProps {
 }
 
 const EDITOR_MODES = [
-  { label: 'Builder', value: EditorMode.Visual },
   { label: 'KQL', value: EditorMode.Raw },
+  { label: 'Builder', value: EditorMode.Visual },
 ];
 
 const EDITOR_FORMATS: Array<SelectableValue<string>> = [
@@ -32,16 +28,14 @@ const EDITOR_FORMATS: Array<SelectableValue<string>> = [
   { label: 'Time series', value: FormatOptions.timeSeries },
 ];
 
-const adxTimeFormat: SelectableValue<string> = {
-  label: 'ADX Time series',
-  value: FormatOptions.adxTimeSeries,
+const logshipTimeFormat: SelectableValue<string> = {
+  label: 'Logship Time series',
+  value: FormatOptions.logshipTimeSeries,
 };
 
 export const QueryHeader = (props: QueryEditorHeaderProps) => {
-  const { query, onChange, schema, datasource, dirty, setDirty, onRunQuery } = props;
+  const { query, onChange, dirty, setDirty, onRunQuery } = props;
   const { rawMode } = query;
-  const databases = useDatabaseOptions(schema.value);
-  const database = useSelectedDatabase(databases, props.query, datasource);
   const [formats, setFormats] = useState(EDITOR_FORMATS);
   const [showWarning, setShowWarning] = useState(false);
 
@@ -54,14 +48,8 @@ export const QueryHeader = (props: QueryEditorHeaderProps) => {
   };
 
   useEffect(() => {
-    if (!query.database && database) {
-      onChange({ ...query, database });
-    }
-  }, [query, database, onChange]);
-
-  useEffect(() => {
     if (rawMode) {
-      setFormats(EDITOR_FORMATS.concat(adxTimeFormat));
+      setFormats(EDITOR_FORMATS.concat(logshipTimeFormat));
     } else {
       setFormats(EDITOR_FORMATS);
     }
@@ -71,8 +59,8 @@ export const QueryHeader = (props: QueryEditorHeaderProps) => {
     if (!query.resultFormat) {
       onChange({ ...query, resultFormat: 'table' });
     }
-    if (query.resultFormat === adxTimeFormat.value && !rawMode) {
-      // Fallback to Time Series since time_series_adx_series is not available when not in rawMode
+    if (query.resultFormat === logshipTimeFormat.value && !rawMode) {
+      // Fallback to Time Series since time_series_logship_series is not available when not in rawMode
       onChange({ ...query, resultFormat: 'time_series' });
     }
   }, [query, formats, onChange, rawMode]);
@@ -93,16 +81,6 @@ export const QueryHeader = (props: QueryEditorHeaderProps) => {
           setShowWarning(false);
         }}
       ></ConfirmModal>
-      <InlineSelect
-        label="Database"
-        aria-label="Database"
-        options={databases}
-        value={database}
-        isLoading={schema.loading}
-        onChange={({ value }) => {
-          onChange({ ...query, database: value!, expression: defaultQuery.expression });
-        }}
-      />
       <InlineSelect
         label="Format as"
         options={formats}
@@ -129,56 +107,4 @@ export const QueryHeader = (props: QueryEditorHeaderProps) => {
       />
     </EditorHeader>
   );
-};
-
-const useSelectedDatabase = (
-  options: QueryEditorPropertyDefinition[],
-  query: KustoQuery,
-  datasource: AdxDataSource
-): string => {
-  const defaultDB = useAsync(() => datasource.getDefaultOrFirstDatabase(), [datasource]);
-  const variables = datasource.getVariables();
-
-  return useMemo(() => {
-    const selected = options.find((option) => option.value === query.database);
-
-    if (selected) {
-      return selected.value;
-    }
-
-    const variable = variables.find((variable) => variable === query.database);
-
-    if (variable) {
-      return variable;
-    }
-
-    if (options.length > 0) {
-      const result = options.find((x) => x.value === defaultDB.value);
-
-      if (result) {
-        return result.value;
-      } else {
-        return options[0].value;
-      }
-    }
-
-    return '';
-  }, [options, variables, query.database, defaultDB.value]);
-};
-
-const useDatabaseOptions = (schema?: AdxSchema): QueryEditorPropertyDefinition[] => {
-  return useMemo(() => {
-    const databases: QueryEditorPropertyDefinition[] = [];
-
-    if (!schema || !schema.Databases) {
-      return databases;
-    }
-
-    for (const name of Object.keys(schema.Databases)) {
-      const database = schema.Databases[name];
-      databases.push(databaseToDefinition(database));
-    }
-
-    return databases;
-  }, [schema]);
 };

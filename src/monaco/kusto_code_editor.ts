@@ -59,7 +59,7 @@ export default class KustoCodeEditor {
       });
     } catch (e) {
       error = new Error(
-        'Unable to load Kusto language. Try refreshing the page or upgrading to Grafana +8.5 and ADX plugin +4.0'
+        'Unable to load Kusto language. Try refreshing the page or upgrading to Grafana +8.5 and Logship plugin +4.0'
       );
       console.error(error, e);
     }

@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { mockDatasource, mockQuery } from 'components/__fixtures__/Datasource';
-import { AdxColumnSchema } from 'types';
+import { LogshipColumnSchema } from 'types';
 import FilterItem from './FilterItem';
 import React from 'react';
 import { openMenu } from 'react-select-event';
@@ -21,10 +21,10 @@ const defaultProps = {
 describe('FilterItem', () => {
   it('should select a column', () => {
     const onChange = jest.fn();
-    const columns: AdxColumnSchema[] = [
+    const columns: LogshipColumnSchema[] = [
       {
         Name: 'foo',
-        CslType: 'string',
+        Type: 'string',
       },
     ];
     render(<FilterItem {...defaultProps} columns={columns} onChange={onChange} />);

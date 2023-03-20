@@ -13,16 +13,16 @@ import {
   Select,
   VerticalGroup,
 } from '@grafana/ui';
-import { AdxDataSource } from 'datasource';
+import { LogshipDataSource } from 'datasource';
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { useEffectOnce } from 'react-use';
-import { AdxDataSourceOptions, AdxDataSourceSecureOptions, AdxDataSourceSettings } from 'types';
+import { LogshipDataSourceOptions, LogshipDataSourceSecureOptions, LogshipDataSourceSettings } from 'types';
 import { hasCredentials } from './AzureCredentialsConfig';
 import { refreshSchema, Schema } from './refreshSchema';
 
 interface DatabaseConfigProps
-  extends DataSourcePluginOptionsEditorProps<AdxDataSourceOptions, AdxDataSourceSecureOptions> {
-  updateJsonData: <T extends keyof AdxDataSourceOptions>(fieldName: T, value: AdxDataSourceOptions[T]) => void;
+  extends DataSourcePluginOptionsEditorProps<LogshipDataSourceOptions, LogshipDataSourceSecureOptions> {
+  updateJsonData: <T extends keyof LogshipDataSourceOptions>(fieldName: T, value: LogshipDataSourceOptions[T]) => void;
 }
 
 function formatMappingValue(mapping): string {
@@ -55,9 +55,9 @@ const DatabaseConfig: React.FC<DatabaseConfigProps> = (props: DatabaseConfigProp
   const [schemaError, setSchemaError] = useState<FetchErrorResponse['data']>();
   const baseURL = `/api/datasources/${options.id}`;
 
-  const getDatasource = async (): Promise<AdxDataSource> => {
+  const getDatasource = async (): Promise<LogshipDataSource> => {
     const datasource = await getDataSourceSrv().get(options.name);
-    return datasource as unknown as AdxDataSource;
+    return datasource as unknown as LogshipDataSource;
   };
 
   const handleAddNewMapping = useCallback(() => {
@@ -122,7 +122,7 @@ const DatabaseConfig: React.FC<DatabaseConfigProps> = (props: DatabaseConfigProp
     // Save latest changes in the datasource so we can retrieve the schema
     await getBackendSrv()
       .put(baseURL, props.options)
-      .then((result: { datasource: AdxDataSourceSettings }) => {
+      .then((result: { datasource: LogshipDataSourceSettings }) => {
         props.onOptionsChange({
           ...props.options,
           version: result.datasource.version,
@@ -158,7 +158,7 @@ const DatabaseConfig: React.FC<DatabaseConfigProps> = (props: DatabaseConfigProp
 
       <InlineField label="Use managed schema" labelWidth={LABEL_WIDTH}>
         <InlineSwitch
-          id="adx-use-schema-mapping"
+          id="logship-use-schema-mapping"
           value={jsonData.useSchemaMapping}
           onChange={(ev: React.ChangeEvent<HTMLInputElement>) => updateJsonData('useSchemaMapping', ev.target.checked)}
         />
