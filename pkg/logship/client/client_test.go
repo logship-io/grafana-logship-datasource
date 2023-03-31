@@ -7,7 +7,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/grafana/grafana-logship-datasource/pkg/logship/models"
+	"github.com/logsink/grafana-logship-datasource/pkg/logship/models"
 	"github.com/stretchr/testify/require"
 )
 

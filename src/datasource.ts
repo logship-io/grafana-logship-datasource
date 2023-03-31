@@ -352,8 +352,8 @@ const functionSchemaParser = (frames: DataFrame[]): LogshipColumnSchema[] => {
   for (const frame of frames) {
     for (let index = 0; index < frame.length; index++) {
       result.push({
-        Name: frame.fields[nameIndex].values.get(index),
-        Type: frame.fields[typeIndex].values.get(index),
+        name: frame.fields[nameIndex].values.get(index),
+        type: frame.fields[typeIndex].values.get(index),
       });
     }
   }
@@ -397,7 +397,7 @@ const recordSchemaArray = (name: string, types: LogshipSchemaDefinition[], resul
   if (typeof defaultType === 'object') {
     recordSchema(name, types[0], result);
   } else {
-    result.push({ Name: name, Type: defaultType });
+    result.push({ name: name, type: defaultType });
   }
 };
 
@@ -410,8 +410,8 @@ const recordSchema = (columnName: string, schema: LogshipSchemaDefinition, resul
   // Case: schema is a single type: e.g. 'long'
   if (typeof schema === 'string') {
     result.push({
-      Name: columnName,
-      Type: schema,
+      name: columnName,
+      type: schema,
     });
     return;
   }

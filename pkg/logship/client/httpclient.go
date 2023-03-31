@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/grafana/grafana-logship-datasource/pkg/logship/models"
+	"github.com/logsink/grafana-logship-datasource/pkg/logship/models"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/httpclient"
 )

@@ -90,7 +90,7 @@ const useTableOptions = (
   const mapper = datasource.getSchemaMapper();
 
   return useMemo(() => {
-    if (!schema || !schema.Tables) {
+    if (!schema || !schema.tables) {
       return [];
     }
     return mapper.getTableOptions(schema);

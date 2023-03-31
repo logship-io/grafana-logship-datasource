@@ -411,31 +411,31 @@ const defaultTimeColumn = (columns?: LogshipColumnSchema[], expression?: QueryEx
   }
 
   const preciseTimestampColumn = columns?.find((col) => {
-    return col.Name === 'PreciseTimestamp';
+    return col.name === 'PreciseTimestamp';
   });
 
   if (preciseTimestampColumn) {
-    return preciseTimestampColumn?.Name;
+    return preciseTimestampColumn?.name;
   }
 
   const firstLevelColumn = columns?.find((col) => {
-    return col.Type === 'datetime' && col.Name.indexOf('[') === -1;
+    return col.type === 'datetime' && col.name.indexOf('[') === -1;
   });
 
   if (firstLevelColumn) {
-    return firstLevelColumn?.Name;
+    return firstLevelColumn?.name;
   }
 
-  const column = columns?.find((col) => col.Type === 'datetime');
+  const column = columns?.find((col) => col.type === 'datetime');
   if (!column) {
     return undefined;
   }
 
-  return toType(column.Type, column.Name);
+  return toType(column.type, column.name);
 };
 
 const escapeAndCastIfDynamic = (column: string, tableSchema?: LogshipColumnSchema[], schemaName?: string): string => {
-  const columnSchema = tableSchema?.find((c) => c.Name === (schemaName || column));
+  const columnSchema = tableSchema?.find((c) => c.name === (schemaName || column));
 
   // if (!columnSchema?.isDynamic || !Array.isArray(tableSchema)) {
   //   return escapeColumn(column);
@@ -445,7 +445,7 @@ const escapeAndCastIfDynamic = (column: string, tableSchema?: LogshipColumnSchem
     return escapeColumn(column);
   }
 
-  return toType(columnSchema.Type, column);
+  return toType(columnSchema.type, column);
 };
 
 const toType = (type: string, name: string): string => {

@@ -1,4 +1,4 @@
-import { LogshipDatabaseSchema } from 'types';
+import { LogshipDatabaseSchema, LogshipTableSchema } from 'types';
 
 export interface DataTarget {
   target: string;
@@ -85,6 +85,9 @@ export class ResponseParser {
   }
 
   parseSchemaResult(results: any): LogshipDatabaseSchema {
-    return results as LogshipDatabaseSchema;
+    return {
+      name: "Default",
+      tables: results as LogshipTableSchema[]
+    };
   }
 }

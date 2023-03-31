@@ -26,7 +26,7 @@ export class LogshipSchemaResolver {
     if (!database) {
       return [];
     }
-    return Object.keys(database.Tables).map((key) => database.Tables[key]);
+    return Object.keys(database.tables).map((key) => database.tables[key]);
   }
 
   async getColumnsForTable(tableName: string): Promise<LogshipColumnSchema[]> {
@@ -41,8 +41,8 @@ export class LogshipSchemaResolver {
         return [];
       }
 
-      const dynamicColumns = schema.Columns.filter((column) => column.Type === 'dynamic').map(
-        (column) => column.Name
+      const dynamicColumns = schema.columns.filter((column) => column.type === 'dynamic').map(
+        (column) => column.name
       );
 
       const schemaByColumn = await this.datasource.getDynamicSchema(
@@ -51,8 +51,8 @@ export class LogshipSchemaResolver {
         dynamicColumns
       );
 
-      return schema.Columns.reduce((columns: LogshipColumnSchema[], column) => {
-        const schemaForDynamicColumn = schemaByColumn[column.Name];
+      return schema.columns.reduce((columns: LogshipColumnSchema[], column) => {
+        const schemaForDynamicColumn = schemaByColumn[column.name];
 
         if (!Array.isArray(schemaForDynamicColumn)) {
           columns.push(column);
@@ -76,7 +76,7 @@ export class LogshipSchemaResolver {
 
     const name = mapping?.name ?? tableName;
 
-    const table = tables.find((t) => t.Name === name);
+    const table = tables.find((t) => t.name === name);
     if (table) {
       return table;
     }

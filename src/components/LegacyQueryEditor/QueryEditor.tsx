@@ -139,7 +139,7 @@ const useDatabaseOptions = (schema?: LogshipDatabaseSchema): QueryEditorProperty
   return useMemo(() => {
     const databases: QueryEditorPropertyDefinition[] = [];
 
-    if (!schema || !schema.Tables) {
+    if (!schema || !schema.tables) {
       return databases;
     }
 

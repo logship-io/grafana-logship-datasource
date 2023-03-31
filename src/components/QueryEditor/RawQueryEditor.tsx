@@ -62,7 +62,7 @@ export const RawQueryEditor: React.FC<RawQueryEditorProps> = (props) => {
 
   useEffect(() => {
     if (worker && stateSchema) {
-      worker.setSchemaFromShowSchema(stateSchema, 'https://help.kusto.windows.net', props.database);
+      // worker.setSchemaFromShowSchema(stateSchema, 'https://help.kusto.windows.net', props.database);
     }
   }, [worker, stateSchema, variables, props.database]);
 

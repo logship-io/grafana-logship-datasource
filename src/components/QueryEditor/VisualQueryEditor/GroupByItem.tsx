@@ -44,7 +44,7 @@ const GroupByItem: React.FC<GroupByItemProps> = (props) => {
               property: {
                 name: e.value,
                 type: toPropertyType(
-                  columns?.find((c) => c.Name === e.value)?.Type || QueryEditorPropertyType.String
+                  columns?.find((c) => c.name === e.value)?.type || QueryEditorPropertyType.String
                 ),
               },
               interval: groupBy.interval,

@@ -1,17 +1,21 @@
 {
+  "$schema": "https://raw.githubusercontent.com/grafana/grafana/master/docs/sources/developers/plugins/plugin.schema.json",
   "type": "datasource",
-  "name": "Logship Datasource",
-  "id": "grafana-logship-datasource",
+  "name": "Logship",
+  "id": "logsink-logship-datasource",
+  "metrics": true,
+  "backend": true,
+  "executable": "gpx_logship_datasource",
   "info": {
-    "description": "Grafana data source for Logship",
+    "description": "Logship integration and data source",
     "author": {
       "name": "Logship LLC",
       "url": "https://logship.ai"
     },
-    "keywords": ["logship", "kusto", "kustodb"],
+    "keywords": ["logship", "datasource", "kusto"],
     "logos": {
-      "small": "img/logo.png",
-      "large": "img/logo.png"
+      "small": "img/logo.svg",
+      "large": "img/logo.svg"
     },
     "links": [
       {
@@ -28,12 +32,7 @@
     "updated": "%TODAY%"
   },
   "dependencies": {
-    "grafanaDependency": ">=9.0.0",
+    "grafanaDependency": "^9.3.8",
     "plugins": []
-  },
-  "metrics": true,
-  "annotations": true,
-  "backend": true,
-  "executable": "gpx_logship",
-  "alerting": true
+  }
 }

@@ -14,7 +14,7 @@ type Props = QueryEditorProps<LogshipDataSource, KustoQuery, LogshipDataSourceOp
 
 export const QueryEditor: React.FC<Props> = (props) => {
   const { onChange, onRunQuery, query, datasource } = props;
-  const schema = useAsync(() => datasource.getSchema(false), [datasource.id]);
+  const schema = useAsync(() => datasource.getSchema(true), [datasource.id]);
   const templateVariables = useTemplateVariables(datasource);
   const [dirty, setDirty] = useState(false);
   const dbSchema = {
@@ -41,6 +41,7 @@ export const QueryEditor: React.FC<Props> = (props) => {
   return (
     <>
       {schema.error && <Alert title="Could not load datasource schema">{parseSchemaError(schema.error)}</Alert>}
+      
       <QueryHeader
         query={query}
         onChange={onChange}

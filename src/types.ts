@@ -1,6 +1,6 @@
-import { DataSourceJsonData, DataSourceSettings } from '@grafana/data';
-import { DataQuery } from '@grafana/schema';
 
+
+import { DataSourceJsonData, DataSourceSettings } from '@grafana/data';
 import {
   QueryEditorColumnsExpression,
   QueryEditorExpressionType,
@@ -10,6 +10,7 @@ import {
   QueryEditorReduceExpressionArray,
   QueryEditorWhereArrayExpression,
 } from './components/LegacyQueryEditor/editor/expressions';
+import { DataQuery } from '@grafana/schema';
 
 const packageJson = require('../package.json');
 
@@ -106,18 +107,18 @@ export interface LogshipDataSourceOptions extends DataSourceJsonData {
 export interface LogshipDataSourceSecureOptions {}
 
 export interface LogshipDatabaseSchema {
-  Name: string;
-  Tables: LogshipTableSchema[];
+  name: string;
+  tables: LogshipTableSchema[];
 }
 
 export interface LogshipTableSchema {
-  Name: string;
-  Columns: LogshipColumnSchema[];
+  name: string;
+  columns: LogshipColumnSchema[];
 }
 
 export interface LogshipColumnSchema {
-  Name: string;
-  Type: string;
+  name: string;
+  type: string;
 }
 
 export interface LogshipFunctionSchema {

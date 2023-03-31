@@ -5,14 +5,13 @@ import (
 	"math/rand"
 	"net/http"
 
-	"github.com/grafana/grafana-azure-sdk-go/azusercontext"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/instancemgmt"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/resource/httpadapter"
 	"github.com/grafana/grafana-plugin-sdk-go/data"
 
-	"github.com/grafana/grafana-logship-datasource/pkg/logship/client"
-	"github.com/grafana/grafana-logship-datasource/pkg/logship/models"
+	"github.com/logsink/grafana-logship-datasource/pkg/logship/client"
+	"github.com/logsink/grafana-logship-datasource/pkg/logship/models"
 
 	// 100% compatible drop-in replacement of "encoding/json"
 	json "github.com/json-iterator/go"
@@ -71,7 +70,7 @@ func NewDatasource(instanceSettings backend.DataSourceInstanceSettings) (instanc
 
 // QueryData is the primary method called by grafana-server
 func (logship *LogshipBackend) QueryData(ctx context.Context, req *backend.QueryDataRequest) (*backend.QueryDataResponse, error) {
-	ctx = azusercontext.WithUserFromQueryReq(ctx, req)
+	//ctx = azusercontext.WithUserFromQueryReq(ctx, req)
 	backend.Logger.Debug("Query", "datasource", req.PluginContext.DataSourceInstanceSettings.Name)
 
 	res := backend.NewQueryDataResponse()
@@ -84,12 +83,12 @@ func (logship *LogshipBackend) QueryData(ctx context.Context, req *backend.Query
 }
 
 func (logship *LogshipBackend) CallResource(ctx context.Context, req *backend.CallResourceRequest, sender backend.CallResourceResponseSender) error {
-	return logship.CallResourceHandler.CallResource(azusercontext.WithUserFromResourceReq(ctx, req), req, sender)
+	return logship.CallResourceHandler.CallResource(ctx /*azusercontext.WithUserFromResourceReq(ctx, req) */, req, sender)
 }
 
 // CheckHealth handles health checks
 func (logship *LogshipBackend) CheckHealth(ctx context.Context, req *backend.CheckHealthRequest) (*backend.CheckHealthResult, error) {
-	ctx = azusercontext.WithUserFromHealthCheckReq(ctx, req)
+	// ctx = azusercontext.WithUserFromHealthCheckReq(ctx, req)
 	headers := map[string]string{}
 	err := logship.client.TestRequest(ctx, logship.settings, models.NewConnectionProperties(logship.settings, nil), headers)
 	if err != nil {
@@ -141,7 +140,7 @@ func (logship *LogshipBackend) modelQuery(ctx context.Context, q models.QueryMod
 	}
 	headers["x-ms-client-request-id"] = msClientRequestIDHeader
 
-	tableRes, err := logship.client.KustoRequest(ctx, logship.settings.ClusterURL+"/LS-Search-Query/api/kusto", models.RequestPayload{
+	tableRes, err := logship.client.KustoRequest(ctx, logship.settings.ClusterURL, models.RequestPayload{
 		Query:       q.Query,
 		DB:          q.Database,
 		Properties:  props,

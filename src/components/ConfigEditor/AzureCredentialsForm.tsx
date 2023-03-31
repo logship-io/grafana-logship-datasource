@@ -140,7 +140,7 @@ export const AzureCredentialsForm: FunctionComponent<Props> = (props: Props) => 
           <Alert title="On-Behalf-Of feature is in beta" severity="warning">
             For known limitations and issues, bug report, or feedback, please visit{' '}
             <a
-              href="https://github.com/grafana/grafana-logship-datasource/blob/main/doc/on-behalf-of.md"
+              href="https://github.com/logsink/grafana-logship-datasource/blob/main/doc/on-behalf-of.md"
               target="_blank"
               rel="noreferrer"
             >

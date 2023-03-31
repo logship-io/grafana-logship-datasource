@@ -7,23 +7,23 @@ import { LogshipColumnSchema, LogshipDatabaseSchema, LogshipTableSchema } from '
 
 export const tableToDefinition = (table: LogshipTableSchema): QueryEditorPropertyDefinition => {
   return {
-    label: table.Name,
-    value: table.Name,
+    label: table.name,
+    value: table.name,
     type: QueryEditorPropertyType.String,
   };
 };
 
 export const tableToSelectable = (table: LogshipTableSchema): SelectableValue<string> => {
   return {
-    label: table.Name,
-    value: table.Name,
+    label: table.name,
+    value: table.name,
   };
 };
 
 export const databaseToDefinition = (database: LogshipDatabaseSchema): QueryEditorPropertyDefinition => {
   return {
-    value: database.Name,
-    label: database.Name,
+    value: database.name,
+    label: database.name,
     type: QueryEditorPropertyType.String,
   };
 };
@@ -41,8 +41,8 @@ export const tablesToDefinition = (tables: LogshipTableSchema[]): QueryEditorPro
   }
 
   return tables.map((table) => ({
-    value: table.Name,
-    label: table.Name,
+    value: table.name,
+    label: table.name,
     type: QueryEditorPropertyType.String,
   }));
 };
@@ -61,9 +61,9 @@ export const columnsToDefinition = (columns: LogshipColumnSchema[]): QueryEditor
 
   return columns.map((column) => {
     return {
-      value: column.Name,
-      label: column.Name.replace(new RegExp(escapeRegExp(DYNAMIC_TYPE_ARRAY_DELIMITER), 'g'), '[ ]'),
-      type: toPropertyType(column.Type),
+      value: column.name,
+      label: column.name.replace(new RegExp(escapeRegExp(DYNAMIC_TYPE_ARRAY_DELIMITER), 'g'), '[ ]'),
+      type: toPropertyType(column.type),
     };
   });
 };

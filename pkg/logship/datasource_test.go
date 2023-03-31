@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/grafana/grafana-logship-datasource/pkg/logship/models"
+	"github.com/logsink/grafana-logship-datasource/pkg/logship/models"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/stretchr/testify/require"
 )

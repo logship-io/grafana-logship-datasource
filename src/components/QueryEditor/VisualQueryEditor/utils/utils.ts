@@ -204,7 +204,7 @@ export function sanitizeGroupBy(expression: QueryEditorGroupByExpression): Query
 // extract the column name, ignoring inner objects for dynamic columns
 // e.g. MyCol["Inner"] => MyCol
 export function toColumnName(column: LogshipColumnSchema) {
-  return column.Name.split('[')[0];
+  return column.name.split('[')[0];
 }
 
 export function toColumnNames(columns: LogshipColumnSchema[]) {
@@ -254,8 +254,8 @@ export function defaultTimeSeriesColumns(expression: QueryExpression, tableColum
   }
 
   const timeCols = tableColumns.reduce<string[]>((cols, col) => {
-    if (toPropertyType(col.Type) === QueryEditorPropertyType.DateTime) {
-      cols.push(col.Name);
+    if (toPropertyType(col.type) === QueryEditorPropertyType.DateTime) {
+      cols.push(col.name);
     }
     return cols;
   }, []);
@@ -265,8 +265,8 @@ export function defaultTimeSeriesColumns(expression: QueryExpression, tableColum
   }
 
   const valCols = tableColumns.reduce<string[]>((cols, col) => {
-    if (toPropertyType(col.Type) === QueryEditorPropertyType.Number) {
-      cols.push(col.Name);
+    if (toPropertyType(col.type) === QueryEditorPropertyType.Number) {
+      cols.push(col.name);
     }
     return cols;
   }, []);

@@ -1,4 +1,4 @@
-import { VariableModel } from '@grafana/data';
+import { VariableModel } from '@grafana/data'; 
 import { monacoTypes } from '@grafana/ui';
 import { LogshipFunctionSchema } from 'types';
 
@@ -6,14 +6,14 @@ const defaultTimeField = 'TimeGenerated';
 
 export function getFunctions(variables: VariableModel[]): Record<string, LogshipFunctionSchema> {
   const functions = {
-    $__timeFilter: {
+    "$__timeFilter": {
       Name: '$__timeFilter',
       Body: '{ true }',
       FunctionKind: 'Unknown',
       InputParameters: [
         {
-          Name: 'timeColumn',
-          Type: 'string',
+          name: 'timeColumn',
+          type: 'string',
           CslDefaultValue: '""',
         },
       ],
@@ -25,7 +25,7 @@ export function getFunctions(variables: VariableModel[]): Record<string, Logship
         ' column\n\n' +
         '- `$__timeFilter(datetimeColumn)` ->  Uses the specified datetime column to build the query.',
     },
-    $__from: {
+    "$__from": {
       Name: '$__from',
       Body: '{ datetime(2018-06-05T18:09:58.907Z) }',
       FunctionKind: 'Unknown',
@@ -37,7 +37,7 @@ export function getFunctions(variables: VariableModel[]): Record<string, Logship
       InputParameters: [],
       OutputColumns: [],
     },
-    $__to: {
+    "$__to": {
       Name: '$__to',
       Body: '{ datetime(2018-06-05T18:09:58.907Z) }',
       FunctionKind: 'Unknown',
@@ -49,7 +49,7 @@ export function getFunctions(variables: VariableModel[]): Record<string, Logship
       InputParameters: [],
       OutputColumns: [],
     },
-    $__timeInterval: {
+    "$__timeInterval": {
       Name: '$__timeInterval',
       Body: '{ 1s }',
       FunctionKind: 'Unknown',
@@ -62,7 +62,7 @@ export function getFunctions(variables: VariableModel[]): Record<string, Logship
       InputParameters: [],
       OutputColumns: [],
     },
-    $__contains: {
+    "$__contains": {
       Name: '$__contains',
       Body: `{ colName in ('value1','value2') }`,
       FunctionKind: 'Unknown',
@@ -74,13 +74,13 @@ export function getFunctions(variables: VariableModel[]): Record<string, Logship
         '[Grafana docs](https://grafana.com/grafana/plugins/grafana-grafana-logship-datasource/)',
       InputParameters: [
         {
-          Name: 'colName',
-          Type: 'string',
+          name: 'colName',
+          type: 'string',
           CslDefaultValue: 'colName',
         },
         {
-          Name: '$myVar',
-          Type: 'string',
+          name: '$myVar',
+          type: 'string',
           CslDefaultValue: '$myVar',
         },
       ],
@@ -103,8 +103,7 @@ export function getFunctions(variables: VariableModel[]): Record<string, Logship
 }
 
 export function getSignatureHelp(
-  model: monacoTypes.editor.ITextModel,
-  position: monacoTypes.Position
+  model: monacoTypes.editor.ITextModel, position: monacoTypes.Position, token: monacoTypes.CancellationToken, context: monacoTypes.languages.SignatureHelpContext
 ): monacoTypes.languages.ProviderResult<monacoTypes.languages.SignatureHelpResult> {
   // The current position is the position of the parenthesis `(`
   // So we need to get the function name using the previous character
@@ -114,7 +113,7 @@ export function getSignatureHelp(
     return { value: { activeParameter: 0, activeSignature: 0, signatures: [] }, dispose: () => {} };
   }
 
-  const signature: monaco.languages.SignatureHelp = {
+  const signature: monacoTypes.languages.SignatureHelp = {
     activeParameter: 0,
     activeSignature: 0,
     signatures: [

@@ -16,17 +16,17 @@ export async function refreshSchema(datasource: LogshipDataSource): Promise<Sche
   const schema = await datasource.getSchema();
   for (const database of [schema]) {
     databases.push({
-      label: database.Name,
-      value: database.Name,
+      label: database.name,
+      value: database.name,
     });
 
-    for (const table of Object.values(database.Tables)) {
+    for (const table of Object.values(database.tables)) {
       schemaMappingOptions.push({
         type: SchemaMappingType.table,
-        label: `${database.Name}/tables/${table.Name}`,
-        value: table.Name,
-        name: table.Name,
-        database: database.Name,
+        label: `${database.name}/tables/${table.name}`,
+        value: table.name,
+        name: table.name,
+        database: database.name,
       });
     }
   }

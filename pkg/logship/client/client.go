@@ -11,7 +11,7 @@ import (
 	// 100% compatible drop-in replacement of "encoding/json"
 	json "github.com/json-iterator/go"
 
-	"github.com/grafana/grafana-logship-datasource/pkg/logship/models"
+	"github.com/logsink/grafana-logship-datasource/pkg/logship/models"
 )
 
 type LogshipClient interface {
@@ -38,44 +38,19 @@ func New(instanceSettings *backend.DataSourceInstanceSettings, dsSettings *model
 
 // TestRequest handles a data source test request in Grafana's Datasource configuration UI.
 func (c *Client) TestRequest(ctx context.Context, datasourceSettings *models.DatasourceSettings, properties *models.Properties, additionalHeaders map[string]string) error {
-	req, err := http.NewRequestWithContext(ctx, "GET", datasourceSettings.ClusterURL+"/LS-Search-Query/api/tables/00000000-0000-0000-0000-000000000000", bytes.NewReader([]byte{}))
-	if err != nil {
-		return err
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-	for key, value := range additionalHeaders {
-		req.Header.Set(key, value)
-	}
-
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode/100 != 2 {
-		return fmt.Errorf("HTTP %q", resp.Status)
-	}
-
-	_, err = models.SchemaFromJSON(resp.Body)
-	if err != nil {
-		return fmt.Errorf("Failed to parse schema body %q: %s", resp.Status, err)
-	}
-
-	return nil
+	_, err := c.SchemaRequest(ctx, datasourceSettings.ClusterURL, additionalHeaders)
+	return err
 }
 
 func (c *Client) SchemaRequest(ctx context.Context, url string, additionalHeaders map[string]string) ([]models.TableSchema, error) {
-	buf := []byte{}
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, bytes.NewReader(buf))
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url+"/LS-Search-Query/api/tables/00000000-0000-0000-0000-000000000000", http.NoBody)
 	if err != nil {
 		return nil, fmt.Errorf("no request instance: %w", err)
 	}
 
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("x-ms-app", "Grafana-Logship")
+	// req.Header.Set("x-ms-app", "Grafana-Logship")
 	for key, value := range additionalHeaders {
 		req.Header.Set(key, value)
 	}
@@ -86,7 +61,7 @@ func (c *Client) SchemaRequest(ctx context.Context, url string, additionalHeader
 	}
 
 	defer resp.Body.Close()
-
+	backend.Logger.Error("Response %s      - - %s", resp.Request.URL, resp.StatusCode)
 	switch {
 	case resp.StatusCode == http.StatusUnauthorized:
 		// HTTP 401 has no error body
@@ -113,7 +88,7 @@ func (c *Client) KustoRequest(ctx context.Context, url string, payload models.Re
 		return nil, fmt.Errorf("failed to serialize request: %w", err)
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(buf))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url+"/LS-Search-Query/api/kusto", bytes.NewReader(buf))
 	if err != nil {
 		return nil, fmt.Errorf("no request instance: %w", err)
 	}

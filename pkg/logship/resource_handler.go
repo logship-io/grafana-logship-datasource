@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/grafana/grafana-logship-datasource/pkg/logship/models"
+	"github.com/logsink/grafana-logship-datasource/pkg/logship/models"
 )
 
 func (logship *LogshipBackend) registerRoutes(mux *http.ServeMux) {
@@ -18,23 +18,24 @@ func (logship *LogshipBackend) getSchema(rw http.ResponseWriter, req *http.Reque
 		return
 	}
 
-	headers := map[string]string{}
+	//headers := map[string]string{}
 
-	tables, err := logship.client.SchemaRequest(req.Context(), logship.settings.ClusterURL+"/LS-Search-Query/api/tables/00000000-0000-0000-0000-000000000000", headers)
-	if err != nil {
-		respondWithError(rw, http.StatusInternalServerError, "Schema query unsuccessful", err)
-		return
-	}
+	// tables, err := logship.client.SchemaRequest(req.Context(), logship.settings.ClusterURL, headers)
+	// if err != nil {
+	// 	respondWithError(rw, http.StatusInternalServerError, "Schema query unsuccessful", err)
+	// 	return
+	// }
 
-	result := models.DatabaseSchemaResponse{
-		Name:   "Default",
-		Tables: tables,
-	}
+	// result := models.DatabaseSchemaResponse{
+	// 	Name:   "Default",
+	// 	Tables: tables,
+	// }
 
 	rw.Header().Set("Content-Type", "application/json")
-	err = json.NewEncoder(rw).Encode(result)
+	err := json.NewEncoder(rw).Encode([]models.TableSchema{})
 	if err != nil {
-		rw.WriteHeader(http.StatusInternalServerError)
+		respondWithError(rw, http.StatusInternalServerError, "Internal server error", err)
+		// rw.WriteHeader(http.StatusInternalServerError)
 	}
 }
 

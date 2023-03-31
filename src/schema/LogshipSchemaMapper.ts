@@ -44,7 +44,7 @@ export class LogshipSchemaMapper {
   }
 
   getTableOptions(database: LogshipDatabaseSchema): QueryEditorPropertyDefinition[] {
-    if (!database || !database.Tables) {
+    if (!database || !database.tables) {
       return [];
     }
 
@@ -59,11 +59,11 @@ const filterAndMapToDefinition = (
 ): QueryEditorPropertyDefinition[] => {
   return mappings.reduce((all: QueryEditorPropertyDefinition[], mapping) => {
     if (mapping.type === SchemaMappingType.table) {
-      if (database.Tables[mapping.name]) {
-        console.log('if (database.Tables[mapping.name])', mapping);
+      // if (database.Tables[mapping.name]) {
+      //   console.log('if (database.Tables[mapping.name])', mapping);
         all.push(mappingToDefinition(mapping));
         return all;
-      }
+      // }
     }
 
     return all;
