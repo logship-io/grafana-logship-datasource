@@ -21,7 +21,6 @@ coverage
 
 # Compiled binary addons (https://nodejs.org/api/addons.html)
 dist/
-provisioning/
 artifacts/
 work/
 ci/
@@ -33,19 +32,3 @@ e2e-results/
 .idea
 
 .eslintcache
-
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
-.pnp.*
-.DS_Store
-.vscode
-coverage
-ci
-yarn.lock
-.d.ts
-.idea
-pkg/__debug_bin
