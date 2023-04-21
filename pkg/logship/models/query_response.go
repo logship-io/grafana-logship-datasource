@@ -87,6 +87,7 @@ var converterMap = map[string]data.FieldConverter{
 	"Dynamic":  dynamicConverter,
 	"DateTime": timeConverter,
 	"Int32":    intConverter,
+	"Int64":    longConverter,
 	"UInt64":   longConverter,
 	"real":     realConverter,
 	"Boolean":  boolConverter,
