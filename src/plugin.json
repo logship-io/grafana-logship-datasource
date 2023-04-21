@@ -5,6 +5,7 @@
   "id": "logsink-logship-datasource",
   "metrics": true,
   "backend": true,
+  "alerting": true,
   "executable": "gpx_logship_datasource",
   "info": {
     "description": "Logship integration and data source",

@@ -3,6 +3,7 @@ package models
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
@@ -41,6 +42,8 @@ func (d *DatasourceSettings) Load(config backend.DataSourceInstanceSettings) err
 			return fmt.Errorf("could not unmarshal DatasourceSettings json: %w", err)
 		}
 	}
+
+	d.ClusterURL = strings.TrimRight(d.ClusterURL, "/\\")
 
 	if d.QueryTimeoutRaw == "" {
 		d.QueryTimeout = time.Second * 30

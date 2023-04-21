@@ -35,6 +35,7 @@ export const RawQueryEditor: React.FC<RawQueryEditorProps> = (props) => {
         ...props.query,
         query: kql,
       });
+      console.log("query change: " + kql)
     }
   };
 
@@ -77,6 +78,7 @@ export const RawQueryEditor: React.FC<RawQueryEditorProps> = (props) => {
           language="kusto"
           value={query.query}
           onBlur={onRawQueryChange}
+          onChange={onRawQueryChange}
           showMiniMap={false}
           showLineNumbers={true}
           height="240px"

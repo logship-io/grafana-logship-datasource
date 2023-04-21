@@ -8,7 +8,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana-plugin-sdk-go/data"
 	jsoniter "github.com/json-iterator/go"
 )
@@ -73,7 +72,6 @@ func converterFrameForTable(t TableResponse, executedQueryString string) (*data.
 	}
 
 	for row_index, row := range t.Results {
-		backend.Logger.Info("Row %s", row)
 		for f_index, fname := range colNames {
 			fic.Set(f_index, row_index, row[fname])
 		}

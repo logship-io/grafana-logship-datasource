@@ -71,7 +71,7 @@ func NewDatasource(instanceSettings backend.DataSourceInstanceSettings) (instanc
 // QueryData is the primary method called by grafana-server
 func (logship *LogshipBackend) QueryData(ctx context.Context, req *backend.QueryDataRequest) (*backend.QueryDataResponse, error) {
 	//ctx = azusercontext.WithUserFromQueryReq(ctx, req)
-	backend.Logger.Debug("Query", "datasource", req.PluginContext.DataSourceInstanceSettings.Name)
+	backend.Logger.Info("Query", "datasource", req.PluginContext.DataSourceInstanceSettings.Name)
 
 	res := backend.NewQueryDataResponse()
 

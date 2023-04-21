@@ -29,6 +29,15 @@ type ErrorResponse struct {
 	} `json:"error"`
 }
 
+type WhoAmIResponse struct {
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+	NickName  string `json:"nickName"`
+	UserID    string `json:"userId"`
+	UserName  string `json:"userName"`
+	Email     string `json:"email"`
+}
+
 // Properties is a property bag of connection string options.
 type Properties struct {
 	Options *options `json:"options,omitempty"`

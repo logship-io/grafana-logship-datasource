@@ -1,4 +1,5 @@
 import {
+  CoreApp,
   DataFrame,
   DataQueryRequest,
   DataSourceInstanceSettings,
@@ -50,12 +51,19 @@ export class LogshipDataSource extends DataSourceWithBackend<KustoQuery, Logship
     this.templateSrv = getTemplateSrv();
     this.defaultOrFirstDatabase = instanceSettings.jsonData.defaultDatabase;
     this.url = instanceSettings.url;
-    this.defaultEditorMode = instanceSettings.jsonData.defaultEditorMode ?? EditorMode.Visual;
+    this.defaultEditorMode = EditorMode.Raw;// instanceSettings.jsonData.defaultEditorMode ?? EditorMode.Raw;
     this.schemaMapper = new LogshipSchemaMapper(useSchemaMapping, schemaMapping);
     this.expressionParser = new KustoExpressionParser(this.templateSrv);
     this.parseExpression = this.parseExpression.bind(this);
     this.autoCompleteQuery = this.autoCompleteQuery.bind(this);
     this.getSchemaMapper = this.getSchemaMapper.bind(this);
+  }
+
+  getDefaultQuery(app: CoreApp): Partial<KustoQuery> {
+    return {
+       query: "Logship.Agent.Uptime \n\t| where timestamp > ago(1h) \n\t| project value, timestamp, interval, machine, startTime \n\t| limit 100",
+       queryType: "raw"
+    };
   }
 
   /**
@@ -143,6 +151,7 @@ export class LogshipDataSource extends DataSourceWithBackend<KustoQuery, Logship
     }
 
     return this.getDatabases().then((databases) => {
+      console.log(databases)
       this.defaultOrFirstDatabase = databases[0].value;
       return this.defaultOrFirstDatabase;
     });
