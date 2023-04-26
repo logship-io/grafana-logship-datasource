@@ -18,25 +18,26 @@ func (logship *LogshipBackend) getSchema(rw http.ResponseWriter, req *http.Reque
 		return
 	}
 
-	//headers := map[string]string{}
+	headers := map[string]string{}
 
-	// tables, err := logship.client.SchemaRequest(req.Context(), logship.settings.ClusterURL, headers)
-	// if err != nil {
-	// 	respondWithError(rw, http.StatusInternalServerError, "Schema query unsuccessful", err)
-	// 	return
-	// }
+	tables, err := logship.client.SchemaRequest(req.Context(), logship.settings.ClusterURL, headers)
+	if err != nil {
+		respondWithError(rw, http.StatusInternalServerError, "Schema query unsuccessful", err)
+		return
+	}
 
-	// result := models.DatabaseSchemaResponse{
-	// 	Name:   "Default",
-	// 	Tables: tables,
-	// }
-
+	result := models.DatabaseSchemaResponse{
+		Name:   "Default",
+		Tables: tables,
+	}
+	
 	rw.Header().Set("Content-Type", "application/json")
-	err := json.NewEncoder(rw).Encode([]models.TableSchema{})
+	err = json.NewEncoder(rw).Encode(result)
 	if err != nil {
 		respondWithError(rw, http.StatusInternalServerError, "Internal server error", err)
 		// rw.WriteHeader(http.StatusInternalServerError)
 	}
+
 }
 
 func (logship *LogshipBackend) getDatabases(rw http.ResponseWriter, req *http.Request) {

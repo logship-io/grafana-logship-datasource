@@ -8,6 +8,7 @@ import { LogshipDataSourceOptions, KustoQuery, LogshipDatabaseSchema } from 'typ
 import { cloneDeep } from 'lodash';
 
 import { getSignatureHelp } from './Suggestions';
+import { TableList } from './TableList';
 
 type Props = QueryEditorProps<LogshipDataSource, KustoQuery, LogshipDataSourceOptions>;
 
@@ -23,7 +24,7 @@ interface Worker {
 }
 
 export const RawQueryEditor: React.FC<RawQueryEditorProps> = (props) => {
-  const { query, schema } = props;
+  const { query, schema, onChange } = props;
   const [worker, setWorker] = useState<Worker>();
   const [variables] = useState(getTemplateSrv().getVariables());
   const [stateSchema, setStateSchema] = useState(cloneDeep(schema));
@@ -73,7 +74,21 @@ export const RawQueryEditor: React.FC<RawQueryEditorProps> = (props) => {
 
   return (
     <div>
-      <div data-testid={selectors.components.queryEditor.codeEditor.container}>
+      <span data-testid={selectors.components.queryEditor.codeEditor.container}>
+        <span style={{
+          width: "20%",
+          float: 'left',
+          height: '240px',
+          overflowX: 'hidden',
+          overflowY: 'scroll',
+          paddingRight: '5px',
+          }}>
+          <TableList {...props} schema={schema} onChange={onChange} />
+        </span>
+        <span style={{
+          width: '80%',
+          float: 'left',
+        }}>
         <CodeEditor
           language="kusto"
           value={query.query}
@@ -83,8 +98,9 @@ export const RawQueryEditor: React.FC<RawQueryEditorProps> = (props) => {
           showLineNumbers={true}
           height="240px"
           onEditorDidMount={handleEditorMount}
-        />
-      </div>
+        /></span>
+        <div style={{ clear: 'both' }} />
+      </span>
     </div>
   );
 };

@@ -20,7 +20,7 @@ export interface QueryEditorHeaderProps {
 
 const EDITOR_MODES = [
   { label: 'KQL', value: EditorMode.Raw },
-  { label: 'Builder', value: EditorMode.Visual },
+  //{ label: 'Builder', value: EditorMode.Visual },
 ];
 
 const EDITOR_FORMATS: Array<SelectableValue<string>> = [
@@ -34,17 +34,17 @@ const logshipTimeFormat: SelectableValue<string> = {
 };
 
 export const QueryHeader = (props: QueryEditorHeaderProps) => {
-  const { query, onChange, dirty, setDirty, onRunQuery } = props;
+  const { query, onChange, setDirty, onRunQuery } = props;
   const { rawMode } = query;
   const [formats, setFormats] = useState(EDITOR_FORMATS);
   const [showWarning, setShowWarning] = useState(false);
 
   const changeEditorMode = (value: EditorMode) => {
-    if (value === EditorMode.Visual && dirty) {
-      setShowWarning(true);
-    } else {
-      onChange({ ...query, rawMode: value === EditorMode.Raw });
-    }
+    // if (value === EditorMode.Visual && dirty) {
+    //   setShowWarning(true);
+    // } else {
+      onChange({ ...query, rawMode: true }); //value === EditorMode.Raw });
+    // }
   };
 
   useEffect(() => {

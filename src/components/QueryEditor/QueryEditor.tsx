@@ -17,10 +17,6 @@ export const QueryEditor: React.FC<Props> = (props) => {
   const schema = useAsync(() => datasource.getSchema(true), [datasource.id]);
   const templateVariables = useTemplateVariables(datasource);
   const [dirty, setDirty] = useState(false);
-  const dbSchema = {
-    Name: 'Default',
-    Tables: schema.value
-  }
 
   useEffectOnce(() => {
     let processedQuery = query;
@@ -40,29 +36,31 @@ export const QueryEditor: React.FC<Props> = (props) => {
 
   return (
     <>
-      {schema.error && <Alert title="Could not load datasource schema">{parseSchemaError(schema.error)}</Alert>}
-      
-      <QueryHeader
-        query={query}
-        onChange={onChange}
-        schema={schema}
-        datasource={datasource}
-        dirty={dirty}
-        setDirty={setDirty}
-        onRunQuery={onRunQuery}
-      />
-      <RawQueryEditor
-          {...props}
-          schema={dbSchema.Tables}
-          database={query.database}
-          templateVariableOptions={templateVariables}
-          setDirty={() => !dirty && setDirty(true)}
+      { schema.error && <Alert title="Could not load datasource schema">{parseSchemaError(schema.error)}</Alert> }
+        <QueryHeader
+          query={query}
+          onChange={onChange}
+          schema={schema}
+          datasource={datasource}
+          dirty={dirty}
+          setDirty={setDirty}
+          onRunQuery={onRunQuery}
         />
+        <RawQueryEditor
+            {...props}
+            schema={schema.value}
+            database={query.database}
+            templateVariableOptions={templateVariables}
+            setDirty={() => !dirty && setDirty(true)}
+          />
     </>
   );
 };
 
-function parseSchemaError(error: Error) {
+function parseSchemaError(error?: Error) {
+  if (error === undefined) {
+    error = Error("Invalid error output. Error undefined");
+  }
   // error may be an object with a message
   return get(error, 'data.Message', String(error));
 }
