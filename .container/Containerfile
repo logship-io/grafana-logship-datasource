@@ -41,6 +41,7 @@ RUN mage -v
 
 FROM docker.io/grafana/${grafana_image}:${grafana_version} as app
 COPY --from=build /app/dist /var/lib/grafana/plugins/logship-datasource
+COPY ./provisioning/* /etc/grafana/provisioning
 
 # Make it as simple as possible to access the grafana instance for development purposes
 # Do NOT enable these settings in a public facing / production grafana instance
