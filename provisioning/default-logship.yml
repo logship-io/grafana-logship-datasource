@@ -1,0 +1,12 @@
+- name: Logship
+  type: logsink-logship-datasource
+  typeName: Logship
+  typeLogoUrl: public/plugins/logsink-logship-datasource/img/logo.svg
+  access: proxy
+  basicAuth: false
+  isDefault: true
+  jsonData:
+    clusterUrl: http://try.logship.ai:5000/
+    dataConsistency: strongconsistency
+    defaultEditorMode: raw
+  readOnly: false

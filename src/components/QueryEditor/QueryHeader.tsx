@@ -33,8 +33,9 @@ const logshipTimeFormat: SelectableValue<string> = {
   value: FormatOptions.logshipTimeSeries,
 };
 
+
 export const QueryHeader = (props: QueryEditorHeaderProps) => {
-  const { query, onChange, setDirty, onRunQuery } = props;
+  const { query, schema, onChange, setDirty, onRunQuery } = props;
   const { rawMode } = query;
   const [formats, setFormats] = useState(EDITOR_FORMATS);
   const [showWarning, setShowWarning] = useState(false);
@@ -46,6 +47,15 @@ export const QueryHeader = (props: QueryEditorHeaderProps) => {
       onChange({ ...query, rawMode: true }); //value === EditorMode.Raw });
     // }
   };
+
+  useEffect(() => {
+    if (schema.loading) {
+      console.log("loading schema");
+    }
+    else if (schema.value) {
+      console.log("done loading schema");
+    }
+  });
 
   useEffect(() => {
     if (rawMode) {

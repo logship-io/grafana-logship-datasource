@@ -10,5 +10,5 @@ services:
     ports:
       - 2345:2345/tcp
     volumes:
-      # - ./dist:/var/lib/grafana/plugins/logsink-logship-datasource
+      - ./dist:/var/lib/grafana/plugins/logsink-logship-datasource
       - ./provisioning:/etc/grafana/provisioning
