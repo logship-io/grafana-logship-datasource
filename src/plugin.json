@@ -2,7 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/grafana/grafana/master/docs/sources/developers/plugins/plugin.schema.json",
   "type": "datasource",
   "name": "Logship",
-  "id": "logsink-logship-datasource",
+  "id": "logship-datasource",
   "metrics": true,
   "backend": true,
   "alerting": true,

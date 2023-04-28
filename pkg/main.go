@@ -6,6 +6,7 @@ import (
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/datasource"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
+
 	// "github.com/logsink/grafana-logship-datasource/pkg/plugin"
 	"github.com/logsink/grafana-logship-datasource/pkg/logship"
 )
@@ -19,16 +20,15 @@ func main() {
 	// from Grafana to create different instances of SampleDatasource (per datasource
 	// ID). When datasource configuration changed Dispose method will be called and
 	// new datasource instance created using NewSampleDatasource factory.
-	
-	
+
 	// if err := datasource.Manage("logsink-logship-datasource", plugin.NewDatasource, datasource.ManageOpts{}); err != nil {
 	// 	log.DefaultLogger.Error(err.Error())
 	// 	os.Exit(1)
 	// }
 
-	backend.SetupPluginEnvironment("logsink-logship-datasource")
+	backend.SetupPluginEnvironment("logship-datasource")
 
-	if err := datasource.Manage("logsink-logship-datasource", logship.NewDatasource, datasource.ManageOpts{}); err != nil {
+	if err := datasource.Manage("logship-datasource", logship.NewDatasource, datasource.ManageOpts{}); err != nil {
 		log.DefaultLogger.Error(err.Error())
 		os.Exit(1)
 	}

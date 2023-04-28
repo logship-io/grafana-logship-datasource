@@ -151,6 +151,10 @@ func (logship *LogshipBackend) modelQuery(ctx context.Context, q models.QueryMod
 		return backend.DataResponse{}, err
 	}
 
+	if q.Format == "" {
+		q.Format = "table"
+	}
+
 	var resp backend.DataResponse
 	switch q.Format {
 	case "table":
