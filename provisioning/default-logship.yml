@@ -6,7 +6,7 @@
   basicAuth: false
   isDefault: true
   jsonData:
-    clusterUrl: http://try.logship.ai:5000/
+    clusterUrl: http://localhost:5000/
     dataConsistency: strongconsistency
     defaultEditorMode: raw
   readOnly: false
