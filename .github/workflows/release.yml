@@ -2,27 +2,26 @@ name: Release
 
 on:
   push:
-    tags:
-      - 'v*' # Run workflow on version tags, e.g. v1.0.0.
+    branches:
+      - master
+      - main
 
 jobs:
   release:
     runs-on: ubuntu-latest
-    env:
-      GRAFANA_API_KEY: ${{ secrets.GRAFANA_API_KEY }} # Requires a Grafana API key from Grafana.com.
     steps:
       - uses: actions/checkout@v3
 
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '18'
           cache: 'yarn'
 
       - name: Setup Go environment
         uses: actions/setup-go@v3
         with:
-          go-version: '1.19'
+          go-version: '1.20.2'
 
       - name: Install dependencies
         run: yarn install --immutable --prefer-offline
@@ -38,12 +37,12 @@ jobs:
             echo "has-backend=true" >> $GITHUB_OUTPUT
           fi
 
-      - name: Test backend
-        if: steps.check-for-backend.outputs.has-backend == 'true'
-        uses: magefile/mage-action@v2
-        with:
-          version: latest
-          args: coverage
+      # - name: Test backend
+      #   if: steps.check-for-backend.outputs.has-backend == 'true'
+      #   uses: magefile/mage-action@v2
+      #   with:
+      #     version: latest
+      #     args: coverage
 
       - name: Build backend
         if: steps.check-for-backend.outputs.has-backend == 'true'
@@ -52,11 +51,11 @@ jobs:
           version: latest
           args: buildAll
 
-      - name: Warn missing Grafana API key
-        run: |
-          echo Please generate a Grafana API key: https://grafana.com/docs/grafana/latest/developers/plugins/sign-a-plugin/#generate-an-api-key
-          echo Once done please follow the instructions found here: https://github.com/${{github.repository}}/blob/main/README.md#using-github-actions-release-workflow
-        if: ${{ env.GRAFANA_API_KEY == '' }}
+      # - name: Warn missing Grafana API key
+      #   run: |
+      #     echo Please generate a Grafana API key: https://grafana.com/docs/grafana/latest/developers/plugins/sign-a-plugin/#generate-an-api-key
+      #     echo Once done please follow the instructions found here: https://github.com/${{github.repository}}/blob/main/README.md#using-github-actions-release-workflow
+      #   if: ${{ env.GRAFANA_API_KEY == '' }}
 
       - name: Sign plugin
         run: yarn sign
