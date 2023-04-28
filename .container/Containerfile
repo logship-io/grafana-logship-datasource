@@ -32,12 +32,10 @@ RUN . $NVM_DIR/nvm.sh && nvm install $NODE_VERSION && nvm alias default $NODE_VE
 
 FROM build-env as build
 WORKDIR /app
-COPY package.json package.json
-COPY go.mod go.mod
-RUN yarn install && go mod tidy
 COPY . .
-RUN yarn build
+RUN yarn && yarn install && go mod tidy
 RUN mage -v
+RUN yarn build
 
 FROM docker.io/grafana/${grafana_image}:${grafana_version} as app
 COPY --from=build /app/dist /var/lib/grafana/plugins/logship-datasource
