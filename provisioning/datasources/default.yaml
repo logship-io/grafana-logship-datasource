@@ -4,6 +4,6 @@ datasources:
     type: logship-datasource
     isDefault: true
     jsonData:
-      clusterUrl: http://localhost:5000/
+      clusterUrl: http://try.logship.ai:5000/
       dataConsistency: strongconsistency
       defaultEditorMode: raw
