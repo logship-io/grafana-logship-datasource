@@ -39,23 +39,17 @@ export const QueryHeader = (props: QueryEditorHeaderProps) => {
   const { rawMode } = query;
   const [formats, setFormats] = useState(EDITOR_FORMATS);
   const [showWarning, setShowWarning] = useState(false);
+  const [schemaLoaded, setSchemaLoaded] = useState(false);
 
   const changeEditorMode = (value: EditorMode) => {
-    // if (value === EditorMode.Visual && dirty) {
-    //   setShowWarning(true);
-    // } else {
-      onChange({ ...query, rawMode: true }); //value === EditorMode.Raw });
-    // }
+      onChange({ ...query, rawMode: true });
   };
-
+  query.rawMode = true;
   useEffect(() => {
-    if (schema.loading) {
-      console.log("loading schema");
+    if (schema.value && !schemaLoaded) {
+      setSchemaLoaded(true);
     }
-    else if (schema.value) {
-      console.log("done loading schema");
-    }
-  });
+  }, [schema.value, schemaLoaded]);
 
   useEffect(() => {
     if (rawMode) {
@@ -74,7 +68,6 @@ export const QueryHeader = (props: QueryEditorHeaderProps) => {
       onChange({ ...query, resultFormat: 'time_series' });
     }
   }, [query, formats, onChange, rawMode]);
-
   return (
     <EditorHeader>
       <ConfirmModal

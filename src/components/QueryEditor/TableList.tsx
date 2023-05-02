@@ -1,9 +1,9 @@
 import { QueryEditorProps, SelectableValue } from '@grafana/data';
-import { Label, List } from '@grafana/ui';
+import { Label, List, useTheme2 } from '@grafana/ui';
 import React from 'react';
 import { LogshipDataSourceOptions as LogshipDataSourceOptions, KustoQuery, LogshipDatabaseSchema, LogshipTableSchema, EditorMode, LogshipColumnSchema } from 'types';
-
 import { LogshipDataSource } from '../../datasource';
+
 type Props = QueryEditorProps<LogshipDataSource, KustoQuery, LogshipDataSourceOptions>;
 
 interface TableListProps extends Props {
@@ -16,9 +16,10 @@ export const TableList: React.FC<TableListProps> = ({
     query,
     onChange,
   }) => {
-
+  const theme = useTheme2();
   const tableDefaultQuery = (t: LogshipTableSchema) => {
     let cols: LogshipColumnSchema[] = [];
+    
     let timestamp = t.columns.find(c => c.type === 'DateTime');
     if (timestamp !== undefined) {
         let temp = [timestamp];
@@ -39,9 +40,12 @@ export const TableList: React.FC<TableListProps> = ({
   };
 
   const tableRenderer = (t: LogshipTableSchema) => {
+    const borderColor = theme.colors.text.secondary;
     return <>
         <li style={{
-            marginBottom: '2px',
+            marginBottom: '5px',
+            borderBottom: '1px inset',
+            borderColor: borderColor,
             cursor: 'pointer',
         }} onClick={() => {
             query = {

@@ -61,7 +61,7 @@ export class LogshipDataSource extends DataSourceWithBackend<KustoQuery, Logship
 
   getDefaultQuery(app: CoreApp): Partial<KustoQuery> {
     return {
-       query: "Logship.Agent.Uptime \n\t| where timestamp > ago(1h) \n\t| project value, timestamp, interval, machine, startTime \n\t| limit 100",
+       query: '',
        queryType: "raw"
     };
   }
@@ -70,7 +70,7 @@ export class LogshipDataSource extends DataSourceWithBackend<KustoQuery, Logship
    * Return true if it should execute
    */
   filterQuery(target: KustoQuery): boolean {
-    if (target.hide || !target.query) {
+    if (target.hide || !target.query || target.query.trim() === '') {
       return false;
     }
     if (typeof target.rawMode === 'undefined' && target.query) {

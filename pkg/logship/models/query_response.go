@@ -291,9 +291,9 @@ func ToLogshipTimeSeries(in *data.Frame) (*data.Frame, error) {
 		case "string":
 			labelColIdxs = append(labelColIdxs, fieldIdx)
 		case "dynamic":
-			if field.Name == "Timestamp" {
+			if field.Name == "timestamp" {
 				if foundTime {
-					return nil, fmt.Errorf("must be exactly one column named 'Timestamp', but response has more than one")
+					return nil, fmt.Errorf("must be exactly one column named 'timestamp', but response has more than one")
 				}
 				foundTime = true
 				timeColIdx = fieldIdx
@@ -305,7 +305,7 @@ func ToLogshipTimeSeries(in *data.Frame) (*data.Frame, error) {
 	}
 
 	if timeColIdx == -1 {
-		return nil, fmt.Errorf("response must have a column named 'Timestamp'")
+		return nil, fmt.Errorf("response must have a column named 'timestamp'")
 	}
 	if len(valueColIdxs) < 1 {
 		return nil, fmt.Errorf("did not find a numeric value column, expected at least one column of type 'dynamic', got %v", len(valueColIdxs))
@@ -325,7 +325,7 @@ func ToLogshipTimeSeries(in *data.Frame) (*data.Frame, error) {
 				return nil, err
 			}
 			expectedRowLen = len(times)
-			out.Fields = append(out.Fields, data.NewField("Timestamp", nil, times))
+			out.Fields = append(out.Fields, data.NewField("timestamp", nil, times))
 		}
 
 		// Build the labels for the series from the row

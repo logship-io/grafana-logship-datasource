@@ -48,7 +48,7 @@ export const QueryEditor: React.FC<Props> = (props) => {
         />
         <RawQueryEditor
             {...props}
-            schema={schema.value}
+            schema={schema}
             database={query.database}
             templateVariableOptions={templateVariables}
             setDirty={() => !dirty && setDirty(true)}
