@@ -1,16 +1,13 @@
 import { css } from '@emotion/css';
 import { GrafanaTheme2, QueryEditorProps, SelectableValue } from '@grafana/data';
-import { config } from '@grafana/runtime';
-import { CodeEditor, Icon, Monaco, MonacoEditor, useStyles2 } from '@grafana/ui';
+import { Icon, useStyles2 } from '@grafana/ui';
 import { QueryEditorResultFormat, selectResultFormat } from './QueryEditorResultFormat';
 import { LogshipDataSource } from 'datasource';
-import { KustoMonacoEditor } from 'monaco/KustoMonacoEditor';
 import React, { useState } from 'react';
-import { gte, valid, coerce } from 'semver';
-import { selectors } from 'test/selectors';
+
 import { LogshipDataSourceOptions, KustoQuery, LogshipDatabaseSchema } from 'types';
 
-import { getSignatureHelp } from '../QueryEditor/Suggestions';
+// import { LogshipMonacoEditor } from 'monaco/LogshipMonacoEditor';
 
 type Props = QueryEditorProps<LogshipDataSource, KustoQuery, LogshipDataSourceOptions>;
 
@@ -24,50 +21,40 @@ interface RawQueryEditorProps extends Props {
   templateVariableOptions: SelectableValue<string>;
 }
 
-const defaultQuery = [
-  '//change this to create your own time series query',
-  '',
-  '<table name>',
-  '| where $__timeFilter(Timestamp)',
-  '// | summarize count() by <group by column>, bin(Timestamp, $__timeInterval)',
-  '// | order by Timestamp asc',
-].join('\n');
+// const defaultQuery = [
+//   '//change this to create your own time series query',
+//   '',
+//   '<table name>',
+//   '| where $__timeFilter(Timestamp)',
+//   '// | summarize count() by <group by column>, bin(Timestamp, $__timeInterval)',
+//   '// | order by Timestamp asc',
+// ].join('\n');
 
 interface Worker {
   setSchemaFromShowSchema: (schema: LogshipDatabaseSchema, url: string, database: string) => void;
 }
 
-// Since Grafana 8.5, the query editor includes a version of the Monaco editor for Kusto
-// that includes fixes required for auto-completion to work.
-// Remove this code once Grafana 8.5 is the minimal version supported
-function gtGrafana8_5() {
-  const version = config.buildInfo.version;
-  const isValid = valid(version);
-  // Assume that a security release will be of the form 'w.x.y.z' - Pre releases of the form 'w.x.y-pre.z' are already valid
-  const isSecurityRelease = version.split('.').length > 3;
-  if (!isValid && isSecurityRelease) {
-    // Coerce will drop the z in 'w.x.y.z' leaving just the major-minor-patch version
-    const coercedValue = coerce(version);
-    return coercedValue ? gte(coercedValue, '8.5.0') : null;
-  }
-  return isValid && gte(version, '8.5.0');
-}
+// // Since Grafana 8.5, the query editor includes a version of the Monaco editor for Kusto
+// // that includes fixes required for auto-completion to work.
+// // Remove this code once Grafana 8.5 is the minimal version supported
+// function gtGrafana8_5() {
+//   const version = config.buildInfo.version;
+//   const isValid = valid(version);
+//   // Assume that a security release will be of the form 'w.x.y.z' - Pre releases of the form 'w.x.y-pre.z' are already valid
+//   const isSecurityRelease = version.split('.').length > 3;
+//   if (!isValid && isSecurityRelease) {
+//     // Coerce will drop the z in 'w.x.y.z' leaving just the major-minor-patch version
+//     const coercedValue = coerce(version);
+//     return coercedValue ? gte(coercedValue, '8.5.0') : null;
+//   }
+//   return isValid && gte(version, '8.5.0');
+// }
 
 export const RawQueryEditor: React.FC<RawQueryEditorProps> = (props) => {
   const [showLastQuery, setShowLastQuery] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
-  const [_, setWorker] = useState<Worker>();
+  const [_, _setWorker] = useState<Worker>();
 
-  const onRawQueryChange = (kql: string) => {
-    const resultFormat = selectResultFormat(props.query.resultFormat, true);
-
-    props.onChange({
-      ...props.query,
-      query: kql,
-      database: props.database,
-      resultFormat,
-    });
-  };
 
   const onChangeResultFormat = (format: string) => {
     props.onChange({
@@ -76,27 +63,10 @@ export const RawQueryEditor: React.FC<RawQueryEditorProps> = (props) => {
     });
   };
 
-  const { query, datasource, lastQueryError, lastQuery, timeNotASC, schema } = props;
+  const { query, lastQueryError, lastQuery, timeNotASC, schema } = props;
   const resultFormat = selectResultFormat(query.resultFormat, true);
-  const baseUrl = `${config.appSubUrl}/${datasource.meta.baseUrl}`;
 
   const styles = useStyles2(getStyles);
-
-  const handleEditorMount = (editor: MonacoEditor, monaco: Monaco) => {
-    monaco.languages.registerSignatureHelpProvider('kusto', {
-      signatureHelpTriggerCharacters: ['(', ')'],
-      provideSignatureHelp: getSignatureHelp,
-    });
-    monaco.languages['kusto']
-      .getKustoWorker()
-      .then((kusto) => {
-        const model = editor.getModel();
-        return model && kusto(model.uri);
-      })
-      .then((worker) => {
-        setWorker(worker);
-      });
-  };
 
   if (!schema) {
     return null;
@@ -104,7 +74,7 @@ export const RawQueryEditor: React.FC<RawQueryEditorProps> = (props) => {
 
   return (
     <div>
-      {gtGrafana8_5() ? (
+      {/* {gtGrafana8_5() ? (
         <div data-testid={selectors.components.queryEditor.codeEditor.container}>
           <CodeEditor
             language="kusto"
@@ -118,7 +88,7 @@ export const RawQueryEditor: React.FC<RawQueryEditorProps> = (props) => {
         </div>
       ) : (
         <div data-testid={selectors.components.queryEditor.codeEditorLegacy.container}>
-          <KustoMonacoEditor
+          <LogshipMonacoEditor
             defaultTimeField="Timestamp"
             pluginBaseUrl={baseUrl}
             content={query.query || defaultQuery}
@@ -127,7 +97,7 @@ export const RawQueryEditor: React.FC<RawQueryEditorProps> = (props) => {
             onExecute={props.onRunQuery}
           />
         </div>
-      )}
+      )} */}
 
       <div className={styles.toolbar}>
         <QueryEditorResultFormat
