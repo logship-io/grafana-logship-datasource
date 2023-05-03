@@ -51,7 +51,6 @@ export const TableList: React.FC<TableListProps> = ({
             query = {
                 ...query,
                 query: tableDefaultQuery(t),
-                rawMode: true,
                 querySource: EditorMode.Raw,
             };
             onChange(query);

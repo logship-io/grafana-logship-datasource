@@ -28,23 +28,16 @@ const EDITOR_FORMATS: Array<SelectableValue<string>> = [
   { label: 'Time series', value: FormatOptions.timeSeries },
 ];
 
-const logshipTimeFormat: SelectableValue<string> = {
-  label: 'Logship Time series',
-  value: FormatOptions.logshipTimeSeries,
-};
-
 
 export const QueryHeader = (props: QueryEditorHeaderProps) => {
   const { query, schema, onChange, setDirty, onRunQuery } = props;
-  const { rawMode } = query;
-  const [formats, setFormats] = useState(EDITOR_FORMATS);
+  const [formats, _setFormats] = useState(EDITOR_FORMATS);
   const [showWarning, setShowWarning] = useState(false);
   const [schemaLoaded, setSchemaLoaded] = useState(false);
 
   const changeEditorMode = (value: EditorMode) => {
-      onChange({ ...query, rawMode: true });
+      onChange({ ...query, });
   };
-  query.rawMode = true;
   useEffect(() => {
     if (schema.value && !schemaLoaded) {
       setSchemaLoaded(true);
@@ -52,22 +45,11 @@ export const QueryHeader = (props: QueryEditorHeaderProps) => {
   }, [schema.value, schemaLoaded]);
 
   useEffect(() => {
-    if (rawMode) {
-      setFormats(EDITOR_FORMATS.concat(logshipTimeFormat));
-    } else {
-      setFormats(EDITOR_FORMATS);
-    }
-  }, [rawMode]);
-
-  useEffect(() => {
     if (!query.resultFormat) {
       onChange({ ...query, resultFormat: 'table' });
     }
-    if (query.resultFormat === logshipTimeFormat.value && !rawMode) {
-      // Fallback to Time Series since time_series_logship_series is not available when not in rawMode
-      onChange({ ...query, resultFormat: 'time_series' });
-    }
-  }, [query, formats, onChange, rawMode]);
+    
+  }, [query, formats, onChange]);
   return (
     <EditorHeader>
       <ConfirmModal
@@ -77,7 +59,7 @@ export const QueryHeader = (props: QueryEditorHeaderProps) => {
         confirmText="Confirm"
         onConfirm={() => {
           setShowWarning(false);
-          onChange({ ...query, rawMode: false });
+          onChange({ ...query, });
           setDirty(false);
         }}
         onDismiss={() => {
@@ -105,7 +87,7 @@ export const QueryHeader = (props: QueryEditorHeaderProps) => {
       <RadioButtonGroup
         size="sm"
         options={EDITOR_MODES}
-        value={query.rawMode ? EditorMode.Raw : EditorMode.Visual}
+        value={EditorMode.Raw}
         onChange={changeEditorMode}
       />
     </EditorHeader>

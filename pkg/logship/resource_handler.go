@@ -30,12 +30,11 @@ func (logship *LogshipBackend) getSchema(rw http.ResponseWriter, req *http.Reque
 		Name:   "Default",
 		Tables: tables,
 	}
-	
+
 	rw.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(rw).Encode(result)
 	if err != nil {
 		respondWithError(rw, http.StatusInternalServerError, "Internal server error", err)
-		// rw.WriteHeader(http.StatusInternalServerError)
 	}
 
 }

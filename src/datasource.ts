@@ -6,28 +6,22 @@ import {
   MetricFindValue,
   ScopedVar,
   ScopedVars,
-  TimeRange,
 } from '@grafana/data';
 import { BackendSrv, DataSourceWithBackend, getBackendSrv, getTemplateSrv, TemplateSrv } from '@grafana/runtime';
 import { firstStringFieldToMetricFindValue } from 'common/responseHelpers';
 import { QueryEditorPropertyType } from './schema/types';
-import { KustoExpressionParser, escapeColumn } from 'KustoExpressionParser';
 import { map } from 'lodash';
 import { cache } from 'schema/cache';
 import { toPropertyType } from 'schema/mapper';
-
-import { migrateAnnotation } from './migrations/annotation';
 import interpolateKustoQuery from './query_builder';
 import { DatabaseItem, KustoDatabaseList, ResponseParser } from './response_parser';
 import {
   LogshipColumnSchema,
   LogshipDataSourceOptions as LogshipDataSourceOptions,
   LogshipSchemaDefinition,
-  AutoCompleteQuery,
   defaultQuery,
   EditorMode,
   KustoQuery,
-  QueryExpression,
   LogshipDatabaseSchema,
 } from './types';
 import { LogshipSchemaMapper } from 'schema/LogshipSchemaMapper';
@@ -37,7 +31,6 @@ export class LogshipDataSource extends DataSourceWithBackend<KustoQuery, Logship
   private templateSrv: TemplateSrv;
   private defaultOrFirstDatabase: string;
   private url?: string;
-  private expressionParser: KustoExpressionParser;
   private defaultEditorMode: EditorMode;
   private schemaMapper: LogshipSchemaMapper;
 
@@ -53,9 +46,6 @@ export class LogshipDataSource extends DataSourceWithBackend<KustoQuery, Logship
     this.url = instanceSettings.url;
     this.defaultEditorMode = EditorMode.Raw;// instanceSettings.jsonData.defaultEditorMode ?? EditorMode.Raw;
     this.schemaMapper = new LogshipSchemaMapper(useSchemaMapping, schemaMapping);
-    this.expressionParser = new KustoExpressionParser(this.templateSrv);
-    this.parseExpression = this.parseExpression.bind(this);
-    this.autoCompleteQuery = this.autoCompleteQuery.bind(this);
     this.getSchemaMapper = this.getSchemaMapper.bind(this);
   }
 
@@ -73,22 +63,7 @@ export class LogshipDataSource extends DataSourceWithBackend<KustoQuery, Logship
     if (target.hide || !target.query || target.query.trim() === '') {
       return false;
     }
-    if (typeof target.rawMode === 'undefined' && target.query) {
-      return true;
-    }
-    if (target.rawMode) {
-      return true; // anything else we can check
-    }
 
-    const tableExpr = target.expression?.from;
-    if (!tableExpr) {
-      return false;
-    }
-
-    const table = tableExpr.property?.name;
-    if (!table) {
-      return false; // Don't execute things without a table selected
-    }
     return true;
   }
 
@@ -105,10 +80,6 @@ export class LogshipDataSource extends DataSourceWithBackend<KustoQuery, Logship
       database: this.templateSrv.replace(target.database, scopedVars),
     };
   }
-
-  annotations = {
-    prepareAnnotation: migrateAnnotation,
-  };
 
   async metricFindQuery(query: string, optionalOptions: any): Promise<MetricFindValue[]> {
     const databasesQuery = query.match(/^databases\(\)/i);
@@ -186,40 +157,6 @@ export class LogshipDataSource extends DataSourceWithBackend<KustoQuery, Logship
     return functionSchemaParser(response?.data as DataFrame[]);
   }
 
-  async getDynamicSchema(
-    database: string,
-    source: string,
-    columns: string[]
-  ): Promise<Record<string, LogshipColumnSchema[]>> {
-    if (!database || !source || !Array.isArray(columns) || columns.length === 0) {
-      return {};
-    }
-    const queryParts: string[] = [];
-
-    const take = 'take 50000';
-    const where = `where ${columns.map((column) => `isnotnull(${escapeColumn(column)})`).join(' and ')}`;
-    const project = `project ${columns.map((column) => escapeColumn(column)).join(', ')}`;
-    const summarize = `summarize ${columns.map((column) => `buildschema(${escapeColumn(column)})`).join(', ')}`;
-
-    queryParts.push(source);
-    queryParts.push(take);
-    queryParts.push(where);
-    queryParts.push(project);
-    queryParts.push(summarize);
-
-    const query = this.buildQuery(queryParts.join('\n | '), {}, database);
-    const response = await this.query({
-      targets: [
-        {
-          ...query,
-          querySource: 'schema',
-        },
-      ],
-    } as DataQueryRequest<KustoQuery>).toPromise();
-
-    return dynamicSchemaParser(response?.data as DataFrame[]);
-  }
-
   getVariables() {
     return this.templateSrv.getVariables().map((v) => `$${v.name}`);
   }
@@ -243,7 +180,6 @@ export class LogshipDataSource extends DataSourceWithBackend<KustoQuery, Logship
       ...defaultQuery,
       refId: `logship-${interpolatedQuery}`,
       resultFormat: 'table',
-      rawMode: true,
       query: interpolatedQuery,
       database,
     };
@@ -293,53 +229,8 @@ export class LogshipDataSource extends DataSourceWithBackend<KustoQuery, Logship
     return this.schemaMapper;
   }
 
-  parseExpression(sections: QueryExpression | undefined, columns: LogshipColumnSchema[] | undefined): string {
-    return this.expressionParser.toQuery(sections, columns);
-  }
-
   getDefaultEditorMode(): EditorMode {
     return this.defaultEditorMode;
-  }
-
-  async autoCompleteQuery(query: AutoCompleteQuery, columns: LogshipColumnSchema[] | undefined): Promise<string[]> {
-    const autoQuery = this.expressionParser.toAutoCompleteQuery(query, columns);
-
-    if (!autoQuery) {
-      return [];
-    }
-
-    const kustoQuery: KustoQuery = {
-      ...defaultQuery,
-      refId: `logship-${autoQuery}`,
-      database: query.database,
-      rawMode: true,
-      query: autoQuery,
-      resultFormat: 'table',
-      querySource: 'autocomplete',
-    };
-
-    const response = await this.query(
-      includeTimeRange({
-        targets: [kustoQuery],
-      }) as DataQueryRequest<KustoQuery>
-    ).toPromise();
-
-    if (!Array.isArray(response?.data) || response?.data.length === 0) {
-      return [];
-    }
-
-    if (!Array.isArray(response?.data[0].fields) || response?.data[0].fields.length === 0) {
-      return [];
-    }
-
-    const results = response?.data[0].fields[0].values.toArray();
-    const operator = query.search.operator;
-
-    let searchTerm = '';
-    if (typeof operator.value === 'string') {
-      searchTerm = operator.value;
-    }
-    return operator.name === 'contains' ? sortStartsWithValuesFirst(results, searchTerm) : results;
   }
 }
 
@@ -364,28 +255,6 @@ const functionSchemaParser = (frames: DataFrame[]): LogshipColumnSchema[] => {
         name: frame.fields[nameIndex].values.get(index),
         type: frame.fields[typeIndex].values.get(index),
       });
-    }
-  }
-
-  return result;
-};
-
-const dynamicSchemaParser = (frames: DataFrame[]): Record<string, LogshipColumnSchema[]> => {
-  const result: Record<string, LogshipColumnSchema[]> = {};
-
-  for (const frame of frames) {
-    for (const field of frame.fields) {
-      const json = JSON.parse(field.values.get(0));
-
-      if (json === null) {
-        console.log('error with field', field);
-        continue;
-      }
-
-      const columnSchemas: LogshipColumnSchema[] = [];
-      const columnName = field.name.replace('schema_', '');
-      recordSchema(columnName, json, columnSchemas);
-      result[columnName] = columnSchemas;
     }
   }
 
@@ -439,22 +308,6 @@ const recordSchema = (columnName: string, schema: LogshipSchemaDefinition, resul
     const subSchema = schema[name];
     recordSchema(key, subSchema, result);
   }
-};
-
-/**
- * this is a super ugly way of doing this.
- */
-const includeTimeRange = (option: any): any => {
-  const range = (getTemplateSrv() as any)?.timeRange as TimeRange;
-
-  if (!range) {
-    return option;
-  }
-
-  return {
-    ...option,
-    range,
-  };
 };
 
 export const escapeSpecial = (value: string): string => {

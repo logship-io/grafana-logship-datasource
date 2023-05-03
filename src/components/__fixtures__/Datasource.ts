@@ -1,7 +1,6 @@
 import { DataSourcePluginOptionsEditorProps, PluginType } from '@grafana/data';
 
 import { LogshipDataSource } from '../../datasource';
-import { QueryEditorExpressionType } from '../LegacyQueryEditor/editor/expressions';
 import { LogshipDataSourceOptions, LogshipDataSourceSecureOptions, EditorMode, KustoQuery } from '../../types';
 
 export const mockDatasourceOptions: DataSourcePluginOptionsEditorProps<
@@ -79,11 +78,6 @@ export const mockQuery: KustoQuery = {
   query: '',
   database: '',
   resultFormat: '',
-  expression: {
-    where: { expressions: [], type: QueryEditorExpressionType.And },
-    reduce: { expressions: [], type: QueryEditorExpressionType.And },
-    groupBy: { expressions: [], type: QueryEditorExpressionType.And },
-  },
   querySource: 'raw',
   pluginVersion: '1',
 };

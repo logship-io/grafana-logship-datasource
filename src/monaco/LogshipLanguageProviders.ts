@@ -2,7 +2,7 @@ import { CancellationToken, Position, editor, languages } from "monaco-editor";
 
 export class LogshipInlineCompletionsProvider implements languages.InlineCompletionsProvider {
     provideInlineCompletions(model: editor.ITextModel, position: Position, context: languages.InlineCompletionContext, token: CancellationToken): languages.ProviderResult<languages.InlineCompletions<languages.InlineCompletion>> {
-        return {items: [{insertText: 'where timestamp > $__timeInterval', }]};
+        return {items: [{insertText: 'where timestamp > $__timeFrom()\n| where timestamp < $__timeTo()', }]};
     }
 
     

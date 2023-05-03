@@ -1,69 +1,26 @@
 
 
-import { DataSourceJsonData, DataSourceSettings } from '@grafana/data';
-import {
-  QueryEditorColumnsExpression,
-  QueryEditorExpressionType,
-  QueryEditorGroupByExpressionArray,
-  QueryEditorOperatorExpression,
-  QueryEditorPropertyExpression,
-  QueryEditorReduceExpressionArray,
-  QueryEditorWhereArrayExpression,
-} from './components/LegacyQueryEditor/editor/expressions';
+import { DataSourceJsonData, DataSourceSettings } from '@grafana/data';;
 import { DataQuery } from '@grafana/schema';
 
 const packageJson = require('../package.json');
-
-export interface QueryExpression {
-  from?: QueryEditorPropertyExpression;
-  columns?: QueryEditorColumnsExpression;
-  where: QueryEditorWhereArrayExpression;
-  reduce: QueryEditorReduceExpressionArray;
-  groupBy: QueryEditorGroupByExpressionArray;
-  timeshift?: QueryEditorPropertyExpression;
-}
 
 type QuerySource = 'raw' | 'schema' | 'autocomplete' | 'visual';
 export interface KustoQuery extends DataQuery {
   query: string;
   database: string;
-  alias?: string;
   resultFormat: string;
-  expression: QueryExpression;
-  rawMode?: boolean;
   querySource: QuerySource;
   pluginVersion: string;
 }
 
-export interface AutoCompleteQuery {
-  database: string;
-  search: QueryEditorOperatorExpression;
-  expression: QueryExpression;
-  index?: string;
-}
-
 export enum EditorMode {
-  Visual = 'visual',
   Raw = 'raw',
 }
 
-export const defaultQuery: Pick<KustoQuery, 'query' | 'expression' | 'querySource' | 'pluginVersion'> = {
+export const defaultQuery: Pick<KustoQuery, 'query' | 'querySource' | 'pluginVersion'> = {
   query: '',
   querySource: EditorMode.Raw,
-  expression: {
-    where: {
-      type: QueryEditorExpressionType.And,
-      expressions: [],
-    },
-    groupBy: {
-      type: QueryEditorExpressionType.And,
-      expressions: [],
-    },
-    reduce: {
-      type: QueryEditorExpressionType.And,
-      expressions: [],
-    },
-  },
   pluginVersion: packageJson.version,
 };
 
