@@ -45,7 +45,6 @@ func converterFrameForTable(t TableResponse, executedQueryString string) (*data.
 	converters := make([]data.FieldConverter, len(t.Columns))
 	colNames := make([]string, len(t.Columns))
 	colTypes := make([]string, len(t.Columns))
-
 	for i, col := range t.Columns {
 		colNames[i] = col.Name
 		colTypes[i] = col.Type
@@ -290,7 +289,7 @@ func ToLogshipTimeSeries(in *data.Frame) (*data.Frame, error) {
 		switch getKustoColType(fieldIdx) {
 		case "string":
 			labelColIdxs = append(labelColIdxs, fieldIdx)
-		case "dynamic":
+		default:
 			if field.Name == "timestamp" {
 				if foundTime {
 					return nil, fmt.Errorf("must be exactly one column named 'timestamp', but response has more than one")

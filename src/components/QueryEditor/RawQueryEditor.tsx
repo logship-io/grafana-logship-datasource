@@ -6,8 +6,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { AsyncState } from 'react-use/lib/useAsyncFn';
 import { LogshipDataSourceOptions, KustoQuery, LogshipDatabaseSchema } from 'types';
 import { cloneDeep } from 'lodash';
-import { getSignatureHelp } from './Suggestions';
 import { TableList } from './TableList';
+import { LogshipInlineCompletionsProvider, LogshipSignatureHelpProvider } from 'monaco/LogshipLanguageProviders';
+import { LogshipKustoGrammar } from 'monaco/LogshipKustoGrammar';
 
 type Props = QueryEditorProps<LogshipDataSource, KustoQuery, LogshipDataSourceOptions>;
 
@@ -25,8 +26,8 @@ interface Worker {
 
 export const RawQueryEditor: React.FC<RawQueryEditorProps> = (props) => {
   const { query, schema, onChange } = props;
-  const [worker, setWorker] = useState<Worker>();
-  const [variables] = useState(getTemplateSrv().getVariables());
+  const [_worker, _setWorker] = useState<Worker>();
+  const [_variables] = useState(getTemplateSrv().getVariables());
   const [stateSchema, setStateSchema] = useState<LogshipDatabaseSchema | undefined>(undefined);
   const minWidth = 50;
   const theme = useTheme2();
@@ -49,7 +50,6 @@ export const RawQueryEditor: React.FC<RawQueryEditorProps> = (props) => {
     xPosition: 0
   });
   
-
   const onMouseDown = (e) => {
     if (paneRef.current && dividerRef.current && e.target.className === dividerRef.current.className) {
       const containerLeft = paneRef.current.getBoundingClientRect().left;
@@ -99,7 +99,6 @@ export const RawQueryEditor: React.FC<RawQueryEditorProps> = (props) => {
         ...props.query,
         query: kql,
       });
-      console.log("query change: " + kql)
     }
   };
 
@@ -117,70 +116,70 @@ export const RawQueryEditor: React.FC<RawQueryEditorProps> = (props) => {
   }, [schema, stateSchema]);
 
   const handleEditorMount = (editor: MonacoEditor, monaco: Monaco) => {
-    monaco.languages.registerSignatureHelpProvider('kusto', {
-      signatureHelpTriggerCharacters: ['(', ')'],
-      provideSignatureHelp: getSignatureHelp,
-    });
-    monaco.languages['kusto']
-      .getKustoWorker()
-      .then((kusto) => {
-        const model = editor.getModel();
-        return model && kusto(model.uri);
-      })
-      .then((worker: React.SetStateAction<Worker | undefined>) => {
-        setWorker(worker);
-      });
+    monaco.languages.registerSignatureHelpProvider('ls-kusto', new LogshipSignatureHelpProvider());
+    monaco.languages.registerInlineCompletionsProvider('ls-kusto', new LogshipInlineCompletionsProvider());
+    monaco.languages.register({ id: 'ls-kusto' });
+    monaco.languages.setMonarchTokensProvider('ls-kusto', LogshipKustoGrammar);
+    // monaco.languages['ls-kusto']
+    //   .getKustoWorker()
+    //   .then((kusto) => {
+    //     const model = editor.getModel();
+    //     return model && kusto(model.uri);
+    //   })
+    //   .then((worker: React.SetStateAction<Worker | undefined>) => {
+    //     setWorker(worker);
+    //   });
   };
 
-  useEffect(() => {
-    if (worker && stateSchema !== undefined) {
-      const dotnetTypeToKustoType = {
-        'SByte': 'bool',
-        'Byte': 'uint8',
-        'Int16': 'int16',
-        'UInt16': 'uint16',
-        'Int32': 'int',
-        'UInt32': 'uint',
-        'Int64': 'long',
-        'UInt64': 'ulong',
-        'String': 'string',
-        'Single': 'float',
-        'Double': 'real',
-        'DateTime': 'datetime',
-        'DateTimeOffset': 'datetime',
-        'TimeSpan': 'timespan',
-        'Guid': 'guid',
-        'Boolean': 'bool',
-      };
+  // useEffect(() => {
+  //   if (worker && stateSchema !== undefined) {
+  //     const dotnetTypeToKustoType = {
+  //       'SByte': 'bool',
+  //       'Byte': 'uint8',
+  //       'Int16': 'int16',
+  //       'UInt16': 'uint16',
+  //       'Int32': 'int',
+  //       'UInt32': 'uint',
+  //       'Int64': 'long',
+  //       'UInt64': 'ulong',
+  //       'String': 'string',
+  //       'Single': 'float',
+  //       'Double': 'real',
+  //       'DateTime': 'datetime',
+  //       'DateTimeOffset': 'datetime',
+  //       'TimeSpan': 'timespan',
+  //       'Guid': 'guid',
+  //       'Boolean': 'bool',
+  //     };
       
-      const tables = Array.from(stateSchema.tables.map((t) => { return {
-        "name": t.name,
-        "entityType": 'Table',
-        "columns": t.columns.map((c) => { return {
-          "name": c.name,
-          "type": dotnetTypeToKustoType[c.type] ?? 'dynamic',
-          "entityType": "Column"
-        }}),
-      }}));
-      const db = {
-        "name": stateSchema.name,
-        "majorVersion": 5,
-        "minorVersion": 0,
-        "tables": tables,
-        "functions": [],
-      };
-      const kustoSchema = {
-        "clusterType":"Engine",
-        "cluster":{
-          "connectionString": "logship.ai",
-          "databases": [ db ]
-        },      
-        "database": db
-      };
+  //     const tables = Array.from(stateSchema.tables.map((t) => { return {
+  //       "name": t.name,
+  //       "entityType": 'Table',
+  //       "columns": t.columns.map((c) => { return {
+  //         "name": c.name,
+  //         "type": dotnetTypeToKustoType[c.type] ?? 'dynamic',
+  //         "entityType": "Column"
+  //       }}),
+  //     }}));
+  //     const db = {
+  //       "name": stateSchema.name,
+  //       "majorVersion": 5,
+  //       "minorVersion": 0,
+  //       "tables": tables,
+  //       "functions": [],
+  //     };
+  //     const kustoSchema = {
+  //       "clusterType":"Engine",
+  //       "cluster":{
+  //         "connectionString": "logship.ai",
+  //         "databases": [ db ]
+  //       },      
+  //       "database": db
+  //     };
 
-      worker.setSchema(kustoSchema);
-    }
-  }, [worker, stateSchema, variables, props.database]);
+  //     worker.setSchema(kustoSchema);
+  //   }
+  // }, [worker, stateSchema, variables, props.database]);
 
   if (!stateSchema) {
     return null;
@@ -217,11 +216,11 @@ export const RawQueryEditor: React.FC<RawQueryEditorProps> = (props) => {
           }} />
         <div className="query-editor-split-pane-right" style={{ display: "inline-block", width: widths.right, }}>
           <CodeEditor
-            language="kusto"
+            language="ls-kusto"
             value={query.query}
             onBlur={onRawQueryChange}
             onChange={onRawQueryChange}
-            showMiniMap={false}
+            showMiniMap={true}
             showLineNumbers={true}
             height="240px"
             onEditorDidMount={handleEditorMount} />

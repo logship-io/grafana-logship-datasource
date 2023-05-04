@@ -1,10 +1,9 @@
 import { QueryEditorProps } from '@grafana/data';
 import { Alert } from '@grafana/ui';
 import { get } from 'lodash';
-import { migrateQuery, needsToBeMigrated } from 'migrations/query';
 import React, { useMemo, useState } from 'react';
 import { useAsync, useEffectOnce } from 'react-use';
-import { LogshipDataSourceOptions as LogshipDataSourceOptions, EditorMode, KustoQuery } from 'types';
+import { LogshipDataSourceOptions as LogshipDataSourceOptions, KustoQuery } from 'types';
 
 import { LogshipDataSource } from '../../datasource';
 import { QueryHeader } from './QueryHeader';
@@ -19,19 +18,7 @@ export const QueryEditor: React.FC<Props> = (props) => {
   const [dirty, setDirty] = useState(false);
 
   useEffectOnce(() => {
-    let processedQuery = query;
-    if (needsToBeMigrated(query)) {
-      processedQuery = migrateQuery(query);
-      onChange(processedQuery);
-      onRunQuery();
-    }
-    if (processedQuery.rawMode === undefined) {
-      onChange({
-        ...processedQuery,
-        rawMode: datasource.getDefaultEditorMode() === EditorMode.Raw,
-      });
-      onRunQuery();
-    }
+    onRunQuery();
   });
 
   return (

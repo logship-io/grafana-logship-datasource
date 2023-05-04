@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
+	"sort"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/instancemgmt"
@@ -164,46 +165,42 @@ func (logship *LogshipBackend) modelQuery(ctx context.Context, q models.QueryMod
 			return resp, fmt.Errorf("error converting response to data frames: %w", err)
 		}
 	case "time_series":
+		index := -1
+		for i, t := range tableRes.Columns {
+			if t.Type == "DateTime" {
+				index = i
+				break
+			}
+		}
+
+		if index >= 0 {
+			name := tableRes.Columns[index].Name
+			sort.SliceStable(tableRes.Results, func(i, j int) bool {
+				a := tableRes.Results[i][name]
+				b := tableRes.Results[j][name]
+				return a.(string) < b.(string)
+			})
+		}
+
 		frames, err := tableRes.ToDataFrames(q.Query)
 		if err != nil {
 			return resp, err
 		}
+
+		missing := data.FillMissing{
+			Mode:  data.FillModeNull,
+			Value: 0.0,
+		}
+
 		for _, f := range frames {
-			tsSchema := f.TimeSeriesSchema()
-			switch tsSchema.Type {
-			case data.TimeSeriesTypeNot:
+			r, err := data.LongToWide(f, &missing)
+			if err != nil {
 				f.AppendNotices(data.Notice{
 					Severity: data.NoticeSeverityWarning,
-					Text:     "Returned frame is not a time series, returning table format instead. The response must have at least one datetime field and one numeric field.",
+					Text:     fmt.Sprintf("Returned frame is not a time series, returning table format instead. The response must have at least one datetime field and one numeric field. Error: %e", err),
 				})
-				resp.Frames = append(resp.Frames, f)
-				continue
-			case data.TimeSeriesTypeLong:
-				wideFrame, err := data.LongToWide(f, nil)
-				if err != nil {
-					f.AppendNotices(data.Notice{
-						Severity: data.NoticeSeverityWarning,
-						Text:     fmt.Sprintf("detected long formatted time series but failed to convert from long frame: %v. Returning table format instead.", err),
-					})
-					resp.Frames = append(resp.Frames, f)
-					continue
-				}
-				resp.Frames = append(resp.Frames, wideFrame)
-			default:
-				resp.Frames = append(resp.Frames, f)
 			}
-		}
-	case "time_series_logship_series":
-		originalDFs, err := tableRes.ToDataFrames(q.Query)
-		if err != nil {
-			return resp, fmt.Errorf("error converting response to data frames: %w", err)
-		}
-		for _, f := range originalDFs {
-			formattedDF, err := models.ToLogshipTimeSeries(f)
-			if err != nil {
-				return resp, err
-			}
-			resp.Frames = append(resp.Frames, formattedDF)
+			resp.Frames = append(resp.Frames, r)
 		}
 
 	default:

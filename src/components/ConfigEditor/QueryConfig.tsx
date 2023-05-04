@@ -14,7 +14,6 @@ const dataConsistencyOptions: Array<{ value: string; label: string }> = [
 ];
 
 const editorModeOptions: Array<{ value: EditorMode; label: string }> = [
-  { value: EditorMode.Visual, label: 'Visual' },
   { value: EditorMode.Raw, label: 'Raw' },
 ];
 
@@ -93,7 +92,7 @@ const QueryConfig: React.FC<QueryConfigProps> = ({ options, updateJsonData }) =>
           options={editorModeOptions}
           value={editorModeOptions.find((v) => v.value === jsonData.defaultEditorMode)}
           onChange={(change: SelectableValue<EditorMode>) =>
-            updateJsonData('defaultEditorMode', change.value || EditorMode.Visual)
+            updateJsonData('defaultEditorMode', change.value || EditorMode.Raw)
           }
           width={18}
         />
