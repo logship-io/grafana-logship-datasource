@@ -46,7 +46,7 @@ export const QueryHeader = (props: QueryEditorHeaderProps) => {
 
   useEffect(() => {
     if (!query.resultFormat) {
-      onChange({ ...query, resultFormat: 'table' });
+      onChange({ ...query, resultFormat: FormatOptions.timeSeries });
     }
     
   }, [query, formats, onChange]);

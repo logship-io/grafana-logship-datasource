@@ -197,10 +197,13 @@ func (logship *LogshipBackend) modelQuery(ctx context.Context, q models.QueryMod
 			if err != nil {
 				f.AppendNotices(data.Notice{
 					Severity: data.NoticeSeverityWarning,
-					Text:     fmt.Sprintf("Returned frame is not a time series, returning table format instead. The response must have at least one datetime field and one numeric field. Error: %e", err),
+					Text:     fmt.Sprintf("Returned frame is not a time series, returning table format instead. The response must have at least one datetime field and one numeric field. Error: %v", err),
 				})
+
+				resp.Frames = append(resp.Frames, f)
+			} else {
+				resp.Frames = append(resp.Frames, r)
 			}
-			resp.Frames = append(resp.Frames, r)
 		}
 
 	default:
