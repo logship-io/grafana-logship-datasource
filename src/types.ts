@@ -5,7 +5,7 @@ import { DataQuery } from '@grafana/schema';
 
 const packageJson = require('../package.json');
 
-type QuerySource = 'raw' | 'schema' | 'autocomplete' | 'visual';
+type QuerySource = 'raw' | 'schema' | 'autocomplete' | 'visual' | 'variable';
 export interface KustoQuery extends DataQuery {
   query: string;
   database: string;

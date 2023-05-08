@@ -1,5 +1,5 @@
 import { FieldType, toDataFrame } from '@grafana/data';
-import { firstStringFieldToMetricFindValue } from './responseHelpers';
+import { firstFieldToMetricFindValue } from './responseHelpers';
 
 describe('firstStringFieldToMetricFindValue', () => {
   it('should find a string field value', () => {
@@ -11,6 +11,6 @@ describe('firstStringFieldToMetricFindValue', () => {
         },
       ],
     });
-    expect(firstStringFieldToMetricFindValue(frame)).toEqual([{ text: 'foo' }]);
+    expect(firstFieldToMetricFindValue(frame)).toEqual([{ text: 'foo' }]);
   });
 });

@@ -8,13 +8,13 @@ import {
   ScopedVars,
 } from '@grafana/data';
 import { BackendSrv, DataSourceWithBackend, getBackendSrv, getTemplateSrv, TemplateSrv } from '@grafana/runtime';
-import { firstStringFieldToMetricFindValue } from 'common/responseHelpers';
+import { firstFieldToMetricFindValue } from 'common/responseHelpers';
 import { QueryEditorPropertyType } from './schema/types';
 import { map } from 'lodash';
 import { cache } from 'schema/cache';
 import { toPropertyType } from 'schema/mapper';
 import interpolateKustoQuery from './query_builder';
-import { DatabaseItem, KustoDatabaseList, ResponseParser } from './response_parser';
+import { ResponseParser } from './response_parser';
 import {
   LogshipColumnSchema,
   LogshipDataSourceOptions as LogshipDataSourceOptions,
@@ -29,7 +29,6 @@ import { LogshipSchemaMapper } from 'schema/LogshipSchemaMapper';
 export class LogshipDataSource extends DataSourceWithBackend<KustoQuery, LogshipDataSourceOptions> {
   private backendSrv: BackendSrv;
   private templateSrv: TemplateSrv;
-  private defaultOrFirstDatabase: string;
   private url?: string;
   private defaultEditorMode: EditorMode;
   private schemaMapper: LogshipSchemaMapper;
@@ -42,7 +41,6 @@ export class LogshipDataSource extends DataSourceWithBackend<KustoQuery, Logship
 
     this.backendSrv = getBackendSrv();
     this.templateSrv = getTemplateSrv();
-    this.defaultOrFirstDatabase = instanceSettings.jsonData.defaultDatabase;
     this.url = instanceSettings.url;
     this.defaultEditorMode = EditorMode.Raw;// instanceSettings.jsonData.defaultEditorMode ?? EditorMode.Raw;
     this.schemaMapper = new LogshipSchemaMapper(useSchemaMapping, schemaMapping);
@@ -82,21 +80,18 @@ export class LogshipDataSource extends DataSourceWithBackend<KustoQuery, Logship
   }
 
   async metricFindQuery(query: string, optionalOptions: any): Promise<MetricFindValue[]> {
-    const databasesQuery = query.match(/^databases\(\)/i);
-    if (databasesQuery) {
-      return this.getDatabases();
-    }
-
-    return this.getDefaultOrFirstDatabase()
-      .then((database) => this.buildQuery(query, optionalOptions, database))
-      .then((query) =>
-        this.query({
-          targets: [query],
-        } as DataQueryRequest<KustoQuery>).toPromise()
-      )
+    const q = this.buildQuery(query, optionalOptions, 'default')
+    return this.query({
+      targets: [
+        {
+          ...q,
+          querySource: 'variable',
+        },
+      ],
+    } as DataQueryRequest<KustoQuery>).toPromise()
       .then((response) => {
         if (response?.data && response.data.length) {
-          return firstStringFieldToMetricFindValue(response.data[0]);
+          return firstFieldToMetricFindValue(response.data[0]);
         }
         return [];
       })
@@ -106,26 +101,8 @@ export class LogshipDataSource extends DataSourceWithBackend<KustoQuery, Logship
       });
   }
 
-  async getDatabases(): Promise<DatabaseItem[]> {
-    return this.getResource<KustoDatabaseList>('databases').then((response) => {
-      return new ResponseParser().parseDatabases(response);
-    });
-  }
-
   async getResource<T = unknown>(path: string): Promise<any> {
     return super.getResource(path);
-  }
-
-  async getDefaultOrFirstDatabase(): Promise<string> {
-    if (this.defaultOrFirstDatabase) {
-      return Promise.resolve(this.defaultOrFirstDatabase);
-    }
-
-    return this.getDatabases().then((databases) => {
-      console.log(databases)
-      this.defaultOrFirstDatabase = databases[0].value;
-      return this.defaultOrFirstDatabase;
-    });
   }
 
   async getSchema(refreshCache = false): Promise<LogshipDatabaseSchema> {
