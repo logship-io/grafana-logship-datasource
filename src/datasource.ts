@@ -7,7 +7,7 @@ import {
   ScopedVar,
   ScopedVars,
 } from '@grafana/data';
-import { BackendSrv, DataSourceWithBackend, getBackendSrv, getTemplateSrv, TemplateSrv } from '@grafana/runtime';
+import { DataSourceWithBackend, getTemplateSrv, TemplateSrv } from '@grafana/runtime';
 import { firstFieldToMetricFindValue } from 'common/responseHelpers';
 import { QueryEditorPropertyType } from './schema/types';
 import { map } from 'lodash';
@@ -27,9 +27,7 @@ import {
 import { LogshipSchemaMapper } from 'schema/LogshipSchemaMapper';
 
 export class LogshipDataSource extends DataSourceWithBackend<KustoQuery, LogshipDataSourceOptions> {
-  private backendSrv: BackendSrv;
   private templateSrv: TemplateSrv;
-  private url?: string;
   private defaultEditorMode: EditorMode;
   private schemaMapper: LogshipSchemaMapper;
 
@@ -39,9 +37,9 @@ export class LogshipDataSource extends DataSourceWithBackend<KustoQuery, Logship
     const useSchemaMapping = instanceSettings.jsonData.useSchemaMapping ?? false;
     const schemaMapping = instanceSettings.jsonData.schemaMappings ?? [];
 
-    this.backendSrv = getBackendSrv();
+    //this.backendSrv = getBackendSrv();
     this.templateSrv = getTemplateSrv();
-    this.url = instanceSettings.url;
+    //this.url = instanceSettings.url;
     this.defaultEditorMode = EditorMode.Raw;// instanceSettings.jsonData.defaultEditorMode ?? EditorMode.Raw;
     this.schemaMapper = new LogshipSchemaMapper(useSchemaMapping, schemaMapping);
     this.getSchemaMapper = this.getSchemaMapper.bind(this);
@@ -160,23 +158,6 @@ export class LogshipDataSource extends DataSourceWithBackend<KustoQuery, Logship
       query: interpolatedQuery,
       database,
     };
-  }
-
-  // Used to get the schema directly
-  doRequest(url: string, data: any, maxRetries = 1) {
-    return this.backendSrv
-      .datasourceRequest({
-        url: this.url + url,
-        method: 'POST',
-        data: data,
-      })
-      .catch((error) => {
-        if (maxRetries > 0) {
-          return this.doRequest(url, data, maxRetries - 1);
-        }
-
-        throw error;
-      });
   }
 
   interpolateVariable(value: any, variable) {
