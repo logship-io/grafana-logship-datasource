@@ -24,9 +24,8 @@ type LogshipFrameMD struct {
 // errorResponse is a minimal structure of Azure Data Explorer's JSON
 // error body,
 type ErrorResponse struct {
-	Error struct {
-		Message string `json:"@message"`
-	} `json:"error"`
+	Message    string `json:"message"`
+	StackTrace string `json:"stackTrace"`
 }
 
 type WhoAmIResponse struct {

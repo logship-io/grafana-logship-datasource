@@ -64,19 +64,9 @@ func (c *Client) WhoAmIRequest(ctx context.Context, url string, additionalHeader
 	}
 
 	defer resp.Body.Close()
-	backend.Logger.Error("Response %s      - - %s", resp.Request.URL, resp.StatusCode)
-	switch {
-	case resp.StatusCode == http.StatusUnauthorized:
-		// HTTP 401 has no error body
-		return nil, fmt.Errorf("HTTP %q", resp.Status)
-
-	case resp.StatusCode/100 != 2:
-		var r models.ErrorResponse
-		err := json.NewDecoder(resp.Body).Decode(&r)
-		if err != nil {
-			return nil, fmt.Errorf("HTTP %q with malformed error response: %s", resp.Status, err)
-		}
-		return nil, fmt.Errorf("HTTP %q: %q", resp.Status, r.Error.Message)
+	err = responseAsError(resp)
+	if err != nil {
+		return nil, err
 	}
 
 	var user models.WhoAmIResponse
@@ -106,19 +96,9 @@ func (c *Client) SchemaRequest(ctx context.Context, url string, additionalHeader
 	}
 
 	defer resp.Body.Close()
-	backend.Logger.Error("Response %s      - - %s", resp.Request.URL, resp.StatusCode)
-	switch {
-	case resp.StatusCode == http.StatusUnauthorized:
-		// HTTP 401 has no error body
-		return nil, fmt.Errorf("HTTP %q", resp.Status)
-
-	case resp.StatusCode/100 != 2:
-		var r models.ErrorResponse
-		err := json.NewDecoder(resp.Body).Decode(&r)
-		if err != nil {
-			return nil, fmt.Errorf("HTTP %q with malformed error response: %s", resp.Status, err)
-		}
-		return nil, fmt.Errorf("HTTP %q: %q", resp.Status, r.Error.Message)
+	err = responseAsError(resp)
+	if err != nil {
+		return nil, err
 	}
 
 	return models.SchemaFromJSON(resp.Body)
@@ -154,19 +134,36 @@ func (c *Client) KustoRequest(ctx context.Context, url string, payload models.Re
 	}
 	defer resp.Body.Close()
 
+	err = responseAsError(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	return models.TableFromJSON(resp.Body)
+}
+
+func responseAsError(resp *http.Response) error {
 	switch {
 	case resp.StatusCode == http.StatusUnauthorized:
-		// HTTP 401 has no error body
-		return nil, fmt.Errorf("HTTP %q", resp.Status)
+		backend.Logger.Error("HTTP 401 Unauthorized response.", resp.Request.URL)
+		return fmt.Errorf("HTTP %q", resp.Status)
 
 	case resp.StatusCode/100 != 2:
 		var r models.ErrorResponse
 		err := json.NewDecoder(resp.Body).Decode(&r)
 		if err != nil {
-			return nil, fmt.Errorf("HTTP %q with malformed error response: %s", resp.Status, err)
+			backend.Logger.Error("Malformed error response.", resp.StatusCode, resp.Request.URL)
+			return fmt.Errorf("HTTP %q with malformed error response: %s", resp.Status, err)
 		}
-		return nil, fmt.Errorf("HTTP %q: %q", resp.Status, r.Error.Message)
+
+		if len(r.StackTrace) > 0 {
+			// backend.Logger.Error("HTTP error response with stack.", resp.StatusCode, resp.Request.URL, r.Message, r.StackTrace)
+			return fmt.Errorf("HTTP %q with error message: %q. \nStack: %s", resp.Status, r.Message, r.StackTrace)
+		}
+
+		// backend.Logger.Error("HTTP error response.", resp.StatusCode, resp.Request.URL, r.Message)
+		return fmt.Errorf("HTTP %q with error message: %q", resp.Status, r.Message)
 	}
 
-	return models.TableFromJSON(resp.Body)
+	return nil
 }
