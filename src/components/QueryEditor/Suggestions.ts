@@ -1,15 +1,15 @@
-import { VariableModel } from '@grafana/data'; 
+import { TypedVariableModel } from '@grafana/data'; 
 import { monacoTypes } from '@grafana/ui';
 import { LogshipFunctionSchema } from 'types';
 
 const defaultTimeField = 'TimeGenerated';
 
-export function getFunctions(variables: VariableModel[]): Record<string, LogshipFunctionSchema> {
+export function getFunctions(variables: TypedVariableModel[]): Record<string, LogshipFunctionSchema> {
   const functions = {
     "$__timeFilter": {
       Name: '$__timeFilter',
       Body: '{ true }',
-      FunctionKind: 'Unknown',
+      FunctionKind: 'Macro',
       InputParameters: [
         {
           name: 'timeColumn',
@@ -28,7 +28,7 @@ export function getFunctions(variables: VariableModel[]): Record<string, Logship
     "$__from": {
       Name: '$__from',
       Body: '{ datetime(2018-06-05T18:09:58.907Z) }',
-      FunctionKind: 'Unknown',
+      FunctionKind: 'DateTime',
       DocString:
         'Built-in variable that returns the from value of the selected timerange in Grafana.\n\n' +
         'Example: `where ' +
@@ -40,7 +40,7 @@ export function getFunctions(variables: VariableModel[]): Record<string, Logship
     "$__to": {
       Name: '$__to',
       Body: '{ datetime(2018-06-05T18:09:58.907Z) }',
-      FunctionKind: 'Unknown',
+      FunctionKind: 'DateTime',
       DocString:
         'Built-in variable that returns the to value of the selected timerange in Grafana.\n\n' +
         'Example: `where ' +
@@ -52,7 +52,7 @@ export function getFunctions(variables: VariableModel[]): Record<string, Logship
     "$__timeInterval": {
       Name: '$__timeInterval',
       Body: '{ 1s }',
-      FunctionKind: 'Unknown',
+      FunctionKind: 'TimeSpan',
       DocString:
         '##### Built-in variable that returns an automatic time grain suitable for the current timerange.\n\n' +
         'Used with the bin() function - `bin(' +
@@ -65,7 +65,7 @@ export function getFunctions(variables: VariableModel[]): Record<string, Logship
     "$__contains": {
       Name: '$__contains',
       Body: `{ colName in ('value1','value2') }`,
-      FunctionKind: 'Unknown',
+      FunctionKind: 'Macro',
       DocString:
         '##### Used with multi-value template variables.\n\n' +
         'If `$myVar` has the value `value1`,`value2`, it expands to: `colName in (value1,value2)`.' +

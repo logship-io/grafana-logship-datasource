@@ -187,6 +187,11 @@ func (logship *LogshipBackend) modelQuery(ctx context.Context, q models.QueryMod
 			return resp, err
 		}
 
+		if len(tableRes.Columns) <= 2 {
+			resp.Frames = frames
+			return resp, nil
+		}
+
 		missing := data.FillMissing{
 			Mode:  data.FillModeNull,
 			Value: 0.0,

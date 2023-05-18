@@ -1,3 +1,4 @@
+import { getSignatureHelp } from "components/QueryEditor/Suggestions";
 import { CancellationToken, Position, editor, languages } from "monaco-editor";
 
 export class LogshipInlineCompletionsProvider implements languages.InlineCompletionsProvider {
@@ -21,17 +22,6 @@ export class LogshipSignatureHelpProvider implements languages.SignatureHelpProv
     signatureHelpTriggerCharacters?: ['(', ')'];
     signatureHelpRetriggerCharacters?: readonly string[] | undefined;
     provideSignatureHelp(model: editor.ITextModel, position: Position, token: CancellationToken, context: languages.SignatureHelpContext): languages.ProviderResult<languages.SignatureHelpResult> {
-        return { value: {
-            activeSignature: 0,
-            activeParameter: 0,
-            signatures: [{
-                label: 'ago(timespan)',
-                parameters: [
-                    { 
-                       label: 'timespan'
-                    }
-                ]
-            }],
-        }, dispose: () => { } };
+        return getSignatureHelp(model, position, token, context);
     }
 }
