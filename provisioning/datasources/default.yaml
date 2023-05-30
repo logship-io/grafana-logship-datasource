@@ -1,6 +1,7 @@
 apiVersion: 1
 datasources:
   - name: Logship
+    uid: P474DFC22BB136045
     type: logship-datasource
     isDefault: true
     jsonData:
