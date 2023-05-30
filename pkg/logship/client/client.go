@@ -158,7 +158,7 @@ func responseAsError(resp *http.Response) error {
 
 		if len(r.StackTrace) > 0 {
 			// backend.Logger.Error("HTTP error response with stack.", resp.StatusCode, resp.Request.URL, r.Message, r.StackTrace)
-			return fmt.Errorf("HTTP %q with error message: %q. \nStack: %s", resp.Status, r.Message, r.StackTrace)
+			return fmt.Errorf("HTTP %q with error message: %q. \nStack: %q", resp.Status, r.Message, r.StackTrace)
 		}
 
 		// backend.Logger.Error("HTTP error response.", resp.StatusCode, resp.Request.URL, r.Message)
