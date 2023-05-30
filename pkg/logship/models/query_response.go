@@ -367,9 +367,6 @@ func TableFromJSON(rc io.Reader) (*TableResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	if tr == nil || len(tr.Headers) == 0 {
-		return nil, fmt.Errorf("unable to parse response, parsed response has no headers")
-	}
 
 	return tr, nil
 }
