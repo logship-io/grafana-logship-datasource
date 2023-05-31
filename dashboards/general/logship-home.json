@@ -1,0 +1,149 @@
+{
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": 5,
+    "links": [],
+    "liveNow": false,
+    "panels": [
+      {
+        "datasource": {
+          "type": "logship-datasource",
+          "uid": "P474DFC22BB136045"
+        },
+        "description": "",
+        "gridPos": {
+          "h": 4,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        },
+        "id": 1,
+        "options": {
+          "code": {
+            "language": "plaintext",
+            "showLineNumbers": false,
+            "showMiniMap": false
+          },
+          "content": "# 🛶 Logship Grafana Sandbox\n\nWelcome aboard.",
+          "mode": "markdown"
+        },
+        "pluginVersion": "9.5.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "logship-datasource",
+              "uid": "P474DFC22BB136045"
+            },
+            "query": "",
+            "queryType": "raw",
+            "refId": "A",
+            "resultFormat": "time_series"
+          }
+        ],
+        "title": "Welcome",
+        "type": "text"
+      },
+      {
+        "datasource": {
+          "type": "logship-datasource",
+          "uid": "P474DFC22BB136045"
+        },
+        "gridPos": {
+          "h": 22,
+          "w": 12,
+          "x": 12,
+          "y": 0
+        },
+        "id": 3,
+        "options": {
+          "maxItems": 10,
+          "query": "",
+          "showHeadings": true,
+          "showRecentlyViewed": true,
+          "showSearch": true,
+          "showStarred": true,
+          "tags": []
+        },
+        "pluginVersion": "9.5.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "logship-datasource",
+              "uid": "P474DFC22BB136045"
+            },
+            "query": "",
+            "queryType": "raw",
+            "refId": "A",
+            "resultFormat": "time_series"
+          }
+        ],
+        "title": "Dashboards",
+        "type": "dashlist"
+      },
+      {
+        "datasource": {
+          "type": "logship-datasource",
+          "uid": "P474DFC22BB136045"
+        },
+        "gridPos": {
+          "h": 18,
+          "w": 12,
+          "x": 0,
+          "y": 4
+        },
+        "id": 2,
+        "options": {
+          "feedUrl": "https://logship.ai/blog/rss",
+          "showImage": true
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "logship-datasource",
+              "uid": "P474DFC22BB136045"
+            },
+            "query": "",
+            "queryType": "raw",
+            "refId": "A",
+            "resultFormat": "time_series"
+          }
+        ],
+        "title": "Logship Blog",
+        "type": "news"
+      }
+    ],
+    "refresh": "",
+    "schemaVersion": 38,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+      "list": []
+    },
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "Logship Home",
+    "uid": "de0e6a74-4744-425b-a2ce-bac06653eb5a",
+    "version": 3,
+    "weekStart": ""
+  }

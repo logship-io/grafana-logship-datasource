@@ -1,0 +1,128 @@
+{
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": 14,
+    "links": [],
+    "liveNow": false,
+    "panels": [
+      {
+        "datasource": {
+          "type": "logship-datasource",
+          "uid": "P474DFC22BB136045"
+        },
+        "gridPos": {
+          "h": 22,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 1,
+        "options": {
+          "dedupStrategy": "none",
+          "enableLogDetails": true,
+          "prettifyLogMessage": false,
+          "showCommonLabels": false,
+          "showLabels": false,
+          "showTime": false,
+          "sortOrder": "Descending",
+          "wrapLogMessage": false
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "logship-datasource",
+              "uid": "P474DFC22BB136045"
+            },
+            "query": "Linux.JournalD\r\n| where timestamp > $__timeFrom()\r\n| where timestamp < $__timeTo()\r\n| where machine == \"$machine\"\r\n| where SYSLOG_IDENTIFIER == \"$sysloguid\"\r\n| where toint(PRIORITY) < 5\r\n| project timestamp, MESSAGE, ExtraData, SYSLOG_IDENTIFIER, level = case(\r\n  toint(PRIORITY) == 0, \"emerg\",\r\n  toint(PRIORITY) == 1, \"alert\",\r\n  toint(PRIORITY) == 2, \"critical\",\r\n  toint(PRIORITY) == 3, \"error\",\r\n  toint(PRIORITY) == 4, \"warning\",\r\n  toint(PRIORITY) == 5, \"notice\",\r\n  toint(PRIORITY) == 6, \"info\",\r\n  toint(PRIORITY) == 7, \"debug\",\r\n  \"unknown\"), SYSLOG_FACILITY, machine\r\n| order by timestamp desc\r\n| limit 1000\r\n",
+            "queryType": "raw",
+            "refId": "A",
+            "resultFormat": "table"
+          }
+        ],
+        "title": "Errors / Warnings",
+        "type": "logs"
+      }
+    ],
+    "refresh": "",
+    "schemaVersion": 38,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+      "list": [
+        {
+          "current": {
+            "selected": false,
+            "text": "logship-1",
+            "value": "logship-1"
+          },
+          "datasource": {
+            "type": "logship-datasource",
+            "uid": "P474DFC22BB136045"
+          },
+          "definition": "Logship.Agent.Uptime\n| where timestamp > ago(5d)\n| summarize machine",
+          "hide": 0,
+          "includeAll": false,
+          "multi": false,
+          "name": "machine",
+          "options": [],
+          "query": "Logship.Agent.Uptime\n| where timestamp > ago(5d)\n| summarize machine",
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 0,
+          "type": "query"
+        },
+        {
+          "current": {
+            "selected": true,
+            "text": "Logship.Data.KeyValue2.Service",
+            "value": "Logship.Data.KeyValue2.Service"
+          },
+          "datasource": {
+            "type": "logship-datasource",
+            "uid": "P474DFC22BB136045"
+          },
+          "definition": "Linux.JournalD\n| where timestamp > ago(1d)\n| summarize by SYSLOG_IDENTIFIER\n| limit 10000\n",
+          "hide": 0,
+          "includeAll": false,
+          "label": "Application",
+          "multi": false,
+          "name": "sysloguid",
+          "options": [],
+          "query": "Linux.JournalD\n| where timestamp > ago(1d)\n| summarize by SYSLOG_IDENTIFIER\n| limit 10000\n",
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 0,
+          "type": "query"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "Errors",
+    "uid": "d8c24f7a-7369-4a94-b94e-5ece8abc54ac",
+    "version": 4,
+    "weekStart": ""
+  }
