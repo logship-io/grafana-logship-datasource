@@ -34,7 +34,19 @@ func TestResponseToFrames(t *testing.T) {
 			testFile: "print_true.json",
 			errorIs:  assert.NoError,
 			frame: data.NewFrame("", data.NewField("print_0", nil, []*bool{pointer.Bool(true)})).SetMeta(
-				&data.FrameMeta{Custom: AzureFrameMD{ColumnTypes: []string{"bool"}}},
+				&data.FrameMeta{
+					Type:                   "",
+					TypeVersion:            [2]uint{},
+					Path:                   "",
+					PathSeparator:          "",
+					Custom:                 LogshipFrameMD{ColumnTypes: []string{"bool"}},
+					Stats:                  []data.QueryStat{},
+					Notices:                []data.Notice{},
+					Channel:                "",
+					PreferredVisualization: "",
+					ExecutedQueryString:    "",
+					DataTopic:              "",
+				},
 			),
 		},
 		{
@@ -53,7 +65,7 @@ func TestResponseToFrames(t *testing.T) {
 				data.NewField("XTimeSpan", nil, []*string{pointer.String("00:00:00.0000001")}),
 				data.NewField("XDecimal", nil, []*float64{pointer.Float64(4.52686980609418)}),
 			).SetMeta(
-				&data.FrameMeta{Custom: AzureFrameMD{ColumnTypes: []string{"bool", "string", "datetime",
+				&data.FrameMeta{Custom: LogshipFrameMD{ColumnTypes: []string{"bool", "string", "datetime",
 					"dynamic", "guid", "int", "long", "real", "timespan", "decimal"}}},
 			),
 		},
@@ -72,7 +84,7 @@ func TestResponseToFrames(t *testing.T) {
 				data.NewField("XTimeSpan", nil, []*string{nil}),
 				data.NewField("XDecimal", nil, []*float64{nil}),
 			).SetMeta(
-				&data.FrameMeta{Custom: AzureFrameMD{ColumnTypes: []string{"bool", "datetime",
+				&data.FrameMeta{Custom: LogshipFrameMD{ColumnTypes: []string{"bool", "datetime",
 					"dynamic", "guid", "int", "long", "real", "timespan", "decimal"}}},
 			),
 		},

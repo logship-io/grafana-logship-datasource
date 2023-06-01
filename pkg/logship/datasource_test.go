@@ -4,21 +4,20 @@ import (
 	"context"
 	"testing"
 
-	"github.com/logsink/grafana-logship-datasource/pkg/logship/models"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
+	"github.com/logsink/grafana-logship-datasource/pkg/logship/models"
 	"github.com/stretchr/testify/require"
 )
 
 var (
 	kustoRequestMock func(url string, payload models.RequestPayload, additionalHeaders map[string]string) (*models.TableResponse, error)
 	table            = &models.TableResponse{
-		Tables: []models.Table{
-			{
-				TableName: "Table_0",
-				Columns:   []models.Column{},
-				Rows:      []models.Row{},
-			},
-		},
+		Headers: []string{},
+		Columns: []struct {
+			Name string "json:\"Name\""
+			Type string "json:\"Type\""
+		}{},
+		Results: []map[string]interface{}{},
 	}
 )
 
@@ -52,6 +51,11 @@ func TestDatasource(t *testing.T) {
 }
 
 type fakeClient struct{}
+
+// SchemaRequest implements client.LogshipClient
+func (*fakeClient) SchemaRequest(ctx context.Context, url string, additionalHeaders map[string]string) ([]models.TableSchema, error) {
+	panic("unimplemented")
+}
 
 func (c *fakeClient) TestRequest(_ context.Context, _ *models.DatasourceSettings, _ *models.Properties, _ map[string]string) error {
 	panic("not implemented")
