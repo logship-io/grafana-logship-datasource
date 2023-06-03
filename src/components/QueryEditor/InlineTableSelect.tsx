@@ -81,7 +81,7 @@ const InlineTableSelect = (props: InlineTableSelectProps) => {
     <Button
       variant="secondary"
       icon="table"
-      disabled={selectedTable !== undefined}
+      disabled={selectedTable === undefined}
       size='xs'
       onClick={onProjectTable}
       tooltip='Project all columns for the selected table with a limited result set.'
