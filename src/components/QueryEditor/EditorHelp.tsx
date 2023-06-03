@@ -35,14 +35,6 @@ export default class EditorHelp extends PureComponent<QueryEditorHelpProps<Kusto
             of valueColumnName stringColumnName=columnValue, ... If there are no string columns in the request, the name
             will just be valueColumnName.
           </li>
-          <li>Example Time Series Query:</li>
-          <pre>
-            {`AzureActivity
-| where $__timeFilter()
-| summarize count() by Category, bin(TimeGenerated, 60min)
-| order by TimeGenerated asc
-`}
-          </pre>
         </p>
 
         <p>

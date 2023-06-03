@@ -4,10 +4,10 @@ import { get } from 'lodash';
 import React, { useMemo, useState } from 'react';
 import { useAsync, useEffectOnce } from 'react-use';
 import { LogshipDataSourceOptions as LogshipDataSourceOptions, KustoQuery } from 'types';
-
 import { LogshipDataSource } from '../../datasource';
 import { QueryHeader } from './QueryHeader';
 import { RawQueryEditor } from './RawQueryEditor';
+import { useLocation } from 'react-router-dom';
 
 type Props = QueryEditorProps<LogshipDataSource, KustoQuery, LogshipDataSourceOptions>;
 
@@ -16,7 +16,7 @@ export const QueryEditor: React.FC<Props> = (props) => {
   const schema = useAsync(() => datasource.getSchema(true), [datasource.id]);
   const templateVariables = useTemplateVariables(datasource);
   const [dirty, setDirty] = useState(false);
-
+  const isExplore = useLocation().pathname?.startsWith('/explore');
   useEffectOnce(() => {
     onRunQuery();
   });
@@ -27,6 +27,7 @@ export const QueryEditor: React.FC<Props> = (props) => {
         <QueryHeader
           query={query}
           onChange={onChange}
+          isExplore={isExplore}
           schema={schema}
           datasource={datasource}
           dirty={dirty}
@@ -36,7 +37,6 @@ export const QueryEditor: React.FC<Props> = (props) => {
         <RawQueryEditor
             {...props}
             schema={schema}
-            database={query.database}
             templateVariableOptions={templateVariables}
             setDirty={() => !dirty && setDirty(true)}
           />

@@ -1,27 +1,22 @@
 package models
 
 // options are properties that can be set on the Logship Connection string.
-// https://docs.microsoft.com/en-us/azure/data-explorer/kusto/api/netfx/request-properties
 type options struct {
 	DataConsistency string `json:"queryconsistency,omitempty"`
 	CacheMaxAge     string `json:"query_results_cache_max_age,omitempty"`
 	ServerTimeout   string `json:"servertimeout,omitempty"`
 }
 
-// RequestPayload is the information that makes up a Kusto query for Azure's Data Explorer API.
 type RequestPayload struct {
-	DB          string      `json:"db"`
 	Query       string      `json:"query"`
 	QuerySource string      `json:"querySource"`
 	Properties  *Properties `json:"properties,omitempty"`
 }
 
-// AzureFrameMD is a type to populate a Frame's Custom metadata property.
 type LogshipFrameMD struct {
 	ColumnTypes []string
 }
 
-// errorResponse is a minimal structure of Azure Data Explorer's JSON
 // error body,
 type ErrorResponse struct {
 	Message    string `json:"message"`
@@ -51,9 +46,8 @@ func NewConnectionProperties(s *DatasourceSettings, cs *CacheSettings) *Properti
 
 	return &Properties{
 		&options{
-			DataConsistency: s.DataConsistency,
-			CacheMaxAge:     cacheMaxAge,
-			ServerTimeout:   s.ServerTimeoutValue,
+			CacheMaxAge:   cacheMaxAge,
+			ServerTimeout: s.ServerTimeoutValue,
 		},
 	}
 }

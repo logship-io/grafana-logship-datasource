@@ -124,7 +124,9 @@ const config = async (env): Promise<Configuration> => ({
       },
     ],
   },
-
+  optimization: {
+    minimize: Boolean(env.production)
+  },
   output: {
     clean: {
       keep: new RegExp(`.*?_(amd64|arm(64)?)(.exe)?`),

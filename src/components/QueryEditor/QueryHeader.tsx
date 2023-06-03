@@ -1,43 +1,38 @@
 import React, { useState, useEffect } from 'react';
-import { Button, ConfirmModal, RadioButtonGroup } from '@grafana/ui';
+import { Button, } from '@grafana/ui';
 import { EditorHeader, FlexItem, InlineSelect } from '@grafana/experimental';
 
-import { EditorMode, FormatOptions, KustoQuery, LogshipDatabaseSchema } from '../../types';
+import { FormatOptions, KustoQuery, LogshipDatabaseSchema } from '../../types';
 import { AsyncState } from 'react-use/lib/useAsyncFn';
 import { LogshipDataSource } from 'datasource';
 import { SelectableValue } from '@grafana/data';
 import { selectors } from 'test/selectors';
+import InlineTableSelect from './InlineTableSelect';
 
 export interface QueryEditorHeaderProps {
   datasource: LogshipDataSource;
   query: KustoQuery;
   schema: AsyncState<LogshipDatabaseSchema>;
   dirty: boolean;
+  isExplore: boolean;
   setDirty: (b: boolean) => void;
   onChange: (value: KustoQuery) => void;
   onRunQuery: () => void;
 }
 
-const EDITOR_MODES = [
-  { label: 'KQL', value: EditorMode.Raw },
-  //{ label: 'Builder', value: EditorMode.Visual },
-];
-
 const EDITOR_FORMATS: Array<SelectableValue<string>> = [
   { label: 'Table', value: FormatOptions.table },
-  { label: 'Time series', value: FormatOptions.timeSeries },
+  { label: 'Time Series', value: FormatOptions.timeSeries },
 ];
 
-
 export const QueryHeader = (props: QueryEditorHeaderProps) => {
-  const { query, schema, onChange, setDirty, onRunQuery } = props;
-  const [formats, _setFormats] = useState(EDITOR_FORMATS);
-  const [showWarning, setShowWarning] = useState(false);
+  const { query, schema, onChange, isExplore, setDirty, onRunQuery } = props;
+  const formats = EDITOR_FORMATS;
+  const defaultFormat = isExplore
+    ? FormatOptions.table
+    : FormatOptions.timeSeries;
   const [schemaLoaded, setSchemaLoaded] = useState(false);
 
-  const changeEditorMode = (value: EditorMode) => {
-      onChange({ ...query, });
-  };
   useEffect(() => {
     if (schema.value && !schemaLoaded) {
       setSchemaLoaded(true);
@@ -46,32 +41,31 @@ export const QueryHeader = (props: QueryEditorHeaderProps) => {
 
   useEffect(() => {
     if (!query.resultFormat) {
-      onChange({ ...query, resultFormat: FormatOptions.timeSeries });
+      onChange({ ...query, resultFormat: 'table' });
+      setDirty(false);
     }
-    
-  }, [query, formats, onChange]);
+  }, [query, onChange, setDirty]);
   return (
     <EditorHeader>
-      <ConfirmModal
-        isOpen={showWarning}
-        title="Are you sure?"
-        body="You will lose manual changes done to the query if you go back to the visual builder."
-        confirmText="Confirm"
-        onConfirm={() => {
-          setShowWarning(false);
-          onChange({ ...query, });
-          setDirty(false);
-        }}
-        onDismiss={() => {
-          setShowWarning(false);
-        }}
-      ></ConfirmModal>
+      <InlineTableSelect
+        query={query}
+        schema={schema}
+        schemaLoaded={schemaLoaded}
+        onChange={onChange}
+        onRunQuery={onRunQuery}
+       />
       <InlineSelect
         label="Format as"
         options={formats}
         value={query.resultFormat}
+        defaultValue={defaultFormat}
         onChange={({ value }) => {
-          onChange({ ...query, resultFormat: value! });
+          if (value === FormatOptions.timeSeries) {
+            onChange({ ...query, resultFormat: 'time_series' });
+          } else {
+            onChange({ ...query, resultFormat: 'table' });
+          }
+          
         }}
       />
       <FlexItem grow={1} />
@@ -84,12 +78,6 @@ export const QueryHeader = (props: QueryEditorHeaderProps) => {
       >
         Run query
       </Button>
-      <RadioButtonGroup
-        size="sm"
-        options={EDITOR_MODES}
-        value={EditorMode.Raw}
-        onChange={changeEditorMode}
-      />
     </EditorHeader>
   );
 };

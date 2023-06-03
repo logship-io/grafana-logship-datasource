@@ -19,13 +19,13 @@ const ConnectionConfig: React.FC<ConnectionConfigProps> = ({ options, updateJson
       <InlineField
         label="Cluster URL"
         labelWidth={LABEL_WIDTH}
-        tooltip="The cluster url for your Azure Data Explorer database."
+        tooltip="The cluster url for your Logship database."
       >
         <Input
           data-testid={selectors.components.configEditor.clusterURL.input}
           value={jsonData.clusterUrl}
           id="logship-cluster-url"
-          placeholder="https://try.logship.ai"
+          placeholder="https://try.logship.ai:5000/"
           width={60}
           onChange={(ev: React.ChangeEvent<HTMLInputElement>) => updateJsonData('clusterUrl', ev.target.value)}
         />

@@ -1,7 +1,7 @@
 import { DataSourcePluginOptionsEditorProps, PluginType } from '@grafana/data';
 
 import { LogshipDataSource } from '../../datasource';
-import { LogshipDataSourceOptions, LogshipDataSourceSecureOptions, EditorMode, KustoQuery } from '../../types';
+import { LogshipDataSourceOptions, LogshipDataSourceSecureOptions, KustoQuery } from '../../types';
 
 export const mockDatasourceOptions: DataSourcePluginOptionsEditorProps<
   LogshipDataSourceOptions,
@@ -25,9 +25,7 @@ export const mockDatasourceOptions: DataSourcePluginOptionsEditorProps<
     jsonData: {
       defaultDatabase: 'default',
       minimalCache: 1,
-      defaultEditorMode: EditorMode.Raw,
       queryTimeout: '',
-      dataConsistency: '',
       cacheMaxAge: '',
       dynamicCaching: false,
       useSchemaMapping: false,
@@ -76,8 +74,7 @@ export const mockDatasource = () =>
 export const mockQuery: KustoQuery = {
   refId: 'A',
   query: '',
-  database: '',
-  resultFormat: '',
+  resultFormat: 'table',
   querySource: 'raw',
   pluginVersion: '1',
 };

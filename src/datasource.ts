@@ -20,7 +20,6 @@ import {
   LogshipDataSourceOptions as LogshipDataSourceOptions,
   LogshipSchemaDefinition,
   defaultQuery,
-  EditorMode,
   KustoQuery,
   LogshipDatabaseSchema,
 } from './types';
@@ -28,7 +27,6 @@ import { LogshipSchemaMapper } from 'schema/LogshipSchemaMapper';
 
 export class LogshipDataSource extends DataSourceWithBackend<KustoQuery, LogshipDataSourceOptions> {
   private templateSrv: TemplateSrv;
-  private defaultEditorMode: EditorMode;
   private schemaMapper: LogshipSchemaMapper;
 
   constructor(instanceSettings: DataSourceInstanceSettings<LogshipDataSourceOptions>) {
@@ -40,7 +38,6 @@ export class LogshipDataSource extends DataSourceWithBackend<KustoQuery, Logship
     //this.backendSrv = getBackendSrv();
     this.templateSrv = getTemplateSrv();
     //this.url = instanceSettings.url;
-    this.defaultEditorMode = EditorMode.Raw;// instanceSettings.jsonData.defaultEditorMode ?? EditorMode.Raw;
     this.schemaMapper = new LogshipSchemaMapper(useSchemaMapping, schemaMapping);
     this.getSchemaMapper = this.getSchemaMapper.bind(this);
   }
@@ -73,7 +70,6 @@ export class LogshipDataSource extends DataSourceWithBackend<KustoQuery, Logship
     return {
       ...target,
       query,
-      database: this.templateSrv.replace(target.database, scopedVars),
     };
   }
 
@@ -156,7 +152,6 @@ export class LogshipDataSource extends DataSourceWithBackend<KustoQuery, Logship
       refId: `logship-${interpolatedQuery}`,
       resultFormat: 'table',
       query: interpolatedQuery,
-      database,
     };
   }
 
@@ -185,10 +180,6 @@ export class LogshipDataSource extends DataSourceWithBackend<KustoQuery, Logship
 
   getSchemaMapper(): LogshipSchemaMapper {
     return this.schemaMapper;
-  }
-
-  getDefaultEditorMode(): EditorMode {
-    return this.defaultEditorMode;
   }
 }
 
@@ -261,7 +252,6 @@ const recordSchema = (columnName: string, schema: LogshipSchemaDefinition, resul
   // Case: schema is an object: e.g. {"a": "long"}
   for (const name of Object.keys(schema)) {
     // Generate a valid accessor for a dynamic type
-    // https://docs.microsoft.com/en-us/azure/data-explorer/kusto/query/scalar-data-types/dynamic#dynamic-object-accessors
     const key = `${columnName}["${name}"]`;
     const subSchema = schema[name];
     recordSchema(key, subSchema, result);

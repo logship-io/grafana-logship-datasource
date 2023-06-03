@@ -29,7 +29,6 @@ func TestClient(t *testing.T) {
 		defer server.Close()
 
 		payload := models.RequestPayload{
-			DB:          "db-name",
 			Query:       "show databases",
 			QuerySource: "schema",
 		}
@@ -56,7 +55,6 @@ func TestClient(t *testing.T) {
 		defer server.Close()
 
 		payload := models.RequestPayload{
-			DB:          "db-name",
 			Query:       "show databases",
 			QuerySource: "schema",
 		}
@@ -79,7 +77,6 @@ func TestClient(t *testing.T) {
 		defer server.Close()
 
 		payload := models.RequestPayload{
-			DB:          "db-name",
 			Query:       "show databases",
 			QuerySource: "schema",
 		}

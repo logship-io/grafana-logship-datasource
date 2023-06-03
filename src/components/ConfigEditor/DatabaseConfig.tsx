@@ -17,7 +17,6 @@ import { LogshipDataSource } from 'datasource';
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { useEffectOnce } from 'react-use';
 import { LogshipDataSourceOptions, LogshipDataSourceSecureOptions, LogshipDataSourceSettings } from 'types';
-import { hasCredentials } from './AzureCredentialsConfig';
 import { refreshSchema, Schema } from './refreshSchema';
 
 interface DatabaseConfigProps
@@ -98,7 +97,7 @@ const DatabaseConfig: React.FC<DatabaseConfigProps> = (props: DatabaseConfigProp
     updateJsonData('schemaMappings', newMappings);
   };
 
-  const canGetSchema = () => options.jsonData.clusterUrl && hasCredentials(options);
+  const canGetSchema = () => options.jsonData.clusterUrl;
 
   const updateSchema = async () => {
     try {
@@ -208,7 +207,7 @@ const DatabaseConfig: React.FC<DatabaseConfigProps> = (props: DatabaseConfigProp
       <br />
 
       {schemaError && (
-        <Alert severity="error" title="Error updating Azure Data Explorer schema">
+        <Alert severity="error" title="Error updating Logship schema">
           {schemaError.message}
         </Alert>
       )}

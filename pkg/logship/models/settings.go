@@ -9,12 +9,8 @@ import (
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 )
 
-// DatasourceSettings holds the datasource configuration information for Azure Data Explorer's API
-// that is needed to execute a request against Azure's Data Explorer API.
 type DatasourceSettings struct {
 	ClusterURL         string `json:"clusterUrl"`
-	DefaultDatabase    string `json:"defaultDatabase"`
-	DataConsistency    string `json:"dataConsistency"`
 	CacheMaxAge        string `json:"cacheMaxAge"`
 	DynamicCaching     bool   `json:"dynamicCaching"`
 	EnableUserTracking bool   `json:"enableUserTracking"`
@@ -63,7 +59,6 @@ func (d *DatasourceSettings) Load(config backend.DataSourceInstanceSettings) err
 // formatTimeout creates some sort of MS TimeSpan string for durations
 // that up to an hour. It is used for the servertimeout request property
 // option.
-// https://docs.microsoft.com/en-us/azure/data-explorer/kusto/concepts/querylimits#limit-execution-timeout
 func formatTimeout(d time.Duration) (string, error) {
 	if d > time.Hour {
 		return "", fmt.Errorf("timeout must be one hour or less")

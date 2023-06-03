@@ -4,11 +4,11 @@ services:
   grafana:
     container_name: 'grafana-logship-datasource'
     build:
-      dockerfile: ./.container/Containerfile
+      dockerfile: ./.config/Containerfile
       args:
-        grafana_version: ${GRAFANA_VERSION:-9.3.8}
+        grafana_version: ${GRAFANA_VERSION:latest}
     ports:
       - 3000:3000/tcp
-    # volumes:
-      # - ./dist:/var/lib/grafana/plugins/logsink-logship-datasource
+    volumes:
+      - ./dist:/var/lib/grafana/plugins/logsink-logship-datasource
       # - ./provisioning:/etc/grafana/provisioning

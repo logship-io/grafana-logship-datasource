@@ -41,20 +41,6 @@ func NewDatasource(instanceSettings backend.DataSourceInstanceSettings) (instanc
 		return nil, err
 	}
 	logship.settings = datasourceSettings
-
-	// azureSettings, err := azsettings.ReadFromEnv()
-	// if err != nil {
-	// 	backend.Logger.Error("failed to read Logship settings from Grafana", "error", err.Error())
-	// 	return nil, err
-	// }
-
-	// credentials, err := logshipcredentials.FromDatasourceData(jsonData, instanceSettings.DecryptedSecureJSONData)
-	// if err != nil {
-	// 	return nil, err
-	// } else if credentials == nil {
-	// 	credentials = logshipcredentials.GetDefaultCredentials(azureSettings)
-	// }
-
 	logshipClient, err := client.New(&instanceSettings, datasourceSettings)
 	if err != nil {
 		backend.Logger.Error("failed to create Logship client", "error", err.Error())
@@ -143,7 +129,6 @@ func (logship *LogshipBackend) modelQuery(ctx context.Context, q models.QueryMod
 
 	tableRes, err := logship.client.KustoRequest(ctx, logship.settings.ClusterURL, models.RequestPayload{
 		Query:       q.Query,
-		DB:          q.Database,
 		Properties:  props,
 		QuerySource: q.QuerySource,
 	}, headers)

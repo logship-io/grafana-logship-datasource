@@ -32,19 +32,9 @@ const ConfigEditor: React.FC<ConfigEditorProps> = (props) => {
 
       <ConnectionConfig options={options} onOptionsChange={onOptionsChange} updateJsonData={updateJsonData} />
 
-      <h3 className="page-heading">Authentication</h3>
-      {/* <AzureCredentialsForm
-        managedIdentityEnabled={config.azure.managedIdentityEnabled}
-        oboEnabled={getOboEnabled()}
-        credentials={credentials}
-        azureCloudOptions={KnownAzureClouds}
-        onCredentialsChange={onCredentialsChange}
-      /> */}
+      {/* <h3 className="page-heading">Authentication</h3> */}
 
       <QueryConfig options={options} onOptionsChange={onOptionsChange} updateJsonData={updateJsonData} />
-
-      {/* <DatabaseConfig options={options} onOptionsChange={onOptionsChange} updateJsonData={updateJsonData} /> */}
-
       <TrackingConfig options={options} onOptionsChange={onOptionsChange} updateJsonData={updateJsonData} />
     </div>
   );

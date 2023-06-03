@@ -5,22 +5,18 @@ import { DataQuery } from '@grafana/schema';
 
 const packageJson = require('../package.json');
 
-type QuerySource = 'raw' | 'schema' | 'autocomplete' | 'visual' | 'variable';
+type QuerySource = 'raw' | 'schema' | 'autocomplete' | 'variable';
+type QueryResultFormat = 'time_series' | 'table';
 export interface KustoQuery extends DataQuery {
   query: string;
-  database: string;
-  resultFormat: string;
+  resultFormat: QueryResultFormat;
   querySource: QuerySource;
   pluginVersion: string;
 }
 
-export enum EditorMode {
-  Raw = 'raw',
-}
-
 export const defaultQuery: Pick<KustoQuery, 'query' | 'querySource' | 'pluginVersion'> = {
   query: '',
-  querySource: EditorMode.Raw,
+  querySource: 'raw',
   pluginVersion: packageJson.version,
 };
 
@@ -50,9 +46,7 @@ export enum SchemaMappingType {
 export interface LogshipDataSourceOptions extends DataSourceJsonData {
   defaultDatabase: string;
   minimalCache: number;
-  defaultEditorMode: EditorMode;
   queryTimeout: string;
-  dataConsistency: string;
   cacheMaxAge: string;
   dynamicCaching: boolean;
   useSchemaMapping: boolean;
@@ -94,7 +88,6 @@ export type LogshipSchemaDefinition = string | LogshipSchemaDefinition[] | { [k:
 export enum FormatOptions {
   table = 'table',
   timeSeries = 'time_series',
-  logshipTimeSeries = 'time_series_logship_series',
 }
 
 export type LogshipDataSourceSettings = DataSourceSettings<LogshipDataSourceOptions, LogshipDataSourceSecureOptions>;
