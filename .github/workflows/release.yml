@@ -112,6 +112,8 @@ jobs:
         with:
           draft: true
           generate_release_notes: false
+          automatic_release_tag: "latest"
+          prerelease: true
           files: |
             ./${{ steps.metadata.outputs.archive }}
             ./${{ steps.metadata.outputs.archive-checksum }}

@@ -62,7 +62,7 @@ const InlineTableSelect = (props: InlineTableSelectProps) => {
       setLoading(false);
     }
   }, [schema.value, schemaLoaded, loading]);
-  
+
   return loading ? (
     <div className={styles.valueContainer}>
       <InlineFormLabel>Loading Tables... <Spinner /></InlineFormLabel>
@@ -78,15 +78,16 @@ const InlineTableSelect = (props: InlineTableSelectProps) => {
       }))}
       onChange={(s) => { setSelectedTable(s.value) }}
     />
-    { selectedTable !== undefined && <Button
+    <Button
       variant="secondary"
       icon="table"
+      disabled={selectedTable !== undefined}
       size='xs'
       onClick={onProjectTable}
-      tooltip='Project columns for the selected table'
+      tooltip='Project all columns for the selected table with a limited result set.'
       >
-        Project
-    </Button> }
+        Preview
+    </Button>
   </div>
 )
 };
