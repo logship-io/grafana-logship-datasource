@@ -147,6 +147,7 @@ jobs:
       IMAGE_NAME: ${{ github.repository }}
     steps:
       - uses: actions/checkout@v3
+      
       - name: Registry Login
         uses: docker/login-action@v2
         with:
@@ -157,7 +158,7 @@ jobs:
       - name: Build the container image
         run: |
           podman build . \
-            --file ./.containers/Containerfile \
+            --file ./.container/Containerfile \
             --build-arg logship_grafana_datasource_version=${{ needs.release.outputs.version }}\
             --tag ghcr.io/${{ github.repository }}:$GITHUB_REF_NAME
           podman tag ghcr.io/${{ github.repository }}:$GITHUB_REF_NAME ghcr.io/${{ github.repository }}:latest
