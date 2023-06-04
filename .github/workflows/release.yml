@@ -13,6 +13,10 @@ jobs:
       version: ${{ steps.metadata.outputs.plugin-version }}
     steps:
       - uses: actions/checkout@v3
+      - name: Inject Tag Version
+        run: |
+          sudo apt-get install jq
+          jq ".id = ${GITHUB_REF#refs/*/v}" dist/plugin.json dist/plugin.tmp && mv -i dist/plugin.tmp dist/plugin.json
 
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
@@ -71,8 +75,6 @@ jobs:
       - name: Get plugin metadata
         id: metadata
         run: |
-          sudo apt-get install jq
-
           export GRAFANA_PLUGIN_ID=$(cat dist/plugin.json | jq -r .id)
           export GRAFANA_PLUGIN_VERSION=$(cat dist/plugin.json | jq -r .info.version)
           export GRAFANA_PLUGIN_TYPE=$(cat dist/plugin.json | jq -r .type)
