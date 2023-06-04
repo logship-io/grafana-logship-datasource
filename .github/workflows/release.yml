@@ -157,8 +157,9 @@ jobs:
       
       - name: Build the container image
         run: |
+          cd ./.container
           podman build . \
-            --file ./.container/Containerfile \
+            --file /Containerfile \
             --build-arg logship_grafana_datasource_version=${{ needs.release.outputs.version }}\
             --tag ghcr.io/${{ github.repository }}:$GITHUB_REF_NAME
           podman tag ghcr.io/${{ github.repository }}:$GITHUB_REF_NAME ghcr.io/${{ github.repository }}:latest

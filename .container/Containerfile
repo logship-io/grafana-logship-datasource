@@ -1,11 +1,11 @@
 ARG grafana_version=latest
 ARG grafana_image=grafana-oss
-ARG logship_grafana_datasource_version=0.0.17
+ARG logship_grafana_datasource_version=0.0.24
 
 FROM grafana/${grafana_image}:${grafana_version}
 ARG logship_grafana_datasource_version
-COPY ./.container/provisioning /etc/grafana/provisioning
-COPY ./.container/dashboards /opt/grafana-dashboards
+COPY ./provisioning /etc/grafana/provisioning
+COPY ./dashboards /var/lib/grafana/dashboards
 
 # Make it as simple as possible to access the grafana instance for development purposes
 # Do NOT enable these settings in a public facing / production grafana instance

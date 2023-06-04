@@ -1,9 +1,15 @@
 # Logship Data Source for Grafana
-
 ---
-
-
 [![Release](https://github.com/logsink/grafana-logship-datasource/actions/workflows/release.yml/badge.svg)](https://github.com/logsink/grafana-logship-datasource/actions/workflows/release.yml)
+
+Install in your own Grafana instance from our [releases.](https://github.com/logsink/grafana-logship-datasource/releases/latest)
+
+Test out a pre-provisioned container:
+```
+docker pull ghcr.io/logsink/grafana-logship-datasource:latest
+docker run -p 3000:3000 -it ghcr.io/logsink/grafana-logship-datasource:latest
+```
+
 
 # Configure
 - `podman-compose up`
