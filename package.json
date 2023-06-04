@@ -1,6 +1,6 @@
 {
   "name": "logship-datasource",
-  "version": "0.0.21",
+  "version": "0.0.23",
   "description": "A grafana datasource for logship",
   "scripts": {
     "build": "webpack -c ./.config/webpack/webpack.config.ts --env production",
