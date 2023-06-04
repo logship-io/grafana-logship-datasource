@@ -1,6 +1,6 @@
 # Configure
 - `podman-compose up`
-- Configure DataSource in Grafana with http://try.logship.ai:4000 (no trailing slash)
+- Configure DataSource in Grafana with http://try.logship.ai:5000/
 
 # Grafana data source plugin template
 

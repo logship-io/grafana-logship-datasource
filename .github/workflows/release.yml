@@ -9,6 +9,8 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.metadata.outputs.plugin-version }}
     steps:
       - uses: actions/checkout@v3
 
@@ -52,11 +54,11 @@ jobs:
           version: latest
           args: buildAll
 
-      # - name: Warn missing Grafana API key
-      #   run: |
-      #     echo Please generate a Grafana API key: https://grafana.com/docs/grafana/latest/developers/plugins/sign-a-plugin/#generate-an-api-key
-      #     echo Once done please follow the instructions found here: https://github.com/${{github.repository}}/blob/main/README.md#using-github-actions-release-workflow
-      #   if: ${{ env.GRAFANA_API_KEY == '' }}
+      - name: Warn missing Grafana API key
+        run: |
+          echo Please generate a Grafana API key: https://grafana.com/docs/grafana/latest/developers/plugins/sign-a-plugin/#generate-an-api-key
+          echo Once done please follow the instructions found here: https://github.com/${{github.repository}}/blob/main/README.md#using-github-actions-release-workflow
+        if: ${{ env.GRAFANA_API_KEY == '' }}
 
       - name: Sign plugin
         run: yarn sign
@@ -132,3 +134,25 @@ jobs:
               - Paste this [.zip.md5 link](https://github.com/${{ github.repository }}/releases/download/v${{ steps.metadata.outputs.plugin-version }}/${{ steps.metadata.outputs.archive-checksum }}) in the MD5 field
 
             Once done please remove these instructions and publish this release.
+
+  container:
+    runs-on: ubuntu-latest
+    needs: release
+    steps:
+      - uses: actions/checkout@v3
+      - name: Registry Login
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Build the container image
+        run: |
+          podman build . \
+            --file ./containers/Containerfile \
+            --build-arg logship_grafana_datasource_version=${{ needs.release.outputs.version }}\
+            --tag ghcr.io/${{ github.repository }}:$GITHUB_REF_NAME
+          podman tag ghcr.io/${{ github.repository }}:$GITHUB_REF_NAME ghcr.io/${{ github.repository }}:latest
+          podman push ghcr.io/${{ github.repository }}:$GITHUB_REF_NAME
+          podman push ghcr.io/${{ github.repository }}:latest
