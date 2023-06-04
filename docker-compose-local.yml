@@ -13,5 +13,5 @@ services:
       - host
     volumes:
       - ./dashboards:/var/lib/grafana/dashboards
-      - ./dist:/var/lib/grafana/plugins/logsink-logship-datasource
+      - ./dist:/var/lib/grafana/plugins/grafana-logship-datasource
       - ./provisioning:/etc/grafana/provisioning

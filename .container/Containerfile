@@ -4,8 +4,8 @@ ARG logship_grafana_datasource_version=0.0.17
 
 FROM grafana/${grafana_image}:${grafana_version}
 ARG logship_grafana_datasource_version
-COPY ./provisioning /etc/grafana/provisioning
-COPY ./dashboards /var/lib/grafana/dashboards
+COPY ./.containers/provisioning /etc/grafana/provisioning
+COPY ./.containers/dashboards /opt/grafana-dashboards
 
 # Make it as simple as possible to access the grafana instance for development purposes
 # Do NOT enable these settings in a public facing / production grafana instance

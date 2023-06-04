@@ -9,6 +9,9 @@ services:
         grafana_version: ${GRAFANA_VERSION:latest}
     ports:
       - 3000:3000/tcp
+    network:
+      - host
     volumes:
-      - ./dist:/var/lib/grafana/plugins/logsink-logship-datasource
-      # - ./provisioning:/etc/grafana/provisioning
+      - ./.container/provisioning:/etc/grafana/provisioning
+      - ./.container/dashboards:/var/lib/grafana/dashboards
+      - ./dist:/var/lib/grafana/plugins/grafana-logship-datasource
