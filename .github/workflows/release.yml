@@ -60,13 +60,13 @@ jobs:
           echo Once done please follow the instructions found here: https://github.com/${{github.repository}}/blob/main/README.md#using-github-actions-release-workflow
         env:
           GRAFANA_API_KEY: ${{ secrets.GRAFANA_API_KEY }}
-        if: ${{ env.GRAFANA_API_KEY == '' }}
+        if: ${{ false && env.GRAFANA_API_KEY == '' }}
 
       - name: Sign plugin
         run: yarn sign
         env:
           GRAFANA_API_KEY: ${{ secrets.GRAFANA_API_KEY }}
-        if: ${{ env.GRAFANA_API_KEY != '' }}
+        if: ${{ false && env.GRAFANA_API_KEY != '' }}
 
       - name: Get plugin metadata
         id: metadata
