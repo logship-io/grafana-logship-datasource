@@ -1,10 +1,10 @@
 name: Release
 
+# Run workflow on version tags, e.g. v1.0.0.
 on:
   push:
-    branches:
-      - master
-      - main
+    tags:
+      - v*
 
 jobs:
   release:
@@ -58,10 +58,14 @@ jobs:
         run: |
           echo Please generate a Grafana API key: https://grafana.com/docs/grafana/latest/developers/plugins/sign-a-plugin/#generate-an-api-key
           echo Once done please follow the instructions found here: https://github.com/${{github.repository}}/blob/main/README.md#using-github-actions-release-workflow
+        env:
+          GRAFANA_API_KEY: ${{ secrets.GRAFANA_API_KEY }}
         if: ${{ env.GRAFANA_API_KEY == '' }}
 
       - name: Sign plugin
         run: yarn sign
+        env:
+          GRAFANA_API_KEY: ${{ secrets.GRAFANA_API_KEY }}
         if: ${{ env.GRAFANA_API_KEY != '' }}
 
       - name: Get plugin metadata
@@ -89,8 +93,8 @@ jobs:
           awk '/^## / {s++} s == 1 {print}' CHANGELOG.md > release_notes.md
           echo "path=release_notes.md" >> $GITHUB_OUTPUT
 
-      # - name: Check package version
-      #   run: if [ "v${{ steps.metadata.outputs.plugin-version }}" != "${{ steps.metadata.outputs.github-tag }}" ]; then printf "\033[0;31mPlugin version doesn't match tag name\033[0m\n"; exit 1; fi
+      - name: Check package version
+        run: if [ "v${{ steps.metadata.outputs.plugin-version }}" != "${{ steps.metadata.outputs.github-tag }}" ]; then printf "\033[0;31mPlugin version doesn't match tag name\033[0m\n"; exit 1; fi
 
       - name: Package plugin
         id: package-plugin
@@ -138,6 +142,9 @@ jobs:
   container:
     runs-on: ubuntu-latest
     needs: release
+    env:
+      REGISTRY: ghcr.io
+      IMAGE_NAME: ${{ github.repository }}
     steps:
       - uses: actions/checkout@v3
       - name: Registry Login
