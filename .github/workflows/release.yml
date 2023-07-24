@@ -16,7 +16,7 @@ jobs:
       - name: Inject Tag Version
         run: |
           sudo apt-get install jq
-          jq ".id = ${GITHUB_REF#refs/*/v}" dist/plugin.json dist/plugin.tmp && mv -i dist/plugin.tmp dist/plugin.json
+          jq '.version = "${GITHUB_REF#refs/*/v}"' dist/plugin.json dist/plugin.tmp && mv -i dist/plugin.tmp dist/plugin.json
 
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
