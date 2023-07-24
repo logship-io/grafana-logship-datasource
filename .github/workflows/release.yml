@@ -125,6 +125,11 @@ jobs:
             ./${{ steps.metadata.outputs.archive }}
             ./${{ steps.metadata.outputs.archive-checksum }}
           body: |
+            # Logship Data Source v${{ steps.metadata.outputs.plugin-version }}
+            
+            ---
+            NOTE: This is an unsigned plugin, your Grafana instance must be running in development mode.
+
             **This Github draft release has been created for your plugin.**
 
             _Note: if this is the first release for your plugin please consult the [distributing-your-plugin section](https://github.com/${{github.repository}}/blob/main/README.md#distributing-your-plugin) of the README_

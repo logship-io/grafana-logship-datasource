@@ -19,8 +19,19 @@ type LogshipFrameMD struct {
 
 // error body,
 type ErrorResponse struct {
-	Message    string `json:"message"`
-	StackTrace string `json:"stackTrace"`
+	Message    string                  `json:"message"`
+	StackTrace string                  `json:"stackTrace"`
+	Errors     []TokenizedErrorMessage `json:"errors"`
+}
+
+type TokenizedErrorMessage struct {
+	Message string  `json:"message"`
+	Tokens  []Token `json:"tokens"`
+}
+
+type Token struct {
+	Start int `json:"start"`
+	End   int `json:"end"`
 }
 
 type WhoAmIResponse struct {
