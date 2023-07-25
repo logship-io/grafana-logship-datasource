@@ -75,6 +75,7 @@ jobs:
       - name: Get plugin metadata
         id: metadata
         run: |
+          jq '.version = "${GITHUB_REF#refs/*/v}"' dist/plugin.json > dist/plugin.json.tmp && mv -i -f dist/plugin.json.tmp dist/plugin.json
           export GRAFANA_PLUGIN_ID=$(cat dist/plugin.json | jq -r .id)
           export GRAFANA_PLUGIN_VERSION=$(cat dist/plugin.json | jq -r .info.version)
           export GRAFANA_PLUGIN_TYPE=$(cat dist/plugin.json | jq -r .type)
