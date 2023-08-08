@@ -31,6 +31,8 @@ export const mockDatasourceOptions: DataSourcePluginOptionsEditorProps<
       useSchemaMapping: false,
       enableUserTracking: false,
       clusterUrl: '',
+      authType: 'jwt',
+      username: '',
     },
     secureJsonFields: {},
     readOnly: false,

@@ -12,6 +12,7 @@ import (
 	// 100% compatible drop-in replacement of "encoding/json"
 	json "github.com/json-iterator/go"
 
+	"github.com/logsink/grafana-logship-datasource/pkg/logship/client/auth"
 	"github.com/logsink/grafana-logship-datasource/pkg/logship/models"
 )
 
@@ -26,6 +27,7 @@ var _ LogshipClient = new(Client) // validates interface conformance
 // Client is an http.Client used for API requests.
 type Client struct {
 	userId     uuid.UUID
+	auth       auth.LogshipAuth
 	httpClient *http.Client
 }
 
@@ -36,13 +38,34 @@ func New(instanceSettings *backend.DataSourceInstanceSettings, dsSettings *model
 		return nil, err
 	}
 
-	return &Client{httpClient: httpClient, userId: uuid.Nil}, nil
+	auth, err := auth.New(instanceSettings, dsSettings)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Client{
+		httpClient: httpClient,
+		userId:     uuid.Nil,
+		auth:       auth,
+	}, nil
 }
 
 // TestRequest handles a data source test request in Grafana's Datasource configuration UI.
 func (c *Client) TestRequest(ctx context.Context, datasourceSettings *models.DatasourceSettings, properties *models.Properties, additionalHeaders map[string]string) error {
-	c.WhoAmIRequest(ctx, datasourceSettings.ClusterURL, additionalHeaders)
-	_, err := c.SchemaRequest(ctx, datasourceSettings.ClusterURL, additionalHeaders)
+	backend.Logger.Warn("Starting Logship test request:")
+	user, err := c.WhoAmIRequest(ctx, datasourceSettings.ClusterURL, additionalHeaders)
+	if err != nil {
+		backend.Logger.Error("failed to make whoami request: %w", err)
+		return err
+	}
+
+	backend.Logger.Info("WhoAmI results user: %s", user.UserID)
+	s, err := c.SchemaRequest(ctx, datasourceSettings.ClusterURL, additionalHeaders)
+	if err != nil {
+		backend.Logger.Error("failed to make schema request. %w", err)
+	}
+
+	backend.Logger.Info("Schema results : %s", len(s))
 	return err
 }
 
@@ -50,6 +73,11 @@ func (c *Client) WhoAmIRequest(ctx context.Context, url string, additionalHeader
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url+"/whoami", http.NoBody)
 	if err != nil {
 		return nil, fmt.Errorf("no request instance: %w", err)
+	}
+
+	err = c.auth.AuthenticateRequest(ctx, c.httpClient, req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to authenticate: %w", err)
 	}
 
 	req.Header.Set("Accept", "application/json")
@@ -64,7 +92,7 @@ func (c *Client) WhoAmIRequest(ctx context.Context, url string, additionalHeader
 	}
 
 	defer resp.Body.Close()
-	err = responseAsError(resp)
+	err = c.responseAsError(resp)
 	if err != nil {
 		return nil, err
 	}
@@ -83,9 +111,13 @@ func (c *Client) SchemaRequest(ctx context.Context, url string, additionalHeader
 		return nil, fmt.Errorf("no request instance: %w", err)
 	}
 
+	err = c.auth.AuthenticateRequest(ctx, c.httpClient, req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to authenticate: %w", err)
+	}
+
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.userId))
 	for key, value := range additionalHeaders {
 		req.Header.Set(key, value)
 	}
@@ -96,7 +128,7 @@ func (c *Client) SchemaRequest(ctx context.Context, url string, additionalHeader
 	}
 
 	defer resp.Body.Close()
-	err = responseAsError(resp)
+	err = c.responseAsError(resp)
 	if err != nil {
 		return nil, err
 	}
@@ -118,9 +150,14 @@ func (c *Client) KustoRequest(ctx context.Context, url string, payload models.Re
 		return nil, fmt.Errorf("no request instance: %w", err)
 	}
 
+	err = c.auth.AuthenticateRequest(ctx, c.httpClient, req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to authenticate request to %s: %w", req.URL, err)
+	}
+
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.userId))
+
 	if payload.QuerySource == "" {
 		payload.QuerySource = "unspecified"
 	}
@@ -134,7 +171,7 @@ func (c *Client) KustoRequest(ctx context.Context, url string, payload models.Re
 	}
 	defer resp.Body.Close()
 
-	err = responseAsError(resp)
+	err = c.responseAsError(resp)
 	if err != nil {
 		return nil, err
 	}
@@ -142,10 +179,11 @@ func (c *Client) KustoRequest(ctx context.Context, url string, payload models.Re
 	return models.TableFromJSON(resp.Body)
 }
 
-func responseAsError(resp *http.Response) error {
+func (c *Client) responseAsError(resp *http.Response) error {
 	switch {
 	case resp.StatusCode == http.StatusUnauthorized:
 		backend.Logger.Error("HTTP 401 Unauthorized response.", resp.Request.URL)
+		c.auth.ClearCache() // Try a re-auth
 		return fmt.Errorf("HTTP %q", resp.Status)
 
 	case resp.StatusCode/100 != 2:

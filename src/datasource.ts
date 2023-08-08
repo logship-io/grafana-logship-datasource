@@ -17,7 +17,7 @@ import interpolateKustoQuery from './query_builder';
 import { ResponseParser } from './response_parser';
 import {
   LogshipColumnSchema,
-  LogshipDataSourceOptions as LogshipDataSourceOptions,
+  LogshipDataSourceOptions,
   LogshipSchemaDefinition,
   defaultQuery,
   KustoQuery,

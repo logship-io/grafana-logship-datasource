@@ -1,4 +1,4 @@
-FROM grafana/grafana-oss:${grafana_version}
+FROM grafana/grafana-oss:9.3.8
 
 # Make it as simple as possible to access the grafana instance for development purposes
 # Do NOT enable these settings in a public facing / production grafana instance
@@ -8,9 +8,10 @@ ENV GF_AUTH_BASIC_ENABLED "false"
 # Set development mode so plugins can be loaded without the need to sign
 ENV GF_DEFAULT_APP_MODE "development"
 
-# Mount ../dist to /var/lib/grafana/plugins/grafana-logship-datasource
-# See compose files in ..
-
 # Inject livereload script into grafana index.html
 USER root
-RUN sed -i 's/<\/body><\/html>/<script src=\"http:\/\/localhost:35729\/livereload.js\"><\/script><\/body><\/html>/g' /usr/share/grafana/public/views/index.html
+RUN sed -i 's/<\/body><\/html>/<script src=\"http:\/\/172.21.0.1:35729\/livereload.js\"><\/script><\/body><\/html>/g' /usr/share/grafana/public/views/index.html
+
+# Mount ../dist to /var/lib/grafana/plugins/grafana-logship-datasource
+# See compose files in ..
+# podman run --network host -v ./dist:/var/lib/grafana/plugins/grafana-logship-datasource -v ./.container/dashboards:/var/lib/grafana/dashboards -v ./container/provisioning:/etc/grafana/provisioning -it grafana-logship
