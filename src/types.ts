@@ -1,12 +1,13 @@
 
 
-import { DataSourceJsonData, DataSourceSettings } from '@grafana/data';;
+import { DataSourceJsonData, DataSourceSettings } from '@grafana/data';
 import { DataQuery } from '@grafana/schema';
 
 const packageJson = require('../package.json');
 
-type QuerySource = 'raw' | 'schema' | 'autocomplete' | 'variable';
-type QueryResultFormat = 'time_series' | 'table';
+export type QuerySource = 'raw' | 'schema' | 'autocomplete' | 'variable';
+export type QueryResultFormat = 'time_series' | 'table';
+
 export interface KustoQuery extends DataQuery {
   query: string;
   resultFormat: QueryResultFormat;
@@ -53,9 +54,14 @@ export interface LogshipDataSourceOptions extends DataSourceJsonData {
   schemaMappings?: Array<Partial<SchemaMapping>>;
   enableUserTracking: boolean;
   clusterUrl: string;
+  authType: string;
+  username: string;
 }
 
-export interface LogshipDataSourceSecureOptions {}
+
+export interface LogshipDataSourceSecureOptions {
+  pass: string;
+}
 
 export interface LogshipDatabaseSchema {
   name: string;
@@ -84,10 +90,4 @@ export interface LogshipFunctionSchema {
 export interface LogshipFunctionInputParameterSchema extends LogshipColumnSchema {}
 
 export type LogshipSchemaDefinition = string | LogshipSchemaDefinition[] | { [k: string]: LogshipSchemaDefinition };
-
-export enum FormatOptions {
-  table = 'table',
-  timeSeries = 'time_series',
-}
-
 export type LogshipDataSourceSettings = DataSourceSettings<LogshipDataSourceOptions, LogshipDataSourceSecureOptions>;

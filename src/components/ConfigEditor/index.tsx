@@ -3,21 +3,24 @@ import { DataSourcePluginOptionsEditorProps } from '@grafana/data';
 import ConfigHelp from './ConfigHelp';
 import { LogshipDataSourceOptions, LogshipDataSourceSecureOptions } from 'types';
 import ConnectionConfig from './ConnectionConfig';
-import QueryConfig from './QueryConfig';
+// import QueryConfig from './QueryConfig';
 import TrackingConfig from './TrackingConfig';
+import AuthenticationConfig from './AuthenticationConfig';
 
 export interface ConfigEditorProps
   extends DataSourcePluginOptionsEditorProps<LogshipDataSourceOptions, LogshipDataSourceSecureOptions> {}
 
 const ConfigEditor: React.FC<ConfigEditorProps> = (props) => {
-  const { options, onOptionsChange } = props;
-  const { jsonData } = options;
+  const { options, onOptionsChange } = props;  
+  props.options.jsonData.authType = 'jwt'
+  const jsonData = props.options.jsonData;
 
   const updateJsonData = useCallback(
     <T extends keyof LogshipDataSourceOptions>(fieldName: T, value: LogshipDataSourceOptions[T]) => {
       onOptionsChange({
         ...options,
         jsonData: {
+          ...options.jsonData,
           ...jsonData,
           [fieldName]: value,
         },
@@ -27,16 +30,13 @@ const ConfigEditor: React.FC<ConfigEditorProps> = (props) => {
   );
 
   return (
-    <div data-testid="logship-datasource-config-editor">
+    <>
       <ConfigHelp />
-
       <ConnectionConfig options={options} onOptionsChange={onOptionsChange} updateJsonData={updateJsonData} />
-
-      {/* <h3 className="page-heading">Authentication</h3> */}
-
-      <QueryConfig options={options} onOptionsChange={onOptionsChange} updateJsonData={updateJsonData} />
+      <AuthenticationConfig options={options} userIdentityEnabled={false} onOptionsChange={onOptionsChange} updateJsonData={updateJsonData} />
+      {/* <QueryConfig options={options} onOptionsChange={onOptionsChange} updateJsonData={updateJsonData} /> */}
       <TrackingConfig options={options} onOptionsChange={onOptionsChange} updateJsonData={updateJsonData} />
-    </div>
+    </>
   );
 };
 

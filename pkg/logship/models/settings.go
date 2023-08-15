@@ -14,6 +14,8 @@ type DatasourceSettings struct {
 	CacheMaxAge        string `json:"cacheMaxAge"`
 	DynamicCaching     bool   `json:"dynamicCaching"`
 	EnableUserTracking bool   `json:"enableUserTracking"`
+	AuthType           string `json:"authType"`
+	Username           string `json:"username"`
 
 	// QueryTimeoutRaw is a duration string set in the datasource settings and corresponds
 	// to the server execution timeout.
@@ -40,13 +42,16 @@ func (d *DatasourceSettings) Load(config backend.DataSourceInstanceSettings) err
 	}
 
 	d.ClusterURL = strings.TrimRight(d.ClusterURL, "/\\")
-
 	if d.QueryTimeoutRaw == "" {
 		d.QueryTimeout = time.Second * 30
 	} else {
 		if d.QueryTimeout, err = time.ParseDuration(d.QueryTimeoutRaw); err != nil {
 			return err
 		}
+	}
+
+	if d.AuthType == "" {
+		d.AuthType = "jwt"
 	}
 
 	if d.ServerTimeoutValue, err = formatTimeout(d.QueryTimeout); err != nil {

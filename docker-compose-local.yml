@@ -2,7 +2,7 @@ version: '3.0'
 
 services:
   grafana:
-    container_name: 'grafana-local-logship-datasource'
+    container_name: 'grafana-logship-datasource'
     build:
       context: ./.config
       args:
@@ -12,6 +12,6 @@ services:
     network:
       - host
     volumes:
-      - ./dashboards:/var/lib/grafana/dashboards
+      - ./.container/dashboards:/var/lib/grafana/dashboards
       - ./dist:/var/lib/grafana/plugins/grafana-logship-datasource
-      - ./provisioning:/etc/grafana/provisioning
+      - ./.container/provisioning:/etc/grafana/provisioning

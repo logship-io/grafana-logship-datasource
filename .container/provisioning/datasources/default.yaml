@@ -5,4 +5,7 @@ datasources:
     type: logship-datasource
     isDefault: true
     jsonData:
-      clusterUrl: http://try.logship.ai:5000/
+      clusterUrl: http://172.21.0.1:5000/
+      username: default
+    secureJsonData:
+      pass: default

@@ -2,7 +2,6 @@ package logship
 
 import (
 	"fmt"
-	"math/rand"
 	"net/http"
 	"sort"
 
@@ -40,6 +39,7 @@ func NewDatasource(instanceSettings backend.DataSourceInstanceSettings) (instanc
 	if err != nil {
 		return nil, err
 	}
+
 	logship.settings = datasourceSettings
 	logshipClient, err := client.New(&instanceSettings, datasourceSettings)
 	if err != nil {
@@ -57,11 +57,8 @@ func NewDatasource(instanceSettings backend.DataSourceInstanceSettings) (instanc
 
 // QueryData is the primary method called by grafana-server
 func (logship *LogshipBackend) QueryData(ctx context.Context, req *backend.QueryDataRequest) (*backend.QueryDataResponse, error) {
-	//ctx = azusercontext.WithUserFromQueryReq(ctx, req)
 	backend.Logger.Info("Query", "datasource", req.PluginContext.DataSourceInstanceSettings.Name)
-
 	res := backend.NewQueryDataResponse()
-
 	for _, q := range req.Queries {
 		res.Responses[q.RefID] = logship.handleQuery(ctx, q, req.PluginContext.User)
 	}
@@ -75,10 +72,12 @@ func (logship *LogshipBackend) CallResource(ctx context.Context, req *backend.Ca
 
 // CheckHealth handles health checks
 func (logship *LogshipBackend) CheckHealth(ctx context.Context, req *backend.CheckHealthRequest) (*backend.CheckHealthResult, error) {
-	// ctx = azusercontext.WithUserFromHealthCheckReq(ctx, req)
 	headers := map[string]string{}
+	backend.Logger.Info("Checking logship health.")
+
 	err := logship.client.TestRequest(ctx, logship.settings, models.NewConnectionProperties(logship.settings, nil), headers)
 	if err != nil {
+		backend.Logger.Error("could not complete test request. %w", err)
 		return &backend.CheckHealthResult{
 			Status:  backend.HealthStatusError,
 			Message: err.Error(),
@@ -118,20 +117,18 @@ func (logship *LogshipBackend) handleQuery(ctx context.Context, q backend.DataQu
 
 func (logship *LogshipBackend) modelQuery(ctx context.Context, q models.QueryModel, props *models.Properties, user *backend.User) (backend.DataResponse, error) {
 	headers := map[string]string{}
-	msClientRequestIDHeader := fmt.Sprintf("KGC.%s;%x", q.QuerySource, rand.Uint64())
 	if logship.settings.EnableUserTracking {
 		if user != nil {
-			msClientRequestIDHeader += fmt.Sprintf(";%v", user.Login)
-			headers["x-ms-user-id"] = user.Login
+			headers["x-logship-user-id"] = user.Login
 		}
 	}
-	headers["x-ms-client-request-id"] = msClientRequestIDHeader
 
 	tableRes, err := logship.client.KustoRequest(ctx, logship.settings.ClusterURL, models.RequestPayload{
 		Query:       q.Query,
 		Properties:  props,
 		QuerySource: q.QuerySource,
 	}, headers)
+
 	if err != nil {
 		backend.Logger.Debug("error building kusto request", "error", err.Error())
 		return backend.DataResponse{}, err

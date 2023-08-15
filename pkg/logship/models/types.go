@@ -62,3 +62,13 @@ func NewConnectionProperties(s *DatasourceSettings, cs *CacheSettings) *Properti
 		},
 	}
 }
+
+type JwtTokenRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+type JwtTokenResponse struct {
+	UserId string `json:"userId"`
+	Token  string `json:"token"`
+}

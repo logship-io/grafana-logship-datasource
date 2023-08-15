@@ -2,25 +2,39 @@ import React, { useState, useEffect } from 'react';
 import { AsyncState } from 'react-use/lib/useAsyncFn';
 import { Button, InlineFormLabel, Spinner, getSelectStyles, useStyles2 } from '@grafana/ui';
 import { InlineSelect } from '@grafana/experimental';
-import { KustoQuery, LogshipColumnSchema, LogshipDatabaseSchema, LogshipTableSchema } from 'types';
+import { KustoQuery, LogshipColumnSchema, LogshipDatabaseSchema, LogshipTableSchema, QueryResultFormat } from 'types';
+import { SelectableValue } from '@grafana/data';
 
 export interface InlineTableSelectProps {
   query: KustoQuery;
   schema: AsyncState<LogshipDatabaseSchema>;
   schemaLoaded: boolean,
+  isExplore: boolean,
   onChange: (value: KustoQuery) => void;
   onRunQuery: () => void;
 }
 
+const EDITOR_FORMATS: Array<SelectableValue<QueryResultFormat>> = [
+  { label: 'Table', value: 'table' },
+  { label: 'Time Series', value: 'time_series' },
+];
+
 const InlineTableSelect = (props: InlineTableSelectProps) => {
-  const { query, schema, schemaLoaded, onChange, onRunQuery } = props;
+  const { query, schema, schemaLoaded, onChange, onRunQuery, isExplore } = props;
   const [loading, setLoading] = useState(true);
   const [selectedTable, setSelectedTable] = useState<LogshipTableSchema | undefined>(undefined)
+  const [lastPreviewFormat, setLastPreviewFormat] = useState<QueryResultFormat | undefined>(undefined);
+  
   const [options, setOptions] = useState<LogshipTableSchema[]>([]);
   const styles = useStyles2(getSelectStyles);
+  
+  const formats = EDITOR_FORMATS;
+  const defaultFormat = isExplore
+    ? 'table'
+    : 'time_series';
+  
   const tableDefaultQuery = (t: LogshipTableSchema) => {
     let cols: LogshipColumnSchema[] = [];
-    
     let timestamp = t.columns.find(c => c.type === 'DateTime');
     if (timestamp !== undefined) {
         let temp = [timestamp];
@@ -47,11 +61,12 @@ const InlineTableSelect = (props: InlineTableSelectProps) => {
   const onProjectTable = () => {
     if (selectedTable) {
       const q = tableDefaultQuery(selectedTable)
-      if (query.query === q) {
+      if (query.query === q && lastPreviewFormat === query.resultFormat) {
         return;
       }
 
-      onChange({...query, query: q, resultFormat: 'table' })
+      setLastPreviewFormat(query.resultFormat);
+      onChange({...query, query: q, resultFormat: query.resultFormat })
       onRunQuery();
     }
   };
@@ -78,6 +93,15 @@ const InlineTableSelect = (props: InlineTableSelectProps) => {
       }))}
       onChange={(s) => { setSelectedTable(s.value) }}
     />
+    <InlineSelect
+        label="Format as"
+        options={formats}
+        value={query.resultFormat}
+        defaultValue={defaultFormat}
+        onChange={({ value }) => {
+          onChange({ ...query, resultFormat: value || 'table' });
+        }}
+      />
     <Button
       variant="secondary"
       icon="table"
