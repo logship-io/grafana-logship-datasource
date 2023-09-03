@@ -88,6 +88,7 @@ var converterMap = map[string]data.FieldConverter{
 	"Int32":    intConverter,
 	"UInt32":   intConverter,
 	"Int64":    longConverter,
+	"Int128":	stringConverter,
 	"UInt64":   longConverter,
 	"real":     realConverter,
 	"Float32":  realConverter,
