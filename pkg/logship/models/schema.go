@@ -14,11 +14,8 @@ type ColumnSchema struct {
 }
 
 type TableSchema struct {
-	Name    string `json:"name"`
-	Columns []struct {
-		Name string `json:"name"`
-		Type string `json:"type"`
-	} `json:"columns"`
+	Name    string         `json:"name"`
+	Columns []ColumnSchema `json:"columns"`
 }
 
 type DatabaseSchemaResponse struct {

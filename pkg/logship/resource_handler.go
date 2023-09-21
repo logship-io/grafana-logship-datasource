@@ -2,13 +2,14 @@ package logship
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
+	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/logsink/grafana-logship-datasource/pkg/logship/models"
 )
 
 func (logship *LogshipBackend) registerRoutes(mux *http.ServeMux) {
-	// mux.HandleFunc("/databases", logship.getDatabases)
 	mux.HandleFunc("/schema", logship.getSchema)
 }
 
@@ -19,16 +20,51 @@ func (logship *LogshipBackend) getSchema(rw http.ResponseWriter, req *http.Reque
 	}
 
 	headers := map[string]string{}
+	resp, err := logship.client.KustoRequest(req.Context(), logship.settings.ClusterURL, models.RequestPayload{
+		Query:       "schema.tables.schema",
+		QuerySource: "grafana-schema",
+	}, headers)
 
-	tables, err := logship.client.SchemaRequest(req.Context(), logship.settings.ClusterURL, headers)
 	if err != nil {
 		respondWithError(rw, http.StatusInternalServerError, "Schema query unsuccessful", err)
 		return
 	}
 
+	tables := map[string]models.TableSchema{}
+	for _, t := range resp.Results {
+		tableName, _ := t["TableName"].(string)
+		columnName, _ := t["ColumnName"].(string)
+		columnType, _ := t["ColumnType"].(string)
+
+		c := models.ColumnSchema{
+			Name: columnName,
+			Type: columnType,
+		}
+
+		val, ok := tables[tableName]
+		if ok {
+			backend.Logger.Info(fmt.Sprintf("adding column {%s} {%s} {%s}", tableName, columnName, columnType))
+			val.Columns = append(val.Columns, c)
+		} else {
+			backend.Logger.Info(fmt.Sprintf("adding table {%s} {%s} {%s}", tableName, columnName, columnType))
+			tables[tableName] = models.TableSchema{
+				Name:    tableName,
+				Columns: []models.ColumnSchema{c},
+			}
+		}
+	}
+
+	backend.Logger.Info("done {%w}", tables)
+	txs := make([]models.TableSchema, 0, len(tables))
+	for _, tx := range tables {
+		backend.Logger.Info("add {%w}", tx)
+		txs = append(txs, tx)
+		backend.Logger.Info("done {%w}", txs)
+	}
+
 	result := models.DatabaseSchemaResponse{
 		Name:   "Default",
-		Tables: tables,
+		Tables: txs,
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
@@ -37,30 +73,6 @@ func (logship *LogshipBackend) getSchema(rw http.ResponseWriter, req *http.Reque
 		respondWithError(rw, http.StatusInternalServerError, "Internal server error", err)
 	}
 
-}
-
-func (logship *LogshipBackend) getDatabases(rw http.ResponseWriter, req *http.Request) {
-	if req.Method != "GET" {
-		respondWithError(rw, http.StatusMethodNotAllowed, "Invalid method", nil)
-		return
-	}
-
-	payload := models.RequestPayload{
-		Query: ".show databases",
-	}
-
-	headers := map[string]string{}
-	response, err := logship.client.KustoRequest(req.Context(), logship.settings.ClusterURL+"/LS-Search-Query/api/kusto", payload, headers)
-	if err != nil {
-		respondWithError(rw, http.StatusInternalServerError, "Kusto query unsuccessful", err)
-		return
-	}
-
-	rw.Header().Set("Content-Type", "application/json")
-	err = json.NewEncoder(rw).Encode(response)
-	if err != nil {
-		rw.WriteHeader(http.StatusInternalServerError)
-	}
 }
 
 func respondWithError(rw http.ResponseWriter, code int, message string, err error) {
