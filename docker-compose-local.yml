@@ -5,12 +5,9 @@ services:
     container_name: 'grafana-logship-datasource'
     build:
       context: ./.config
-      args:
-        grafana_version: latest
     ports:
-      - 3000:3000/tcp
-    network:
-      - host
+      - 3000:3000
+    # network_mode: host
     volumes:
       - ./.container/dashboards:/var/lib/grafana/dashboards
       - ./dist:/var/lib/grafana/plugins/grafana-logship-datasource

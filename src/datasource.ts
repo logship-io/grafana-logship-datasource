@@ -4,7 +4,6 @@ import {
   DataQueryRequest,
   DataSourceInstanceSettings,
   MetricFindValue,
-  ScopedVar,
   ScopedVars,
 } from '@grafana/data';
 import { DataSourceWithBackend, getTemplateSrv, TemplateSrv } from '@grafana/runtime';
@@ -60,11 +59,11 @@ export class LogshipDataSource extends DataSourceWithBackend<KustoQuery, Logship
     return true;
   }
 
-  applyTemplateVariables(target: KustoQuery, scopedVars: ScopedVar): Record<string, any> {
+  applyTemplateVariables(target: KustoQuery, scopedVars: ScopedVars): Record<string, any> {
     const query = interpolateKustoQuery(
       target.query,
       (val: string) => this.templateSrv.replace(val, scopedVars, this.interpolateVariable),
-      scopedVars as ScopedVars
+      scopedVars
     );
 
     return {

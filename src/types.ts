@@ -56,11 +56,15 @@ export interface LogshipDataSourceOptions extends DataSourceJsonData {
   clusterUrl: string;
   authType: string;
   username: string;
+  clientId: string;
+  tokenEndpoint: string | undefined;
+  oauthPassThru?: boolean;
+  scope?: string;
 }
 
-
 export interface LogshipDataSourceSecureOptions {
-  pass: string;
+  pass: string | undefined;
+  clientSecret: string | undefined;
 }
 
 export interface LogshipDatabaseSchema {

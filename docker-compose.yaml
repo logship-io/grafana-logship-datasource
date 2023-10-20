@@ -6,11 +6,10 @@ services:
     build:
       dockerfile: ./.config/Containerfile
       args:
-        grafana_version: ${GRAFANA_VERSION:latest}
+        grafana_version: latest
     ports:
-      - 3000:3000/tcp
-    network:
-      - host
+      - 3000:3000
+    # network_mode: host
     volumes:
       - ./.container/provisioning:/etc/grafana/provisioning
       - ./.container/dashboards:/var/lib/grafana/dashboards

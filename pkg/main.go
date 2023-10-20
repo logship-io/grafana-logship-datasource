@@ -7,7 +7,6 @@ import (
 	"github.com/grafana/grafana-plugin-sdk-go/backend/datasource"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 
-	// "github.com/logsink/grafana-logship-datasource/pkg/plugin"
 	"github.com/logsink/grafana-logship-datasource/pkg/logship"
 )
 

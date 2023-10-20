@@ -6,6 +6,7 @@ import (
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/httpclient"
+
 	"github.com/logsink/grafana-logship-datasource/pkg/logship/models"
 )
 
@@ -14,9 +15,10 @@ func newHttpClient(instanceSettings *backend.DataSourceInstanceSettings, dsSetti
 	if err != nil {
 		return nil, fmt.Errorf("error creating http client: %w", err)
 	}
-	clientOpts.Timeouts.Timeout = dsSettings.QueryTimeout
 
-	httpClient, err := httpclient.NewProvider().New(clientOpts)
+	clientOpts.Timeouts.Timeout = dsSettings.QueryTimeout
+	clientOpts.ForwardHTTPHeaders = true
+	httpClient, err := httpclient.New(clientOpts)
 	if err != nil {
 		return nil, fmt.Errorf("error creating http client: %w", err)
 	}

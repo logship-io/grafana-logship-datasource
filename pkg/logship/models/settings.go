@@ -16,6 +16,9 @@ type DatasourceSettings struct {
 	EnableUserTracking bool   `json:"enableUserTracking"`
 	AuthType           string `json:"authType"`
 	Username           string `json:"username"`
+	ClientId           string `json:"clientId"`
+	TokenEndpoint      string `json:"tokenEndpoint"`
+	Scope              string `json:"scope"`
 
 	// QueryTimeoutRaw is a duration string set in the datasource settings and corresponds
 	// to the server execution timeout.
@@ -27,6 +30,14 @@ type DatasourceSettings struct {
 	// ServerTimeoutValue is the QueryTimeout formatted as a MS Timespan
 	// which is used as a connection property option.
 	ServerTimeoutValue string `json:"-"`
+}
+
+type OAuth2OboTokenResponse struct {
+	TokenType    string `json:"token_type"`
+	Scope        string `json:"scope"`
+	ExpiresIn    int    `json:"expires_in"`
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
 }
 
 // newDataSourceData creates a dataSourceData from the plugin API's DatasourceInfo's

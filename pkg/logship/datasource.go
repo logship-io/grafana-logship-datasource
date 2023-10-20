@@ -25,7 +25,7 @@ type LogshipBackend struct {
 	settings *models.DatasourceSettings
 }
 
-func NewDatasource(instanceSettings backend.DataSourceInstanceSettings) (instancemgmt.Instance, error) {
+func NewDatasource(ctx context.Context, instanceSettings backend.DataSourceInstanceSettings) (instancemgmt.Instance, error) {
 	logship := &LogshipBackend{}
 
 	var jsonData map[string]interface{}
@@ -57,7 +57,13 @@ func NewDatasource(instanceSettings backend.DataSourceInstanceSettings) (instanc
 
 // QueryData is the primary method called by grafana-server
 func (logship *LogshipBackend) QueryData(ctx context.Context, req *backend.QueryDataRequest) (*backend.QueryDataResponse, error) {
+	ctx, err := logship.client.WithUserContextFromQuery(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
 	backend.Logger.Info("Query", "datasource", req.PluginContext.DataSourceInstanceSettings.Name)
+
 	res := backend.NewQueryDataResponse()
 	for _, q := range req.Queries {
 		res.Responses[q.RefID] = logship.handleQuery(ctx, q, req.PluginContext.User)
@@ -67,15 +73,24 @@ func (logship *LogshipBackend) QueryData(ctx context.Context, req *backend.Query
 }
 
 func (logship *LogshipBackend) CallResource(ctx context.Context, req *backend.CallResourceRequest, sender backend.CallResourceResponseSender) error {
-	return logship.CallResourceHandler.CallResource(ctx /*azusercontext.WithUserFromResourceReq(ctx, req) */, req, sender)
+	ctx, err := logship.client.WithUserContextFromResource(ctx, req)
+	if err != nil {
+		return err
+	}
+	return logship.CallResourceHandler.CallResource(ctx, req, sender)
 }
 
 // CheckHealth handles health checks
 func (logship *LogshipBackend) CheckHealth(ctx context.Context, req *backend.CheckHealthRequest) (*backend.CheckHealthResult, error) {
+	ctx, err := logship.client.WithUserContextFromHealthCheck(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
 	headers := map[string]string{}
 	backend.Logger.Info("Checking logship health.")
 
-	err := logship.client.TestRequest(ctx, logship.settings, models.NewConnectionProperties(logship.settings, nil), headers)
+	err = logship.client.TestRequest(ctx, logship.settings, models.NewConnectionProperties(logship.settings, nil), headers)
 	if err != nil {
 		backend.Logger.Error("could not complete test request. %w", err)
 		return &backend.CheckHealthResult{

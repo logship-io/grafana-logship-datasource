@@ -12,7 +12,7 @@ export interface ConfigEditorProps
 
 const ConfigEditor: React.FC<ConfigEditorProps> = (props) => {
   const { options, onOptionsChange } = props;  
-  props.options.jsonData.authType = 'jwt'
+  props.options.jsonData.authType ??= 'jwt'
   const jsonData = props.options.jsonData;
 
   const updateJsonData = useCallback(

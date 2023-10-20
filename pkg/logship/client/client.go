@@ -17,6 +17,9 @@ import (
 )
 
 type LogshipClient interface {
+	WithUserContextFromQuery(ctx context.Context, req *backend.QueryDataRequest) (context.Context, error)
+	WithUserContextFromResource(ctx context.Context, req *backend.CallResourceRequest) (context.Context, error)
+	WithUserContextFromHealthCheck(ctx context.Context, req *backend.CheckHealthRequest) (context.Context, error)
 	TestRequest(ctx context.Context, datasourceSettings *models.DatasourceSettings, properties *models.Properties, additionalHeaders map[string]string) error
 	KustoRequest(ctx context.Context, url string, payload models.RequestPayload, additionalHeaders map[string]string) (*models.TableResponse, error)
 	SchemaRequest(ctx context.Context, url string, additionalHeaders map[string]string) ([]models.TableSchema, error)
@@ -48,6 +51,18 @@ func New(instanceSettings *backend.DataSourceInstanceSettings, dsSettings *model
 		userId:     uuid.Nil,
 		auth:       auth,
 	}, nil
+}
+
+func (c *Client) WithUserContextFromQuery(ctx context.Context, req *backend.QueryDataRequest) (context.Context, error) {
+	return c.auth.WithUserContextFromQueryRequest(ctx, req)
+}
+
+func (c *Client) WithUserContextFromResource(ctx context.Context, req *backend.CallResourceRequest) (context.Context, error) {
+	return c.auth.WithUserContextFromResourceRequest(ctx, req)
+}
+
+func (c *Client) WithUserContextFromHealthCheck(ctx context.Context, req *backend.CheckHealthRequest) (context.Context, error) {
+	return c.auth.WithUserContextFromHealthCheck(ctx, req)
 }
 
 // TestRequest handles a data source test request in Grafana's Datasource configuration UI.
