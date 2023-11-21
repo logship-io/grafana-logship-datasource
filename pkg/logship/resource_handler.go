@@ -2,8 +2,8 @@ package logship
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
+	"sort"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/logsink/grafana-logship-datasource/pkg/logship/models"
@@ -43,10 +43,9 @@ func (logship *LogshipBackend) getSchema(rw http.ResponseWriter, req *http.Reque
 
 		val, ok := tables[tableName]
 		if ok {
-			backend.Logger.Info(fmt.Sprintf("adding column {%s} {%s} {%s}", tableName, columnName, columnType))
 			val.Columns = append(val.Columns, c)
+			tables[tableName] = val
 		} else {
-			backend.Logger.Info(fmt.Sprintf("adding table {%s} {%s} {%s}", tableName, columnName, columnType))
 			tables[tableName] = models.TableSchema{
 				Name:    tableName,
 				Columns: []models.ColumnSchema{c},
@@ -57,9 +56,11 @@ func (logship *LogshipBackend) getSchema(rw http.ResponseWriter, req *http.Reque
 	backend.Logger.Info("done {%w}", tables)
 	txs := make([]models.TableSchema, 0, len(tables))
 	for _, tx := range tables {
-		backend.Logger.Info("add {%w}", tx)
+		sort.Slice(tx.Columns, func(i, j int) bool {
+			return tx.Columns[i].Name < tx.Columns[j].Name
+		})
+
 		txs = append(txs, tx)
-		backend.Logger.Info("done {%w}", txs)
 	}
 
 	result := models.DatabaseSchemaResponse{
