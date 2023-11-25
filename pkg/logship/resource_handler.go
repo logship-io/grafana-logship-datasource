@@ -3,7 +3,6 @@ package logship
 import (
 	"encoding/json"
 	"net/http"
-	"sort"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/logsink/grafana-logship-datasource/pkg/logship/models"
@@ -56,10 +55,6 @@ func (logship *LogshipBackend) getSchema(rw http.ResponseWriter, req *http.Reque
 	backend.Logger.Info("done {%w}", tables)
 	txs := make([]models.TableSchema, 0, len(tables))
 	for _, tx := range tables {
-		sort.Slice(tx.Columns, func(i, j int) bool {
-			return tx.Columns[i].Name < tx.Columns[j].Name
-		})
-
 		txs = append(txs, tx)
 	}
 
